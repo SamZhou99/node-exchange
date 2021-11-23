@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    {{include '../_header.html'}}
+</head>
+
+<body>
+    {{include '../_menu.html'}}
+
+    <div class="container-fluid main-content">
+        <div class="container">
+            <h1>登录日志</h1>
+            {{each loginLog}}
+            <p>{{$value.id}} - {{$value.ip}} -
+                <script>document.write(moment('{{@ $value.time}}').format('lll'))</script>
+            </p>
+            {{/each}}
+        </div>
+    </div>
+
+    {{include '../_footer.html'}}
+</body>
+
+</html>

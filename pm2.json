@@ -1,0 +1,38 @@
+{
+  "apps": [
+    {
+      "name": "www",
+      "cwd": "",
+      "script": "./main.js",
+      "max_memory_restart": "500M",
+      "restart_delay": 2000,
+      "exec_mode": "fork",
+      "error_file": "./temp/log/www-err.log",
+      "out_file": "./temp/log/www-out.log",
+      "pid_file": "./temp/log/www.pid",
+      "log_date_format": "YYYY-MM-DD HH:mm:ss",
+      "watch": false,
+      "ignore_watch": [
+        "node_modules",
+        "config"
+      ]
+    },
+    {
+      "name": "webSocket",
+      "cwd": "",
+      "script": "./main_websocket.js",
+      "max_memory_restart": "100M",
+      "restart_delay": 2000,
+      "exec_mode": "fork",
+      "error_file": "./temp/log/webSocket-err.log",
+      "out_file": "./temp/log/webSocket-out.log",
+      "pid_file": "./temp/log/webSocket.pid",
+      "log_date_format": "YYYY-MM-DD HH:mm:ss",
+      "watch": false,
+      "ignore_watch": [
+        "node_modules",
+        "config"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="/admin-assets/plugins/dropzone/dropzone.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL STYLES -->
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper" style="min-height: 580px;">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">上传系统钱包地址</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="#">首页</a>
+                    </li>
+                    <li class="active">
+                        上传系统钱包地址
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col">
+                    <div class="alert alert-danger" role="alert" style="color:#fff;margin:20px;padding:10px;"><i
+                            class="fa fa-warning"></i> 请使用
+                        <strong>比特派</strong> <u>批量导出</u>
+                        的文件，如：<strong>Bitpie_USDT_TRC20_address_xxx.csv</strong>，然后再上传。
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <form action="/admin/api/upload-file" class="dropzone dz-clickable" id="dropzone">
+                        <div class="dz-default dz-message"><span>将文件拖放到这里上传</span></div>
+                    </form>
+                </div>
+
+                <div class="col-md-12" style="margin-top:10px;">
+                    <div class="white-box">
+                        <h4 class="header-title">上传结果</h4>
+                        <p class="text-custom">数据总数：{[results.total]}</p>
+                        <p class="text-danger">不合格的数据：{[results.unqualified]}</p>
+                        <p class="text-danger">不合格的具体数据：{[results.unqualifiedArr]}</p>
+                        <p class="text-primary">已存在的数据：{[results.exist]}</p>
+                        <h4 class="text-success">上传成功的数据：{[results.success]}</h4>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/admin-assets/plugins/dropzone/dropzone.js"></script>
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                list: [],
+                results: {
+                    total: 0,
+                    unqualified: 0,
+                    unqualifiedArr: [],
+                    exist: 0,
+                    success: 0,
+                }
+            },
+            methods: {
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                // 初始化
+                init() {
+                    this.get('/admin/api/user-list', {}, (data) => {
+                        this.list = data.data.list
+                    })
+
+                    $('body').bind('dz-success-event', (files, responseText, e) => {
+                        if (e) {
+                            alert(e)
+                            return
+                        }
+                        let flag = responseText.responseText.flag
+                        if (flag != 'ok') {
+                            alert(flag)
+                            return
+                        }
+                        this.results = responseText.responseText.data
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</body>
+
+</html>

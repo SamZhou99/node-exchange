@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    {{include '../_header.html'}}
+    <style>
+        .bg01 {
+            margin-top: 50px;
+            margin-bottom: 50px;
+            padding: 20px;
+            background-color: #202b3f;
+        }
+
+        .p0 {
+            padding: 0px;
+        }
+
+        #wallet_address {
+            background-color: #333;
+            padding: 10px;
+        }
+
+        #qrcode>canvas {
+            background-color: #fff;
+            padding: 10px;
+        }
+
+        .textOver {
+            font-size: 10px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .profilePicture {
+            width: 60px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    {{include '../_menu.html'}}
+
+    <div id="app" class="container-fluid main-content p0">
+        <div class="container-fluid bg01">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <h2 class="form-signin-heading">
+                            <img class="profilePicture" src="/images/profile01.png" alt="{{session.user.email}}">
+                            {{session.user.email}}
+                        </h2>
+                    </div>
+                    <div class="col-1 offset-6">
+                        <h2 class="form-signin-heading">
+                            <button class="btn btn-primary">充值</button>
+                        </h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 col-sm-12">
+                    <p> <a href="">我的资产列表</a> </p>
+                    <p> <a href="/me/invite-friends">邀请奖励</a> </p>
+                    <p> <a href="">资金转出</a> </p>
+                    <p> <a href="/me/login-log">登录日志</a> </p>
+                </div>
+                <div class="col-md-8 col-sm-12">
+                    <p>
+                    <h1>转入资产USDT</h1>
+                    </p>
+                    <p>
+                    <h5>USDT 钱包充币地址</h5>
+                    </p>
+                    <p>
+                    <div class="row" style="background-color: #090c13;padding: 10px;">
+                        <div class='col-10'> <a href="https://usdt.tokenview.com/cn/address/{{wallet_address}}"
+                                target="_blank">{[this.wallet_address]}</a> </div>
+                        <div class='col-2'>
+                            <button @click="onClickCopyText()" disabled="disabled" class="btn btn-primary">复制</button>
+                        </div>
+                    </div>
+                    </p>
+                    <p>
+                    <div id="qrcode"></div>
+                    </p>
+                    <p>单击二维码，保存二维码图片到本地。</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="container">
+            <div v-if="this.loading" class="row">
+                <div class="col">Loading...</div>
+            </div>
+            <div class="row">
+                <ul>
+                    <i class="row">
+                        <div class="col-4 textOver">哈希</div>
+                        <div class="col-3 textOver">从</div>
+                        <div class="col-3 textOver">到</div>
+                        <div class="col-1 textOver">时间</div>
+                        <div class="col-1 textOver">交易总额</div>
+                    </i>
+                    <li v-for="item in this.list" :key="item.hash" class="row">
+                        <div class="col-4 textOver">{[item.hash]}</div>
+                        <div class="col-3 textOver">{[item.ownerAddress]}</div>
+                        <div class="col-3 textOver">{[item.toAddress]}</div>
+                        <div class="col-1 textOver">{[item.timestamp]}</div>
+                        <div class="col-1 textOver">{[(item.amount / 1000000) + ' USDT']}</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                statusText: '',
+                loading: false,
+                wallet_address: '{{wallet_address}}',
+                list: [],
+            },
+            methods: {
+                onClickCopyText() {
+                    alert('Copy Text')
+                },
+                downloadCanvasImamge(selector, name) {
+                    var canvas = document.querySelector(selector)
+                    var url = canvas.toDataURL('image/png')
+                    var a = document.createElement('a')
+                    var event = new MouseEvent('click')
+                    a.download = name || '下载图片名称'
+                    a.href = url
+                    a.dispatchEvent(event)
+                },
+                getWallet() {
+                    this.get('/api/wallet-address/' + this.wallet_address, {}, (data) => {
+                        let a = data.data.token_transfers
+                        for (let i = 0; i < a.length; i++) {
+                            let item = a[i]
+                            let o = {
+                                hash: item.hash || item.transaction_id,
+                                block: item.block,
+                                timestamp: moment(item.time).format('lll') || moment(item.block_ts).format('lll'),
+                                amount: item.amount || item.quant,
+                                ownerAddress: item.owner_address || item.from_address,
+                                toAddress: item.to_address,
+                            }
+                            console.log('----------------------------------------------------')
+                            console.log(o)
+                            // 转到系统钱包的地址 显示出来 其他不显示
+                            if (o.toAddress == this.wallet_address) {
+                                this.list.push(o)
+                            }
+                        }
+                    })
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+
+                // 初始化
+                init() {
+                    jQuery('#qrcode').qrcode({ width: 128, height: 128, text: this.wallet_address })
+
+                    // 
+                    $('#qrcode > canvas').on('click', () => {
+                        this.downloadCanvasImamge('canvas', '二维码-' + this.wallet_address + '.png')
+                    })
+
+                    this.getWallet()
+                    setInterval(() => {
+                        this.getWallet()
+                    }, 1000 * 60 * 5)
+
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+
+    {{include '../_footer.html'}}
+</body>
+
+</html>

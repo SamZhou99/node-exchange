@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="/admin-assets/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
+    <!-- END PAGE LEVEL STYLES -->
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">添加用户</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/admin">网站首页</a>
+                    </li>
+                    <li class="active">
+                        添加用户
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+                        <h2 class="header-title">填写表单</h2>
+                        <form class="js-validation-bootstrap form-horizontal" action="/admin/user-add" method="post"
+                            novalidate="novalidate">
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="account">帐号名 <span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" id="account" name="account"
+                                        placeholder="Enter User Name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="mail">邮箱 <span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" id="mail" name="mail"
+                                        placeholder="Enter your  email">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="password">密码 <span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" id="password" name="password"
+                                        placeholder="Enter Password">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="type">用户类型<span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <select v-model="userType" class="form-control" id="type" name="type">
+                                        <option disabled value="">请选择</option>
+                                        <option v-for="option in userCategory" v-bind:value="option.id">
+                                            {[option.value]} ({[option.label]})
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="mobile">移动电话 <span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" id="mobile" name="mobile" placeholder="3">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="status">状态[0-1] <span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" id="status" name="status" placeholder="1">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label" for="inviteCode">邀请码 <span
+                                        class="text-danger">*</span></label>
+                                <div class="col-md-9">
+                                    <input class="form-control" type="text" id="inviteCode" name="inviteCode"
+                                        placeholder="四位字符的邀请码">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-8 col-md-offset-3">
+                                    <button @click="onClickSubmit()" class="btn btn-primary"
+                                        type="button">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!--End row-->
+
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/admin-assets/plugins/sweetalert/sweet-alert.js"></script>
+    <script src="/admin-assets/pages/jquery.sweet-alert.custom.js"></script>
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/admin-assets/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <!-- <script src="/admin-assets/pages/validation-custom.js"></script> -->
+    <script>
+
+        var BaseFormValidation = function () {
+            var initValidationBootstrap = function () {
+                jQuery('.js-validation-bootstrap').validate({
+                    errorClass: 'help-block animated fadeInDown',
+                    errorElement: 'div',
+                    errorPlacement: function (error, e) {
+                        jQuery(e).parents('.form-group > div').append(error);
+                    },
+                    highlight: function (e) {
+                        jQuery(e).closest('.form-group').removeClass('has-error').addClass('has-error');
+                        jQuery(e).closest('.help-block').remove();
+                    },
+                    success: function (e) {
+                        jQuery(e).closest('.form-group').removeClass('has-error');
+                        jQuery(e).closest('.help-block').remove();
+                    },
+                    rules: {
+                        'account': {
+                            required: true,
+                            minlength: 3
+                        },
+                        'mail': {
+                            required: true,
+                            email: true
+                        },
+                        'password': {
+                            required: true,
+                            minlength: 5
+                        },
+                        'type': {
+                            required: true
+                        },
+                        'mobile': {
+                            required: true,
+                            digits: true
+                        },
+                        'status': {
+                            required: true,
+                            range: [1, 10]
+                        },
+                        'inviteCode': {
+                            required: true,
+                            minlength: 4
+                        }
+                    },
+                    messages: {
+                        'account': {
+                            required: 'Please enter a username',
+                            minlength: 'Your username must consist of at least 3 characters'
+                        },
+                        'mail': 'Please enter a valid email address',
+                        'password': {
+                            required: 'Please provide a password',
+                            minlength: 'Your password must be at least 5 characters long'
+                        },
+                        'type': 'Please select a user group category!',
+                        'mobile': 'Please enter only mobile!',
+                        'status': 'Please enter a number between 0 and 1!',
+                        'inviteCode': 'Please enter a invite code!'
+                    }
+                });
+            };
+
+            return {
+                init: function () {
+                    // Init Bootstrap Forms Validation
+                    initValidationBootstrap();
+                }
+            };
+        }();
+
+        // Initialize when page loads
+        jQuery(function () { BaseFormValidation.init(); });
+    </script>
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                userCategory: [],
+                list: [],
+                userType: 6,
+            },
+            methods: {
+                onClickSubmit() {
+                    this.post('/admin/api/user-add', {
+                        account: $('#account').val(),
+                        mail: $('#mail').val(),
+                        password: $('#password').val(),
+                        type: this.userType,
+                        mobile: $('#mobile').val(),
+                        status: $('#status').val(),
+                        inviteCode: $('#inviteCode').val()
+                    }, (data) => {
+                        console.log(data)
+                        if (data.flag != 'ok') {
+                            alert(data.flag)
+                        }else{
+                            alert('注册成功!')
+                            document.location = '/admin/user-list'
+                        }
+                    })
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+
+                // 初始化
+                init() {
+                    this.get('/admin/api/user-group-category', {}, (data) => {
+                        this.userCategory = data.data.list
+                    })
+
+                    swal("Good job!", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lorem erat eleifend ex semper, lobortis purus sed.", "success")
+
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</body>
+
+</html>

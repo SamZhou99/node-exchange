@@ -1,0 +1,471 @@
+header{
+    width: 100%;
+    background-color: #2e2e2e;
+}
+header .all_top{
+    width: 1200px;
+    height: 70px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+header .all_top .logo_box{
+    width: 168px;
+    height: 70px;
+    float: left;
+}
+header .all_top .logo_box > a {
+    display: block;
+    width: 150px;
+    height: 60px;
+    margin-top: 5px;
+}
+header .all_top .logo_box > a .logo{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+header .all_top .search_box{
+    margin-top: 15px;
+    margin-left: 251px;
+    float: left;
+    width: 338px;
+	height: 42px;
+	background-color: #f5f2e6;
+    border-radius: 4px;
+    position: relative;
+}
+header .all_top .search_box input{
+    display: block;
+    width: 100%;
+	height: 42px;
+	background-color: #f5f2e6;
+    border-radius: 4px;
+    padding-left: 20px;
+}
+input::-webkit-input-placeholder {
+   color: #666;
+}
+header .all_top .search_box .search_btn{
+    display: block;
+    width: 23px;
+    height: 23px;
+    background: url("../images/search.png") center center no-repeat;
+    position: absolute;
+    right: 18px;
+    top: 10px;
+    cursor: pointer;
+}
+.nav_all{
+    width: 100%;
+    height: 41px;
+	background-color: #f4ea2a;
+}
+.nav_all nav{
+    width: 1200px;
+    margin: 0 auto;
+}
+.nav_all nav .nav_list{
+    width: 100%;
+    /* overflow: hidden; */
+    height: 41px;
+    
+}
+.nav_all nav .nav_list li{
+    float: left;
+    height: 40px;
+    cursor: pointer;
+    position: relative;
+   
+}
+.nav_all nav .nav_list li:last-child{
+    /* padding-right: 0; */
+}
+.nav_all nav .nav_list > li > a{
+    display: block;
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    color: #222;
+    font-size: 16px;
+   margin-top: 5px;
+   padding: 0 23px 0 23px;
+}
+.nav_all nav .nav_list > li:hover .same{
+    background-color: #1f1f1f;
+    border-radius: 4px;
+}
+.nav_all nav .nav_list li:hover .same{
+    color: #ffd100;
+}
+
+.nav_all nav .nav_list > .active > .same{
+    color: #f4ea2a;
+    background-color: #1f1f1f;
+    border-radius: 4px;
+}
+header .advertising_box{
+    background-color: #fff;
+    padding-top: 10px;
+    width: 100%;
+}
+header .advertising_box .advertising_content{
+    width: 1200px;
+    margin: 0 auto;
+}
+header .advertising_box .advertising_content .content_list{
+    width: 1200px;
+    overflow: hidden;
+}
+header .advertising_box .advertising_content .content_list li{
+    float: left;
+    width: 294px;
+    height: 70px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+header .advertising_box .advertising_content .content_list li img{
+    width: 294px;
+    height: 70px;
+}
+header .advertising_box .advertising_content .content_list li:nth-child(4n){
+    margin-right: 0;
+}
+.nav_all nav .nav_list .more_mune{
+    display: block;
+    width: 10px;
+    height: 6px;
+    background: url("../images/more_mune.png") center center no-repeat;
+   position: absolute;
+   left: 91px;
+   top:19px;
+}
+.book_box{
+    width: 80px;
+    height: 60px;
+    background-color: #fff !important;
+    position: absolute;
+    left: 17px;
+    top:41px;
+    border-radius: 0px 0px 4px 4px;
+    opacity: 0;
+    transition: all 0.6s;
+}
+.nav_all nav .nav_list .bookorpic:hover .book_box{
+    /* display: block; */
+    opacity: 1;
+}
+.nav_all nav .nav_list .book_box > li{
+    width: 80px;
+    height: 30px;
+    padding: 0;
+}
+.nav_all nav .nav_list .book_box > li a{
+    display: block;
+    color: #444444;
+    line-height: 30px;
+    text-align: center;
+    font-size: 14px;
+}
+.nav_all nav .nav_list .book_box > li:hover{
+    background-color: #ff9000 !important;
+}
+.nav_all nav .nav_list .book_box > li:hover a{
+    color: #fff;
+    
+}
+
+
+
+/* 登录注册 */
+header .log_before{
+    float: right;
+}
+header .log_before ul{
+    overflow: hidden;
+    height: 70px;
+    padding-top: 10px;
+}
+header .log_before ul li{
+    float: left;
+    color: #999999;
+    padding: 15px 0;
+    margin-right: 19px;
+}
+header .log_before ul li span{
+    color: #999999;
+    cursor: pointer;
+}
+
+header .log_before ul li:nth-child(2){
+    margin-right: 7px;
+}
+header .log_before ul li i{
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+    background: url("../images/ixon.png") no-repeat;
+}
+header .log_before ul li:nth-child(1) i{
+    width: 22px;
+    height: 22px;
+    background-position: 0px -3px;
+}
+header .log_before ul li:nth-child(2) i{
+    width: 24px;
+    height: 22px;
+    background-position: 0px -27px;
+}
+header .log_before ul li:hover span{
+    color: #ff9000;
+}
+header .log_before ul .login:hover i{
+    background-position: -25px -3px
+}
+header .log_before ul .reg:hover i{
+    background-position: -24px -27px
+}
+/* 登陆后样式 */
+/* 登陆后样式 */
+header .log_before .logon_succ li{
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 8px;
+}
+header .log_before .logon_succ li > a{
+    display: block;
+    color: #999;
+}
+header .log_before .logon_succ li i{
+    display: block;
+    margin: 0 auto 6px auto;
+
+}
+header .log_before .logon_succ li:hover a{
+    color: #ff9000;
+}
+header .log_before .logon_succ li:hover a b{
+    color: #ff9000;
+}
+header .log_before .logon_succ .username i{
+    width: 18px;
+    height: 22px;
+    background: url("../images/username.png") center center no-repeat;
+}
+header .log_before .logon_succ .username:hover i{
+    background: url("../images/username_hover.png") center center no-repeat;
+}
+header .log_before .logon_succ .money i{
+    width: 23px;
+    height: 22px;
+    background-position: 0px -107px;
+}
+header .log_before .logon_succ .money:hover i{
+    background-position: -26px -107px;
+}
+header .log_before .logon_succ .msg i{
+    width: 18px;
+    height: 22px;
+    background-position: -2px -54px;
+}
+header .log_before .logon_succ .msg:hover i{
+    background-position: -28px -54px;
+}
+header .log_before .logon_succ .logout i{
+    width: 19px;
+    height: 22px;
+    background-position: -2px -80px;
+}
+header .log_before .logon_succ .logout:hover i{
+    background-position: -28px -80px;
+}
+/* 登录窗口 */
+.shade_box{
+    background: #666 none repeat scroll 0 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0.6;
+    position: fixed;
+    right: 0;
+    top: 0;
+    -webkit-transition: opacity 500ms ease 0s;
+    transition: opacity 500ms ease 0s;
+    z-index: 100000;
+    display: none;
+}
+.box_same{
+    width: 420px;
+    height: 368px;
+    background: url("../images/reg_bg.png") center center no-repeat;
+    position: fixed;
+    left: 50%;
+    top:50%;
+    margin-left: -210px;
+    margin-top: -184px;
+    display: none;
+    z-index: 10000000;
+}
+.box_same h2{
+    width: 420px;
+    height: 61px;
+    line-height: 61px;
+    text-align: center;
+    position: relative;
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+.box_same h2 .reg_close{
+    display: block;
+    width: 35px;
+    height: 35px;
+    background: url("../images/close.png") center center no-repeat;
+    position: absolute;
+    right: -30px;
+    top:-50px;
+    cursor: pointer;
+}
+.box_same .reg_list{
+    width: 200%;
+    padding-left: 56px;
+}
+.box_same .reg_list li{
+    margin-bottom: 8px;
+}
+.box_same .reg_list li span{
+    display: inline-block;
+    vertical-align: middle;
+    width: 74px;
+    margin-right: 12px;
+    line-height: 40px;
+    height: 40px;
+    font-size: 16px;
+}
+.box_same .reg_list li input{
+    display: inline-block;
+    vertical-align: middle;
+    width: 222px;
+	height: 40px;
+	background-color: #ffffff;
+    border: solid 1px #e2e2e2;
+    padding-left: 10px;
+    font-size: 16px;
+}
+.box_same #go_reg{
+    display: block;
+    margin: 0 auto;
+    width: 150px;
+	height: 40px;
+	background-color: #ffd000;
+    border-radius: 8px;
+    text-align: center;
+    color:#fff;
+    font-size: 16px;
+    border: 0;
+    margin-top: 10px;
+}
+/* 登录 */
+.box_same #go_log{
+    display: block;
+    margin: 0 auto;
+    width: 150px;
+	height: 40px;
+	background-color: #ffd000;
+    border-radius: 8px;
+    text-align: center;
+    color:#fff;
+    font-size: 16px;
+    border: 0;
+}
+.box_same h2 .log_close{
+    display: block;
+    width: 35px;
+    height: 35px;
+    background: url("../images/close.png") center center no-repeat;
+    position: absolute;
+    right: -30px;
+    top:-50px;
+    cursor: pointer;
+}
+.log_box .reg_list li:nth-child(3) input{
+    width: 142px;
+}
+.log_box .reg_list li:nth-child(3) .code_num{
+    width: 76px;
+	height: 40px;
+	background-color: #d4d4d4;
+    border: solid 1px #e2e2e2;
+    text-align: center;
+    letter-spacing: 2px;
+    cursor: pointer;
+}
+.log_box .reg_list .forgetpass{
+    /*display: block;*/
+    /*width: 100%;*/
+    /*height: 40px;*/
+    /*line-height: 40px;*/
+    color: #666666;
+    /*text-align: right;*/
+    /*margin-left: 251px;*/
+    font-size: 14px;
+}
+
+.log_box .login_title {
+    margin-bottom: 38px;
+}
+
+
+/* 签到成功 */
+.qd_succ{
+    position: absolute;
+    left: 50%;
+    top:50%;
+    margin-left: -200px;
+    margin-top: -110px;
+    width: 400px;
+    height: 220px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    z-index: 100;
+}
+.qd_succ .yes{
+    width: 100%;
+    text-align: center;
+    padding-top: 36px;
+}
+.qd_succ .yes > i{
+    display: inline-block;
+    vertical-align: middle;
+    width: 45px;
+    height: 45px;
+    background: url("../images/succ.png") center center no-repeat;
+    margin-right: 28px;
+}
+.qd_succ .yes > span{
+    display: inline-block;
+    vertical-align: middle;
+    color: #666666;
+    font-size: 16px;
+}
+.qd_succ .yes > span > b{
+    color: #333333;
+}
+.qd_succ >p{
+    width: 250px;
+    height: 50px;
+    margin: 17px auto 40px auto;
+    background-color: #ffd000;
+    border-radius: 25px;
+    color: #444444;
+    line-height: 50px;
+    text-align: center;
+    font-size: 18px;
+}
+.qd_succ >p >span{
+    color: #ca1515;
+}
+.qd_succ > .close{
+    text-align: center;
+    color: #999999;
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    {{include '../_header.html'}}
+</head>
+
+<body>
+    {{include '../_menu.html'}}
+
+    <div id="app" class="container-fluid main-content">
+        <div class="container">
+            <h6>
+                <p>id：{{session.user.id}}</p>
+                <p>mail：{{session.user.email}}</p>
+            </h6>
+            <h1>邀请码：{{invite_code}}</h1>
+            <h4>邀请URL地址：<a
+                    href="http://{{config.web.host}}:{{config.web.port}}/reg?invite={{invite_code}}" target="_blank">http://{{config.web.host}}:{{config.web.port}}/reg?invite={{invite_code}}</a>
+            </h4>
+
+            <ul v-for="item in this.list" class="row">
+                <li class="col">{[item.id]}</li>
+                <li class="col">{[item.email]}</li>
+                <li class="col">{[item.status]}</li>
+                <li class="col">{[item.amount/1000000]} usdt</li>
+                <li class="col">{[item.create_datetime]}</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                id: '{{session.user.id}}',
+                loading: false,
+                list: [],
+            },
+            methods: {
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                amount(trades) {
+                    let total = 0
+                    for (let i = 0; i < trades.length; i++) {
+                        total += trades[i].amount
+                    }
+                    return total
+                },
+                init() {
+                    this.get(`/api/invite-trade-list/${this.id}`, {}, (data) => {
+                        console.log(data)
+                        data.data.forEach(data => {
+                            data.status = data.status == 1 ? '激活' : '未激活'
+                            data.create_datetime = moment(data.create_datetime).format('YYYY/MM/DD h:mm:ss')
+                            data.amount = this.amount(data.trade)
+                        })
+                        this.list = data.data
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+    {{include '../_footer.html'}}
+</body>
+
+</html>

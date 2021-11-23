@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+	{{include './_header.html'}}
+	<style>
+		.main-table-box5 {
+			margin: 50px auto 0 auto;
+			width: 1200px;
+			overflow: hidden;
+			color: #ffffff;
+			border: solid 1px #1f2636;
+			background-color: #1f2636;
+		}
+
+		.main-table-box5 .table-tab {
+			margin-bottom: 2px;
+			height: 56px;
+			line-height: 56px;
+			border-bottom: solid 1px #313a56;
+			/*下划线颜色*/
+		}
+
+		.main-table-box5 .table-tab li {
+			float: left;
+			margin: 0 10px;
+			padding: 0 20px;
+			font-size: 16px;
+			cursor: pointer;
+		}
+
+		.main-table-box5 .table-tab li.active {
+			color: #424ec5;
+			border-bottom: #424ec5 2px solid;
+		}
+
+		.main-table-box5 .table-head {
+			height: 48px;
+			line-height: 48px;
+		}
+
+		.main-table-box5 .table-head li {
+			float: left;
+			width: 14.28%;
+			font-size: 15px;
+			color: #add5d8;
+			/*首页文字颜色*/
+		}
+
+		.main-table-box5 .table-head li i {
+			margin: auto 13px;
+		}
+
+		.main-table-box5 .table-item {
+			overflow: hidden;
+		}
+
+		.main-table-box5 .table-item li {
+			height: 60px;
+			line-height: 60px;
+			overflow: hidden;
+			border-top: solid 1px #313a56;
+			font-size: 14px;
+		}
+
+		.main-table-box5 .table-item li:hover {
+			background-color: #171a25;
+		}
+
+		.main-table-box5 .table-item li i {
+			margin: auto 13px;
+		}
+
+		.main-table-box5 .table-item dt,
+		.main-table-box5 .table-item dd {
+			width: 14.28%;
+		}
+
+		.main-table-box5 .table-item dt.market img {
+			vertical-align: middle;
+		}
+
+		.main-table-box5 .table-item dt.market span {
+			vertical-align: middle;
+		}
+
+		.main-table-box5 .table-item dt.market span:last-child {
+			color: #add5d8;
+		}
+
+		.main-table-box5 .table-item dt.market span.coin_name {
+			vertical-align: middle;
+			margin-left: 8px;
+			color: #add5d8;
+		}
+
+		.main-table-box5 .table-item dd span {
+			display: inline-block;
+			padding: 6px 0px 6px 5px;
+			min-width: 85px;
+			line-height: normal;
+			overflow: hidden;
+			color: #fff;
+			font-size: 12px;
+			text-align: right;
+			border-radius: 5px;
+			vertical-align: middle;
+			margin-top: -5px;
+		}
+
+		.main-table-box5 .table-item dd span.btn-up {
+			background: #f1280f;
+		}
+
+		.main-table-box5 .table-item dd span.btn-down {
+			background: #3dc18e;
+		}
+
+		.main-table-box5 .table-item dd i.icon-up,
+		.main-table-box5 .table-item dd i.icon-down {
+			position: relative;
+			float: right;
+			width: 10px;
+			height: 13px;
+			margin-left: 5px;
+			margin-right: 7px;
+			margin-top: 1px;
+		}
+
+		.main-table-box5 .table-item dd i.icon-up {
+			background: url(../ecshe_img/icon-up.png) no-repeat;
+			background-size: 100% 100%;
+			animation: 2s ease 0s normal none infinite running magic-arrow-up;
+		}
+
+		.main-table-box5 .table-item dd i.icon-down {
+			background: url(../ecshe_img/icon-down.png) no-repeat;
+			background-size: 100% 100%;
+			animation: 2s ease 0s normal none infinite running magic-arrow-down;
+		}
+
+		@keyframes magic-arrow-up {
+			0% {
+				opacity: 0;
+				top: 5px;
+			}
+
+			30% {
+				opacity: 1
+			}
+
+			100% {
+				opacity: 0;
+				top: 0;
+			}
+		}
+
+		@keyframes magic-arrow-down {
+			0% {
+				opacity: 0;
+				top: -5px;
+			}
+
+			30% {
+				opacity: 1
+			}
+
+			100% {
+				opacity: 0;
+				top: 5px;
+			}
+		}
+
+		.main-table-box5 .table-item dt.deal {
+			text-align: left;
+			margin-top: 12px;
+			line-height: 20px;
+		}
+
+		.main-table-box5 .table-item dt.deal div {
+			margin-left: 26px;
+		}
+
+		.main-table-box5 .table-item dt.deal p:first-child {
+			font-size: 14px;
+			color: #add5d8;
+		}
+
+		.main-table-box5 .table-item dt.deal p:last-child {
+			font-size: 12px;
+			color: #add5d8;
+		}
+
+
+
+
+
+
+
+
+		.main-summary {
+			margin: 0 auto;
+			/* width: 1200px; */
+			overflow: hidden;
+			margin-top: 20px;
+			border-radius: 8px;
+			background-color: #1f2636
+		}
+
+		.main-summary .title {
+			line-height: 28px;
+			font-size: 28px;
+			font-weight: 300;
+			color: #ffffff;
+			text-align: center;
+			margin: 85px 0 72px 0;
+		}
+
+		.main-summary .summary-content {
+			overflow: hidden;
+			border-radius: 8px;
+		}
+
+		.main-summary .summary-content .item {
+			float: left;
+			width: 277px;
+			text-align: center;
+			background-color: #1f2636;
+
+		}
+
+		.main-summary .summary-content .item p {
+			font-size: 14px;
+			color: #ffffff;
+			line-height: 30px;
+		}
+
+		.main-summary .summary-content .item h3 {
+			color: #add5d8;
+			margin: 30px 0 22px 0;
+			font-size: 20px;
+			font-weight: 300;
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+		.box-main-warings {
+			margin: 0 auto;
+			/* width: 1200px; */
+			overflow: hidden;
+			margin-top: 23px;
+			margin-bottom: 38px;
+			background-color: #1f2636;
+			border-radius: 8px;
+		}
+
+		.box-main-warings .main-warings {
+			margin: 0 auto;
+			width: 620px;
+			line-height: 50px;
+			text-align: center;
+		}
+
+		.box-main-warings .main-warings img {
+
+			vertical-align: middle;
+		}
+
+		.box-main-warings .main-warings span {
+			vertical-align: middle;
+			margin-left: 5px;
+			font-size: 18px;
+			color: #ffffff;
+		}
+
+
+
+
+		.table{
+            font-size: small;
+			color: #313a56;
+			background-color: #ffffff;
+        }
+	</style>
+</head>
+
+<body>
+	{{include './_menu.html'}}
+
+	{{include './_banner.html'}}
+
+
+	<div class="container-fluid main-content">
+
+		<div class="container">
+			<ul class="row">
+				<li><a href="/Support/index/articles/cid/3/id/24.html">新币抢购规则...</a></li>
+				<span>/</span>
+				<li><a href="/Support/index/articles/cid/3/id/23.html">投票规则...</a></li>
+				<span>/</span>
+				<li><a href="/Support/index/articles/cid/6/id/22.html">上币申请...</a></li>
+				<span>/</span>
+				<li><a href="/Support/index.html">更多公告</a></li>
+			</ul>
+		</div>
+
+		<div id="app" class="container">
+		
+			<div class="table-responsive">
+				<table class="table shadow p-3 mb-5 bg-white rounded">
+					<thead class="thead-dark">
+						<tr>
+							<th scope="col">排名</th>
+							<th scope="col">名称</th>
+							<th scope="col">价格</th>
+							<th scope="col">市值</th>
+							<th scope="col">VWAP(24Hr)</th>
+							<th scope="col">供应量(24Hr)</th>
+							<th scope="col">量(24Hr)</th>
+							<th scope="col">Change(24Hr)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="item in this.list">
+							<th scope="row">{[item.node.rank]}</th>
+							<td>
+								<div class="row">
+									<div class="col-6"><img :src="item.node.logo" :alt="item.node.name" width="36px">
+									</div>
+									<div class="col-6">
+										<!-- <div>{[item.node.id]}</div> -->
+										<div>{[item.node.name]}</div>
+										<div>{[item.node.symbol]}</div>
+									</div>
+								</div>
+							</td>
+							<td>${[item.node.priceUsd]}</td>
+							<td>${[item.node.marketCapUsd]}t</td>
+							<td>${[item.node.vwapUsd24Hr]}</td>
+							<td>{[item.node.supply]}m</td>
+							<td>${[item.node.volumeUsd24Hr]}b</td>
+							<td>{[item.node.changePercent24Hr]}%</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+
+
+
+
+		<div class="container">
+			<div class="main-summary">
+				<h2 class="title">{{lang.list[defLang].body.t1}}</h2>
+				<div class="summary-content">
+					<div class="item">
+						<img src="/images/img_icon/trait_001.gif" />
+						<h3>{{lang.list[defLang].body.t2}}</h3>
+						<p>{{lang.list[defLang].body.t3}}</p>
+						<p>{{lang.list[defLang].body.t4}}</p>
+					</div>
+					<div class="item">
+						<img src="/images/img_icon/trait_002.gif" />
+						<h3>{{lang.list[defLang].body.t5}}</h3>
+						<p>{{lang.list[defLang].body.t6}}</p>
+						<p>{{lang.list[defLang].body.t7}}</p>
+					</div>
+					<div class="item">
+						<img src="/images/img_icon/trait_003.gif" />
+						<h3>{{lang.list[defLang].body.t8}}</h3>
+						<p>{{lang.list[defLang].body.t9}}</p>
+						<p>{{lang.list[defLang].body.t10}}</p>
+					</div>
+					<div class="item">
+						<img src="/images/img_icon/trait_004.gif" />
+						<h3>{{lang.list[defLang].body.t11}}</h3>
+						<p>{{lang.list[defLang].body.t12}}</p>
+						<p>{{lang.list[defLang].body.t13}}</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="box-main-warings">
+				<div class="main-warings">
+					<img src="/images/icon_waring.png" />
+					<span>{{lang.list[defLang].body.t14}}</span>
+				</div>
+			</div>
+
+			<div class="main-download" style="display:none">
+				<div class="title">
+					<h2>多终端覆盖</h2>
+					<h3>支持IOS、ANDROID、WINDOWS、MAC等客户端全业务功能</h3>
+				</div>
+				<div class="listshow">
+					<div class="list-ld">
+						<img src="/images/download-1.png" height="120" />
+						<ul>
+							<li><a onclick="Downloads()">MAC 下载</a></li>
+							<li><a onclick="Downloads()">Win32位 下载</a></li>
+							<li><a onclick="Downloads()">Win64位 下载</a></li>
+						</ul>
+					</div>
+					<div class="list-rd">
+						<img src="/images/download-2.png" height="120" />
+						<ul>
+							<li><a onclick="Downloads()">IOS 下载</a></li>
+							<li><a onclick="Downloads()">Android 下载</a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+
+
+	</div>
+
+
+
+	{{include './_footer.html'}}
+
+	<script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                list: []
+            },
+            methods: {
+                // 保留几位小数
+                round(num, len) {
+                    let mult = Number("1" + "00000000000000000000000000000".substr(0, len))
+                    return Math.round(num * mult) / mult
+                },
+                // 小数点向前移，min,保留几位小数
+                lessen(num, min, len) {
+                    let n = num / min
+                    return this.round(n, len)
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                coinList() {
+                    let _this = this
+                    fetch('https://graphql.coincap.io/', {
+                        method: 'POST',
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        body: JSON.stringify({ "variables": { "direction": "ASC", "first": 20, "sort": "rank" }, "query": "query ($after: String, $before: String, $direction: SortDirection, $first: Int, $last: Int, $sort: AssetSortInput) {\n  assets(\n    after: $after\n    before: $before\n    direction: $direction\n    first: $first\n    last: $last\n    sort: $sort\n  ) {\n    pageInfo {\n      startCursor\n      endCursor\n      hasNextPage\n      hasPreviousPage\n      __typename\n    }\n    edges {\n      cursor\n      node {\n        changePercent24Hr\n        name\n        id\n        logo\n        marketCapUsd\n        priceUsd\n        rank\n        supply\n        symbol\n        volumeUsd24Hr\n        vwapUsd24Hr\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n" })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data)
+                            let a = data.data.assets.edges
+                            a.forEach(function (item) {
+                                item.node.logo = `https://assets.coincap.io/assets/icons/${item.node.logo}@2x.png`
+                                item.node.priceUsd = _this.round(item.node.priceUsd, 2)
+                                item.node.marketCapUsd = _this.lessen(item.node.marketCapUsd, 12, 2)
+                                item.node.vwapUsd24Hr = _this.round(item.node.vwapUsd24Hr, 2)
+                                item.node.supply = _this.lessen(item.node.supply, 6, 2)
+                                item.node.volumeUsd24Hr = _this.lessen(item.node.volumeUsd24Hr, 9, 2)
+                                item.node.changePercent24Hr = _this.round(item.node.changePercent24Hr, 2)
+                            })
+                            this.list = a
+                        });
+                },
+                // 初始化
+                init() {
+                    this.coinList()
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

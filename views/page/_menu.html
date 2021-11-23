@@ -1,0 +1,50 @@
+<header class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar head-color shadow-lg">
+    <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Bootstrap">
+        <img src="/images/logo.png" alt="{{title}}">
+    </a>
+
+    <div class="navbar-nav-scroll">
+
+        <ul class="navbar-nav bd-navbar-nav flex-row">
+            <li class="nav-item {{if tag=='tags'}}active{{/if}}"><a class="nav-link"
+                    href="/market/btcusdt">{{lang.list[defLang].menu.markets}}</a></li>
+            <li class="nav-item {{if tag=='tags'}}active{{/if}}"><a class="nav-link"
+                    href="/exchange">{{lang.list[defLang].menu.exchange}}</a></li>
+            <li class="nav-item {{if tag=='tags'}}active{{/if}}"><a class="nav-link"
+                    href="/startup">{{lang.list[defLang].menu.startup}}</a></li>
+            <li class="nav-item {{if tag=='tags'}}active{{/if}}"><a class="nav-link"
+                    href="/help/user-greement">{{lang.list[defLang].menu.help}}</a></li>
+        </ul>
+
+    </div>
+
+    <ul class="navbar-nav ml-md-auto">
+        <li class="nav-item dropdown">
+            <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="bd-versions" data-toggle="dropdown"
+                aria-expanded="false">
+                <i class="bi bi-globe"></i>
+                {{lang.list[defLang].name}}
+            </a>
+            <div class="dropdown-menu dropdown-menu-md-right" aria-labelledby="bd-versions">
+                {{each lang.list}}
+                <a class="dropdown-item" href="/language/{{$index}}" title="{{$value.name}}"><img class="rounded"
+                        src="/images/language/{{$value.icon}}" width="32" height="20" /> {{$value.name}}</a>
+                {{/each}}
+            </div>
+        </li>
+
+        {{if isLogin}}
+        <li><a class="nav-link" href="/me"><i class="bi bi-person"></i> 我的资产</a></li>
+        <li><a class="nav-link" href="/logout"><i class="bi bi-person"></i> 退出</a></li>
+        {{else}}
+        <li><a class="nav-link" href="/login"><i class="bi bi-person"></i> {{lang.list[defLang].menu.login}}</a></li>
+        <li><a class="nav-link" href="/reg"><i class="bi bi-pencil-square"></i> {{lang.list[defLang].menu.signup}}</a>
+        {{/if}}
+        
+        </li>
+    </ul>
+
+    <div style="display: none;">
+        <a class="btn btn-bd-download d-none d-lg-inline-block mb-3 mb-md-0 ml-md-3" href="/#">Download APP</a>
+    </div>
+</header>

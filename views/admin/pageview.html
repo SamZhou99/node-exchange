@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">浏览记录</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/admin">网站首页</a>
+                    </li>
+                    <li class="active">
+                        浏览记录
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+                        <h2 class="header-title">记录列表</h2>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>用户</th>
+                                        <th>来源页</th>
+                                        <th>当前页</th>
+                                        <th>IP</th>
+                                        <th>浏览设备</th>
+                                        <th>时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in this.list">
+                                        <td>{[item.id]}</td>
+                                        <td> <span v-html="item.name"></span></td>
+                                        <td>{[item.referer]}</td>
+                                        <td>{[item.url]}</td>
+                                        <td>{[item.ip]}</td>
+                                        <td>{[item.user_agent]}</td>
+                                        <td>{[item.create_datetime]}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="btn-group m-b-20">
+                                <button @click="onClickPage(i)" :disabled="page.page==i"
+                                    :style="page.page==i ? 'background-color: #ddd' : ''"
+                                    v-for="i in Math.ceil(this.page.total / this.page.limit)" type="button"
+                                    class="btn btn-white">{[i]}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End row-->
+
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                list: [],
+                page: {
+                    page: 1,
+                    limit: 10,
+                    total: 0,
+                }
+            },
+            methods: {
+                onClickPage(page) {
+                    this.page.page = page
+                    this.init()
+                },
+                accountName(data) {
+                    let str = ''
+                    if (!data) {
+                        return str
+                    }
+                    if (data.account) {
+                        str += '帐号：' + data.account
+                    }
+                    if (data.mobile) {
+                        str += '<br>手机：' + data.mobile
+                    }
+                    if (data.email) {
+                        str += '<br>邮箱：' + data.email
+                    }
+                    return str
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                // 初始化
+                init() {
+                    this.get('/admin/api/pageview', this.page, (data) => {
+                        let a = data.data.list
+                        for (let i = 0; i < a.length; i++) {
+                            let item = a[i]
+                            item.name = this.accountName(item.user)
+                            item.create_datetime = moment(item.create_datetime).format('YYYY-MM-DD HH:mm:ss')
+                        }
+                        this.list = a
+                        this.page = data.data.page
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">控制涨跌价格</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/admin">网站首页</a>
+                    </li>
+                    <li class="active">
+                        控制涨跌价格
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+                        <h2 class="header-title">控制涨跌价格</h2>
+                        <div>
+                            <button @click="onClickMarkup()" class="btn btn-primary">涨</button>
+                            <button @click="onClickRandom()" class="btn btn-default">随机走势</button>
+                            <button @click="onClickMarkdown()" class="btn btn-danger">跌</button>
+                            <div>
+                                {[this.wx_data]}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End row-->
+
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                list: [],
+                refreshButtonStatus: false,
+
+                ws: null,
+                ws_data: null,
+
+            },
+            methods: {
+                onClickMarkup() {
+                    this.wsSend({ status: 'up' })
+                },
+                onClickMarkdown() {
+                    this.wsSend({ status: 'down' })
+                },
+                onClickRandom() {
+                    this.wsSend({ status: 'random' })
+                },
+                wsSend(data) {
+                    this.ws.send(JSON.stringify(data));
+                },
+                initWebSocket() {
+                    let t = this
+                    t.ws = new WebSocket("ws://127.0.0.1:3031");
+                    t.ws.onopen = function () {
+                        console.log('websocket init ...')
+                    };
+                    t.ws.onmessage = function (event) {
+                        t.ws_data = JSON.parse(event.data);
+                        t.price = t.ws_data.price
+                    }
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+
+                // 初始化
+                init() {
+                    this.initWebSocket()
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</body>
+
+</html>

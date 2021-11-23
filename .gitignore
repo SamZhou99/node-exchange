@@ -1,3 +1,12 @@
+#自定义
+backups/
+config/db.js
+public/article/
+public/_upload/
+temp/log/
+.DS_Store
+
+
 # Logs
 logs
 *.log

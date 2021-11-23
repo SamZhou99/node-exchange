@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="/admin-assets/plugins/datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <link href="/admin-assets/plugins/datatables/css/jquery.dataTables-custom.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL STYLES -->
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">用户列表</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/admin">网站首页</a>
+                    </li>
+                    <li class="active">
+                        所有用户
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+                        <h2 class="header-title">用户列表</h2>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>数额(usdt)</th>
+                                        <th>区块高度</th>
+                                        <th>哈希</th>
+                                        <th>他人钱包地址</th>
+                                        <th>系统钱包地址</th>
+                                        <th>交易时间</th>
+                                        <!-- <th>记录时间</th> -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in this.list">
+                                        <td>{[item.id]}</td>
+                                        <td>{[item.amount/1000000]}</td>
+                                        <td>{[item.block]}</td>
+                                        <td>{[item.hash]}</td>
+                                        <td><a :href="'https://usdt.tokenview.com/cn/address/'+item.owner_address" target="_blank">{[item.owner_address]}</td>
+                                        <td><a :href="'https://usdt.tokenview.com/cn/address/'+item.to_address" target="_blank">{[item.to_address]}</a></td>
+                                        <td>{[item.time]}</td>
+                                        <!-- <td>{[item.create_time]}</td> -->
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--End row-->
+
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                list: [],
+                page: {
+                    page: 1,
+                    limit: 10,
+                    total: 0,
+                }
+            },
+            methods: {
+                onClickStatus(item) {
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                // 初始化
+                init() {
+                    this.get('/admin/api/trade-log', this.page, (data) => {
+                        let a = data.data.list
+                        a.forEach(function (item) {
+                            item.time = moment(item.time).format('YYYY/MM/DD HH:mm:ss')
+                            // item.create_time = moment(item.create_time).format('YYYY/MM/DD HH:mm:ss')
+                        })
+                        this.list = a
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</body>
+
+</html>

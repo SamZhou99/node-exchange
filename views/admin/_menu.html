@@ -1,0 +1,79 @@
+<!--Start left side Menu-->
+<div class="left-side sticky-left-side">
+
+    <!--logo-->
+    <div class="logo">
+        <a href="/admin"><img src="/admin-assets/images/logo.png" alt=""></a>
+    </div>
+
+    <div class="logo-icon text-center">
+        <a href="/admin"><img src="/admin-assets/images/logo-icon.png" alt=""></a>
+    </div>
+    <!--logo-->
+
+    <div id="app-menu" class="left-side-inner">
+        <!--Sidebar nav-->
+        <ul class="nav nav-pills nav-stacked custom-nav">
+            <li :class="{'nav-active':checkActive(['/admin/dashboard'])}" class="menu-list"><a href="#"><i class="icon-home"></i> <span>首　页</span></a>
+                <ul class="sub-menu-list">
+                    <li :class="{'active':checkActive(['/admin/dashboard'])}"><a href="/admin/dashboard"> 网站概况 </a></li>
+                </ul>
+            </li>
+
+            <li :class="{'nav-active':checkActive(['/admin/user-list','/admin/user-add'])}" class="menu-list"><a href="#"><i class="icon-user"></i> <span>用　户</span></a>
+                <ul class="sub-menu-list">
+                    <li :class="{'active':checkActive(['/admin/user-list'])}"><a href="/admin/user-list"> 所有用户</a></li>
+                    <li :class="{'active':checkActive(['/admin/user-add'])}"><a href="/admin/user-add"> 添加用户</a></li>
+                </ul>
+            </li>
+
+            <li :class="{'nav-active':checkActive(['/system-wallet','/upload-wallet-address','/trade-log'])}" class="menu-list"><a href="#"><i class="ti-wallet"></i> <span>钱　包</span></a>
+                <ul class="sub-menu-list">
+                    <li :class="{'active':checkActive(['/admin/system-wallet'])}"><a href="/admin/system-wallet"> 钱包地址</a></li>
+                    <li :class="{'active':checkActive(['/admin/upload-wallet-address'])}"><a href="/admin/upload-wallet-address"> 上传钱包</a></li>
+                    <li :class="{'active':checkActive(['/admin/trade-log'])}"><a href="/admin/trade-log"> 充值记录</a></li>
+                </ul>
+            </li>
+
+            <li :class="{'nav-active':checkActive(['/market-coin','/market-change'])}" class="menu-list"><a href="#"><i class="ti-stats-up"></i></i> <span>行　情</span></a>
+                <ul class="sub-menu-list">
+                    <li :class="{'active':checkActive(['/admin/market-coin'])}"><a href="/admin/market-coin"> 添加货币</a></li>
+                    <li :class="{'active':checkActive(['/admin/market-change'])}"><a href="/admin/market-change"> 控制涨跌</a></li>
+                </ul>
+            </li>
+
+            <li :class="{'nav-active':checkActive(['/admin/pageview'])}" class="menu-list"><a href="#"><i class="fa fa-file-o"></i> <span>浏览记录</span></a>
+                <ul class="sub-menu-list">
+                    <li :class="{'active':checkActive(['/admin/pageview'])}"><a href="/admin/pageview"> PageView</a></li>
+                </ul>
+            </li>
+        </ul>
+        <!--End sidebar nav-->
+    </div>
+    <script>
+        let menuVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app-menu',
+            data: {
+                currUrl: '{{currUrl}}'
+            },
+            methods: {
+                checkActive(urlArr) {
+                    for (let i = 0; i < urlArr.length; i++) {
+                        if (this.currUrl.indexOf(urlArr[i]) != -1) {
+                            return true
+                        }
+                    }
+                    return false
+                },
+                // 初始化
+                init() {
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</div>
+<!--End left side menu-->

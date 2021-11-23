@@ -1,0 +1,27 @@
+{
+  "name": "node-exchange",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "exchange"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "art-template": "^4.13.2",
+    "koa": "^2.13.4",
+    "koa-art-template": "^1.1.1",
+    "koa-body": "^4.2.0",
+    "koa-convert": "^2.0.0",
+    "koa-router": "^10.1.1",
+    "koa-session": "^6.2.0",
+    "koa-static": "^5.0.0",
+    "koa-views": "^7.0.2",
+    "node-utils99": "^1.1.20211113",
+    "nodejs-websocket": "^1.7.2"
+  }
+}
