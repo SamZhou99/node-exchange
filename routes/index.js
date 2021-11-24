@@ -114,6 +114,7 @@ router.get('/admin/api/wallet-list', middleware.checkLogin, middleware.role, con
 router.post('/admin/api/upload-file', middleware.checkLogin, middleware.role, controllers.admin.api.uploadFileJson)
 router.get('/admin/api/trade-log', middleware.checkLogin, middleware.role, controllers.admin.api.tradeLogJson)
 router.get('/admin/api/pageview', middleware.checkLogin, middleware.role, controllers.admin.api.pageviewJson)
+router.get('/admin/api/pageview-clear', middleware.checkLogin, middleware.role, controllers.admin.api.pageviewClearJson)
 
 
 

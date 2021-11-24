@@ -39,7 +39,16 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="white-box">
-                        <h2 class="header-title">记录列表</h2>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 class="header-title">记录列表</h2>
+                            </div>
+                            <div class="col-md-6 text-right">
+                                <button @click="onClickClear()" class="btn btn-default"><i class="fa fa-trash-o"></i></button>
+                            </div>
+                        </div>
+
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>
@@ -59,7 +68,7 @@
                                         <td> <span v-html="item.name"></span></td>
                                         <td>{[item.referer]}</td>
                                         <td>{[item.url]}</td>
-                                        <td>{[item.ip]}</td>
+                                        <td> <a :href="'https://ip138.com/iplookup.asp?ip='+item.ip+'&action=2'" target="_blank">{[item.ip]}</a> </td>
                                         <td>{[item.user_agent]}</td>
                                         <td>{[item.create_datetime]}</td>
                                     </tr>
@@ -108,6 +117,14 @@
                 }
             },
             methods: {
+                onClickClear() {
+                    if (confirm('Are you sure ?')) {
+                        this.get('/admin/api/pageview-clear', {}, (data) => {
+                            console.log(data)
+                            this.init()
+                        })
+                    }
+                },
                 onClickPage(page) {
                     this.page.page = page
                     this.init()

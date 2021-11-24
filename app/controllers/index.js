@@ -211,8 +211,9 @@ let __this = {
 
                 let temp_res = await service.wallet.walletAddress(wallet_address)
                 let old_time = new Date(temp_res.update_datetime).getTime()
-                let new_time = new Date().getTime()
-                // console.log(old_time + (1000 * 60 * 5), new_time, old_time + (1000 * 60 * 5) > new_time)
+                let new_time = new Date(utils99.Time()).getTime()
+                // console.log('时间比较...???')
+                // console.log(old_time, old_time + (1000 * 60 * 5), new_time, old_time + (1000 * 60 * 5) > new_time)
                 if (old_time + (1000 * 60 * 5) > new_time) {
                     // 通过数据库查询 交易记录
                     let res = await service.wallet.tradeListByWalletAddress(wallet_address)
@@ -381,7 +382,7 @@ let __this = {
                     let userCount = await service.user.count()
                     let usdtCount = await service.wallet.usdtAmount()
                     let walletAddressCount = await service.wallet.walletAddressCount()
-                    let pageViewCount = await service.page.count()
+                    let pageViewCount = await service.pageview.count()
                     ctx.body = { flag: 'ok', data: { userCount, usdtCount, walletAddressCount, pageViewCount } }
                 },
                 async userListJson(ctx) {
@@ -447,7 +448,7 @@ let __this = {
                     let limit = q.limit ? parseInt(q.limit) : 20
                     let page = q.page ? parseInt(q.page) : 1
                     let start = limit * (page - 1)
-                    let res = await service.page.list(start, limit)
+                    let res = await service.pageview.list(start, limit)
                     ctx.body = {
                         flag: 'ok',
                         data: {
@@ -459,6 +460,10 @@ let __this = {
                             }
                         }
                     }
+                },
+                async pageviewClearJson(ctx) {
+                    let res = await service.pageview.clear()
+                    ctx.body = { flag: 'ok', data: res }
                 }
             }
         }

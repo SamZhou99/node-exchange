@@ -340,7 +340,7 @@ let service = {
             }
             return results
         },
-        async tradeLog(start,limit){
+        async tradeLog(start, limit) {
             let res = await db.Query('SELECT COUNT(0) AS total FROM trade_log')
             let list = await db.Query('SELECT * FROM trade_log ORDER BY id DESC LIMIT ?,?', [start, limit])
             for (let i = 0; i < list.length; i++) {
@@ -355,7 +355,7 @@ let service = {
             return { list, total: res[0].total }
         },
     },
-    page: {
+    pageview: {
         /**
          * 浏览量日志
          * @param {*} user_id 
@@ -363,7 +363,7 @@ let service = {
          * @param {*} url 
          * @param {*} user_agent 
          */
-        async pageviewLog(user_id, ip, referer, url, user_agent) {
+        async addLog(user_id, ip, referer, url, user_agent) {
             let create_datetime = utils99.Time()
             let res = await db.Query('INSERT INTO page_view_log(user_id,ip,referer,url,user_agent,create_datetime) VALUES(?,?,?,?,?,?)', [user_id, ip, referer, url, user_agent, create_datetime])
             return res
@@ -393,6 +393,14 @@ let service = {
                 }
             }
             return { list, total: res[0].total }
+        },
+        /**
+         * 清除浏览记录
+         * @returns 
+         */
+        async clear() {
+            let res = await db.Query('DELETE FROM page_view_log')
+            return res
         }
     },
 

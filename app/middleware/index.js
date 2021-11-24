@@ -49,7 +49,7 @@ async function pageViewLog(ctx) {
     let referer = ctx.request.header['referer']
     let url = ctx.request.url
     let userAgent = ctx.request.header['user-agent']
-    await service.page.pageviewLog(user_id, ip, referer, url, userAgent)
+    await service.pageview.addLog(user_id, ip, referer, url, userAgent)
     ctx.data.currUrl = url
     return true
 }
