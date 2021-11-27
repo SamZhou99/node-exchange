@@ -179,7 +179,7 @@ let service = {
                 item.trade = r
                 item.tradeTotal = 0
                 for (let j = 0; j < item.trade.length; j++) {
-                    item.tradeTotal += item.trade[0].amount
+                    item.tradeTotal += item.trade[j].amount
                 }
             }
             return res
