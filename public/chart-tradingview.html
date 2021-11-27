@@ -338,21 +338,45 @@
 		// 	}
 		// }, 100);
 
+
+		// 保留几位小数
+		function round(num, len) {
+			let mult = Number("100000000000000000000000000000".substr(0, len + 1))
+			return Math.round(num * mult) / mult
+		}
+
 		setInterval(function () {
-			if (++ticksInCurrentBar === 5) {
+			if (ticksInCurrentBar++ % 5 == 0) {
 				currentBusinessDay = nextBusinessDay(currentBusinessDay);
-				ticksInCurrentBar = 0;
+				let price = lastClose - 1 + Math.random() * 0.5;
+				console.log(price, ticksInCurrentBar)
+				let n = 0.5 * Math.random()
+				currentBar.open = price + n * Math.random();
+				currentBar.high = currentBar.open + n * Math.random();
+				currentBar.close = currentBar.open - (n * 2) * Math.random();
+				currentBar.low = currentBar.close - n * Math.random();
+				currentBar.time = currentBusinessDay
+
+				currentBar.open = round(currentBar.open, 2)
+				currentBar.high = round(currentBar.high, 2)
+				currentBar.close = round(currentBar.close, 2)
+				currentBar.low = round(currentBar.low, 2)
+				candleSeries.update(currentBar);
+				return
 			}
-			let price = lastClose
+			let price = lastClose - 1 + Math.random() * 0.9;
 			console.log(price, ticksInCurrentBar)
-			let n = 0.5 * Math.random()
-			currentBar.open = price + n * Math.random();
-			currentBar.high = currentBar.open + n * Math.random();
+			let zd = (Math.random() * 10 > 5) ? 0.5 : -0.5
+			let n = zd * Math.random()
+			// currentBar.open = price + n * Math.random();
+			// currentBar.high = currentBar.open + n * Math.random();
 			currentBar.close = currentBar.open - (n * 2) * Math.random();
 			currentBar.low = currentBar.close - n * Math.random();
-			currentBar.time = currentBusinessDay
+			// currentBar.time = currentBusinessDay
+			currentBar.close = round(currentBar.close, 2)
+			currentBar.low = round(currentBar.low, 2)
 			candleSeries.update(currentBar);
-		}, 1000)
+		}, 500)
 
 
 		const socket = new WebSocket("ws://127.0.0.1:3031");

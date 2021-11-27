@@ -100,12 +100,12 @@ let __this = {
                 // 写入登录日志 UserAgent,IP,
                 let userAgent = ctx.request.header['user-agent']
                 let ip = utils99.getIP(ctx.req).replace('::ffff:', '')
-                await service.user.loginLog(user.id, userAgent, ip)
+                await service.user.addLoginLog(user.id, userAgent, ip)
                 // 记录session
                 ctx.session['isLogin'] = true
                 ctx.session['user'] = user
-                console.log('useruseruseruseruseruseruseruseruseruseruseruseruseruseruser')
-                console.log(ctx.session)
+                // console.log('session login session login session login session login session login session login session login ')
+                // console.log(ctx.session)
                 // 响应
                 let location = user.type <= 4 ? '/admin' : '/me'
                 ctx.body = { flag: 'ok', data: { location } }
@@ -208,58 +208,12 @@ let __this = {
                     ctx.body = { flag: 'Missing Parameters' }
                     return
                 }
-
-                let temp_res = await service.wallet.walletAddress(wallet_address)
-                let old_time = new Date(temp_res.update_datetime).getTime()
-                let new_time = new Date(utils99.Time()).getTime()
-                // console.log('时间比较...???')
-                // console.log(old_time, old_time + (1000 * 60 * 5), new_time, old_time + (1000 * 60 * 5) > new_time)
-                if (old_time + (1000 * 60 * 5) > new_time) {
-                    // 通过数据库查询 交易记录
-                    let res = await service.wallet.tradeListByWalletAddress(wallet_address)
-                    ctx.body = { flag: 'ok', data: { token_transfers: res } }
+                // 通过网上的数据，查询交易记录
+                let res = await service.wallet.getInternetTradeLog(wallet_address)
+                if (!res) {
+                    ctx.body = { flag: 'Abnormal Condition!' }
                     return
                 }
-                // 下面:通过网上的数据，查询交易记录
-
-                // tokenview.com 的地址 不稳定
-                // https://usdt.tokenview.com/api/usdt/addresstxlist/TUbWM1G6QnjCBfif6hVmJJvKSooBKph5Dn/1/20
-                // tronscan.org 交易查询地址
-                // https://apilist.tronscan.org/api/transaction?sort=-timestamp&count=true&limit=20&start=0&address=TUbWM1G6QnjCBfif6hVmJJvKSooBKph5Dn
-                // tronscan.org 转帐查询
-                // https://apilist.tronscan.org/api/token_trc20/transfers?limit=20&start=0&sort=-timestamp&count=true&relatedAddress=TUbWM1G6QnjCBfif6hVmJJvKSooBKph5Dn
-
-                let url = `https://apilist.tronscan.org/api/token_trc20/transfers?limit=20&start=0&sort=-timestamp&count=true&relatedAddress=${wallet_address}`
-                let res = await utils99.request.axios.get({ url })
-                console.log('请求URL刷新交易数据：', url)
-                if (res.statusText != 'OK') {
-                    ctx.body = { flag: 'ok' }
-                    return
-                }
-
-                // 更新数据更新时间
-                await service.wallet.updateTimeWalletAddress(wallet_address)
-
-                let a = res.data.token_transfers
-                for (let i = 0; i < a.length; i++) {
-                    let item = a[i]
-                    let o = {
-                        hash: item.transaction_id,
-                        block: item.block,
-                        timestamp: item.block_ts,
-                        amount: item.quant,
-                        ownerAddress: item.from_address,
-                        toAddress: item.to_address,
-                    }
-                    // console.log('----------------------------------------------------')
-                    // console.log(o)
-                    // 转入 系统钱包的地址 显示出来 其他不显示
-                    if (o.toAddress == wallet_address) {
-                        // 转入记录日志
-                        await service.wallet.tradeAddLog(o.hash, o.block, utils99.Timestamp(o.timestamp), o.amount, o.ownerAddress, o.toAddress)
-                    }
-                }
-
                 ctx.body = { flag: 'ok', data: res.data }
             },
             // // 用户列表
@@ -273,15 +227,15 @@ let __this = {
                 ctx.body = { flag: 'ok', data: list }
             },
             // 交易列表
-            async tradeListJson(ctx) {
-                let list = await service.wallet.tradeList(ctx.params.user_id)
+            async tradeListByUserJson(ctx) {
+                let list = await service.wallet.tradeListByUser(ctx.params.user_id)
                 ctx.body = { flag: 'ok', data: list }
             },
             // 邀请 和 交易 列表
             async inviteAndTradeListJson(ctx) {
                 let list = await service.user.inviteList(ctx.params.user_id)
                 for (let i = 0; i < list.length; i++) {
-                    list[i]['trade'] = await service.wallet.tradeList(list[i].id)
+                    list[i]['trade'] = await service.wallet.tradeListByUser(list[i].id)
                 }
                 ctx.body = { flag: 'ok', data: list }
             },
@@ -309,11 +263,15 @@ let __this = {
             // 登录日志
             async loginLog(ctx) {
                 let user_id = ctx.session['user'].id
-                let res = await service.user.loginLog(user_id)
+                let res = await service.user.logoLogList(user_id)
                 ctx.data.loginLog = res
                 ctx.data.session = ctx.session
                 await ctx.render('page/me/login_log', ctx.data)
             },
+            async withdraw(ctx) {
+                ctx.data.session = ctx.session
+                await ctx.render('page/me/withdraw', ctx.data)
+            }
         },
 
 
@@ -383,6 +341,7 @@ let __this = {
                     let usdtCount = await service.wallet.usdtAmount()
                     let walletAddressCount = await service.wallet.walletAddressCount()
                     let pageViewCount = await service.pageview.count()
+
                     ctx.body = { flag: 'ok', data: { userCount, usdtCount, walletAddressCount, pageViewCount } }
                 },
                 async userListJson(ctx) {

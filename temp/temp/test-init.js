@@ -53,9 +53,9 @@ async function initAdmin() {
     //测试数据，真实环境，需要注销掉，不要执行。
 
     let data = [
-        { inviteCode: code, account: 'user1', password: utils99.MD5('user1'), mail: 'user1@qq.com', mobile: '13600001111' },
-        { inviteCode: code, account: 'user2', password: utils99.MD5('user2'), mail: 'user2@qq.com', mobile: '13600002222' },
-        { inviteCode: code, account: 'user3', password: utils99.MD5('user3'), mail: 'user3@qq.com', mobile: '13600003333' }
+        { inviteCode: code, account: 'user1', password: utils99.MD5(utils99.MD5('user1')), mail: 'user1@qq.com', mobile: '13600001111' },
+        { inviteCode: code, account: 'user2', password: utils99.MD5(utils99.MD5('user2')), mail: 'user2@qq.com', mobile: '13600002222' },
+        { inviteCode: code, account: 'user3', password: utils99.MD5(utils99.MD5('user3')), mail: 'user3@qq.com', mobile: '13600003333' }
     ]
     for (let i = 0; i < data.length; i++) {
         let item = data[i]

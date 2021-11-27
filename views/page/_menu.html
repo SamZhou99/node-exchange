@@ -34,8 +34,8 @@
         </li>
 
         {{if isLogin}}
-        <li><a class="nav-link" href="/me"><i class="bi bi-person"></i> 我的资产</a></li>
-        <li><a class="nav-link" href="/logout"><i class="bi bi-person"></i> 退出</a></li>
+        <li><a class="nav-link" href="/me"><i class="bi bi-person"></i> {{lang.list[defLang].menu.assets}}</a></li>
+        <li><a class="nav-link" href="/logout"><i class="bi bi-power"></i> {{lang.list[defLang].menu.logout}}</a></li>
         {{else}}
         <li><a class="nav-link" href="/login"><i class="bi bi-person"></i> {{lang.list[defLang].menu.login}}</a></li>
         <li><a class="nav-link" href="/reg"><i class="bi bi-pencil-square"></i> {{lang.list[defLang].menu.signup}}</a>

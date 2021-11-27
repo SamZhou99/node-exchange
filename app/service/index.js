@@ -95,7 +95,9 @@ let service = {
          * @param {*} ip 
          * @returns 一个用户信息/null
          */
-        async loginLog(user_id, user_agent, ip) {
+        async addLoginLog(user_id, user_agent, ip) {
+            console.log('写入登录日志：user_id, user_agent, ip')
+            console.log(user_id, user_agent, ip)
             let time = utils99.Time()
             let res = await db.Query('INSERT INTO login_log (user_id,user_agent,ip,time) VALUES(?,?,?,?)', [user_id, user_agent, ip, time])
             return res
@@ -141,7 +143,7 @@ let service = {
          * @param {*} user_id 
          * @returns 
          */
-        async loginLog(user_id) {
+        async logoLogList(user_id) {
             let res = await db.Query('SELECT * FROM login_log WHERE user_id=? ORDER BY id DESC LIMIT 10', [user_id])
             return res
         },
@@ -179,6 +181,18 @@ let service = {
                 for (let j = 0; j < item.trade.length; j++) {
                     item.tradeTotal += item.trade[0].amount
                 }
+            }
+            return res
+        },
+        async simpleList(){
+            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,gc.label,gc.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN group_category AS gc ON gc.id=u.type WHERE u.status=1 ORDER BY id DESC LIMIT 1000')
+            for (let i = 0; i < res.length; i++) {
+                let item = res[i]
+                let id = item.id
+                let parent_id = item.parent_id
+                // 钱包地址
+                let r = await db.Query('SELECT id,wallet_address FROM system_wallet WHERE bind_user_id=? LIMIT 1', [id])
+                item.wallet = r.length > 0 ? r[0] : null
             }
             return res
         },
@@ -257,7 +271,7 @@ let service = {
          * @param {*} user_id 
          * @returns 
          */
-        async tradeList(user_id) {
+        async tradeListByUser(user_id) {
             let res = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=? LIMIT 1', [user_id])
             if (res.length <= 0) {
                 return null
@@ -340,6 +354,12 @@ let service = {
             }
             return results
         },
+        /**
+         * 查询 交易记录
+         * @param {*} start 
+         * @param {*} limit 
+         * @returns 
+         */
         async tradeLog(start, limit) {
             let res = await db.Query('SELECT COUNT(0) AS total FROM trade_log')
             let list = await db.Query('SELECT * FROM trade_log ORDER BY id DESC LIMIT ?,?', [start, limit])
@@ -354,6 +374,59 @@ let service = {
             }
             return { list, total: res[0].total }
         },
+        /**
+         * 获取网络浏览器的交易记录
+         * @param {*} wallet_address 
+         * @returns 'ok' | 'statusText'
+         */
+        async getInternetTradeLog(wallet_address) {
+            let temp_res = await service.wallet.walletAddress(wallet_address)
+            let old_time = new Date(temp_res.update_datetime).getTime()
+            let new_time = new Date(utils99.Time()).getTime()
+            if (old_time + (1000 * 60 * 5) > new_time) {
+                // 通过数据库查询 交易记录
+                let res = await service.wallet.tradeListByWalletAddress(wallet_address)
+                return {  data: { token_transfers: res } }
+            }
+
+            // tokenview.com 的地址 不稳定
+            // https://usdt.tokenview.com/api/usdt/addresstxlist/TUbWM1G6QnjCBfif6hVmJJvKSooBKph5Dn/1/20
+            // tronscan.org 交易查询地址
+            // https://apilist.tronscan.org/api/transaction?sort=-timestamp&count=true&limit=20&start=0&address=TUbWM1G6QnjCBfif6hVmJJvKSooBKph5Dn
+            // tronscan.org 转帐查询
+            // https://apilist.tronscan.org/api/token_trc20/transfers?limit=20&start=0&sort=-timestamp&count=true&relatedAddress=TUbWM1G6QnjCBfif6hVmJJvKSooBKph5Dn
+
+            let url = `https://apilist.tronscan.org/api/token_trc20/transfers?limit=20&start=0&sort=-timestamp&count=true&relatedAddress=${wallet_address}`
+            console.log('请求URL刷新交易数据：', url)
+            let res = await utils99.request.axios.get({ url })
+            if (!res || res.statusText.toLowerCase() != 'ok') {
+                return null
+            }
+
+            // 过滤交易记录 转给自己的写入数据库
+            let a = res.data.token_transfers
+            for (let i = 0; i < a.length; i++) {
+                let item = a[i]
+                let o = {
+                    hash: item.transaction_id,
+                    block: item.block,
+                    timestamp: item.block_ts,
+                    amount: item.quant,
+                    ownerAddress: item.from_address,
+                    toAddress: item.to_address,
+                }
+                
+                if (o.toAddress == wallet_address) {
+                    // 转入记录日志
+                    await service.wallet.tradeAddLog(o.hash, o.block, utils99.Timestamp(o.timestamp), o.amount, o.ownerAddress, o.toAddress)
+                }
+            }
+
+            // 更新数据更新时间
+            await service.wallet.updateTimeWalletAddress(wallet_address)
+
+            return res
+        }
     },
     pageview: {
         /**

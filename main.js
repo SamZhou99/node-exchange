@@ -11,6 +11,10 @@ const app = new Koa()
 const configWeb = require('./config/web.js')
 const { router } = require('./routes/index.js')
 
+
+const task = require('./app/service/task.js')
+task.start()
+
 app.use(session({
     key: 'koa:sess', /** (string) cookie key (default is koa:sess) */
     /** (number || 'session') maxAge in ms (default is 1 days) */

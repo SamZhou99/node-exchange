@@ -3,6 +3,9 @@
 
 <head>
     {{include './_header.html'}}
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="/admin-assets/plugins/bootstrap-editable/css/bootstrap-editable.css" rel="stylesheet" type="text/css" />
+    <!-- END PAGE LEVEL STYLES -->
 </head>
 
 <body class="sticky-header">
@@ -62,7 +65,10 @@
                                         <td>{[item.account]}</td>
                                         <td>{[item.email]}</td>
                                         <td>{[item.mobile]}</td>
-                                        <td>{[item.value]}</td>
+                                        <td><a href="#" :id="'selectType'+item.id" :data-item="item.id"
+                                                data-type="select" data-pk="1" data-value="" data-title="选择用户类型"
+                                                class="editable editable-click" style="color: gray;">{[item.value]}</a>
+                                        </td>
                                         <td><a :href="'/reg?invite='+item.invite.code"
                                                 target="_blank">{[item.invite.code]}</a>
                                         </td>
@@ -115,6 +121,11 @@
     {{include './_footer.html'}}
 
 
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/admin-assets/plugins/bootstrap-editable/js/bootstrap-editable.min.js"></script>
+    <!-- <script src="/admin-assets/pages/bootstrap-editable-custom.js"></script> -->
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+
 
     <script>
         let appVue = new Vue({
@@ -124,6 +135,7 @@
                 loading: false,
                 list: [],
                 refreshButtonStatus: false,
+                categoryList: []
             },
             methods: {
                 onClickStatus(item) {
@@ -137,6 +149,47 @@
                     this.get('/api/wallet-address/' + wallet_address, {}, (data) => {
                         this.init()
                         this.refreshButtonStatus = false
+                    })
+                },
+                setEditable() {
+                    let t = this
+                    for (let i = 0; i < this.list.length; i++) {
+                        let userItem = this.list[i]
+                        $('#selectType' + userItem.id).editable({
+                            // mode: 'inline',
+                            prepend: userItem.value,
+                            source: this.categoryList,
+                            display: function (value, sourceData) {
+                                let user_id = this.attributes['data-item']['value']
+                                let type_id = value
+                                if (type_id) {
+                                    t.setUserType(user_id, type_id)
+                                }
+                                var colors = { "": "gray", 1: "green", 2: "blue" }
+                                let elem = $.grep(sourceData, function (o) { return o.value == value; });
+                                if (elem.length) {
+                                    $(this).text(elem[0].text).css("color", colors[value]);
+                                } else {
+                                    $(this).empty();
+                                }
+                            }
+                        });
+                    }
+                },
+                setUserType(user_id, type_id) {
+                    this.get('/admin/api/user/update-one-field', { id: user_id, field: 'type', value: type_id }, (data) => {
+                        // 
+                    })
+                },
+                getcCategory() {
+                    this.get('/admin/api/user-group-category', {}, (data) => {
+                        let a = data.data.list
+                        a.forEach(function (item) {
+                            item.text = item.value
+                            item.value = item.id
+                        })
+                        this.categoryList = a
+                        this.setEditable()
                     })
                 },
                 post(url, params, callback) {
@@ -169,7 +222,11 @@
                 init() {
                     this.get('/admin/api/user-list', {}, (data) => {
                         this.list = data.data.list
+                        this.getcCategory()
                     })
+
+
+
                 }
             },
             mounted() {

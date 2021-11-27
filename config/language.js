@@ -1,6 +1,7 @@
 module.exports = {
     default: 'en',
-    copyright: 'Copyright © 2021 btc.com',   // 版权 域名要 改
+    domain:'temp02.go9488.cn',
+    copyright: 'Copyright © 2021 temp02.go9488.cn',   // 版权 域名要 改
     list: {
         en: {
             name: 'English',
@@ -13,7 +14,9 @@ module.exports = {
                 markets: 'Markets',
                 exchange: 'Exchange',
                 startup: 'Startup',
-                help: 'Help'
+                help: 'Help',
+                assets: 'MyAssets',
+                logout: 'Logout'
             },
             banner: {
                 t1: 'Digital asset trading platform',
@@ -114,7 +117,9 @@ module.exports = {
                 markets: '市场行情',
                 exchange: '币币交易',
                 startup: '首发项目',
-                help: '帮助中心'
+                help: '帮助中心',
+                assets: '我的资产',
+                logout: '退出'
             },
             banner: {
                 t1: '数字资产交易平台',

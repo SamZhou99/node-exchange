@@ -3,31 +3,115 @@
 
 <head>
     {{include '../_header.html'}}
+    <style>
+        #qrcode>canvas {
+            background-color: #fff;
+            padding: 10px;
+        }
+
+        .bg01 {
+            margin-top: 50px;
+            margin-bottom: 50px;
+            padding: 20px;
+            background-color: #202b3f;
+        }
+
+        .p0 {
+            padding: 0px;
+        }
+
+        .profilePicture {
+            width: 60px;
+            border-radius: 50%;
+        }
+    </style>
 </head>
 
 <body>
     {{include '../_menu.html'}}
 
-    <div id="app" class="container-fluid main-content">
-        <div class="container">
-            <h6>
-                <p>id：{{session.user.id}}</p>
-                <p>mail：{{session.user.email}}</p>
-            </h6>
-            <h1>邀请码：{{invite_code}}</h1>
-            <h4>邀请URL地址：<a
-                    href="http://{{config.web.host}}:{{config.web.port}}/reg?invite={{invite_code}}" target="_blank">http://{{config.web.host}}:{{config.web.port}}/reg?invite={{invite_code}}</a>
-            </h4>
-
-            <ul v-for="item in this.list" class="row">
-                <li class="col">{[item.id]}</li>
-                <li class="col">{[item.email]}</li>
-                <li class="col">{[item.status]}</li>
-                <li class="col">{[item.amount/1000000]} usdt</li>
-                <li class="col">{[item.create_datetime]}</li>
-            </ul>
+    <div id="app" class="container-fluid main-content p0">
+        <div class="container-fluid bg01">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <h2 class="form-signin-heading">
+                            <img class="profilePicture" src="/images/profile01.png" alt="{{session.user.email}}">
+                            {{session.user.email}}
+                        </h2>
+                    </div>
+                    <div class="col-1 offset-6">
+                        <h2 class="form-signin-heading">
+                            <button class="btn btn-primary">充值</button>
+                        </h2>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-12">
+                    {{include './_menu.html'}}
+                </div>
+                <div class="col-md-9 col-sm-12">
+                    
+                    <div class="bd-example">
+                        <div class="form-row align-items-center">
+                            <div class="col-12"><label for="invite_txt">邀请码</label></div>
+                            <div class="col-sm-9 my-1">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="invite_txt" :value="invite_code"
+                                        :readOnly="readOnly">
+                                </div>
+                            </div>
+                            <div class="col-auto my-1">
+                                <button @click="onClickCopyText('invite_txt')" type="buton" class="btn btn-primary">复制</button>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="bd-example">
+                        <div class="form-row align-items-center">
+                            <div class="col-12"><label for="invite_url">邀请网址</label></div>
+                            <div class="col-sm-9 my-1">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="invite_url"
+                                        :value="'http://'+domain+'/reg?invite='+invite_code" :readOnly="readOnly">
+                                </div>
+                            </div>
+                            <div class="col-auto my-1">
+                                <button @click="onClickCopyText('invite_url')" type="buton" class="btn btn-primary">复制</button>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="bd-example">
+                        <div class="form-row align-items-center">
+                            <div class="col-12">邀请网址二维码</div>
+                            <div class="col-sm-9 my-1">
+                                <div id="qrcode"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ul v-for="item in this.list" class="row">
+                        <li class="col">{[item.id]}</li>
+                        <li class="col">{[item.email]}</li>
+                        <li class="col">{[item.status]}</li>
+                        <li class="col">{[item.amount/1000000]} usdt</li>
+                        <li class="col">{[item.create_datetime]}</li>
+                    </ul>
+                    
+                </div>
+            </div>
+        </div>
+
     </div>
+
+
+
+    
 
     <script>
         let app = new Vue({
@@ -37,8 +121,18 @@
                 id: '{{session.user.id}}',
                 loading: false,
                 list: [],
+                readOnly: 'readOnly',
+                invite_code: '{{invite_code}}',
+                domain: '{{lang.domain}}'
             },
             methods: {
+                onClickCopyText(e) {
+                    this.readOnly = ''
+                    $('#' + e).val()
+                    $('#' + e).select()
+                    document.execCommand("copy")
+                    alert('复制成功：\n' + $('#' + e).val())
+                },
                 get(url, params, callback) {
                     this.loading = true;
                     $.ajax({
@@ -73,6 +167,10 @@
                             data.amount = this.amount(data.trade)
                         })
                         this.list = data.data
+                    })
+
+                    jQuery('#qrcode').qrcode({
+                        width: 128, height: 128, text: 'http://' + this.domain + '/reg?invite=' + this.invite_code
                     })
                 }
             },

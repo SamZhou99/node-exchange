@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "art-template": "^4.13.2",
+    "cron": "^1.8.2",
     "koa": "^2.13.4",
     "koa-art-template": "^1.1.1",
     "koa-body": "^4.2.0",

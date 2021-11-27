@@ -50,12 +50,11 @@ router.get('/me/invite-friends', middleware.checkLogin, controllers.me.inviteFri
 router.get('/me/login-log', middleware.checkLogin, controllers.me.loginLog)
 
 
-
 // router.get('/me/finance', middleware.checkLogin, controllers.index)
 // // 资产转入
 // router.get('/me/deposit', middleware.checkLogin, controllers.index)
-// // 资产转出
-// router.get('/me/withdraw', middleware.checkLogin, controllers.index)
+// 资产转出
+router.get('/me/withdraw', middleware.checkLogin, controllers.me.withdraw)
 // // 委托管理
 // router.get('/me/entrust', middleware.checkLogin, controllers.index)
 // // 成交查询
@@ -74,7 +73,7 @@ router.get('/api/wallet-address/:wallet_address', middleware.checkLogin, control
 // 邀请列表
 router.get('/api/invite-list/:user_id', middleware.checkLogin, controllers.api.inviteListJson)
 // 交易列表
-router.get('/api/trade-list/:user_id', middleware.checkLogin, controllers.api.tradeListJson)
+router.get('/api/trade-list/:user_id', middleware.checkLogin, controllers.api.tradeListByUserJson)
 // 邀请交易列表(上面两个接口合二为一)
 router.get('/api/invite-trade-list/:user_id', middleware.checkLogin, controllers.api.inviteAndTradeListJson)
 
@@ -118,8 +117,8 @@ router.get('/admin/api/pageview-clear', middleware.checkLogin, middleware.role, 
 
 
 
-
-router.get('/admin/api/init', middleware.checkLogin, middleware.role, controllers.admin.api.init)
+// 数据库初始化
+router.get('/admin/api/init', controllers.admin.api.init)
 
 
 

@@ -102,10 +102,10 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="white-box">
-                        <h2 class="header-title">Sales Statics</h2>
+                        <h2 class="header-title">充值统计</h2>
                         <!--Start chart-->
                         <div class="col-md-9">
-                            <canvas id="sharpLinechart" height="90"></canvas>
+                            <canvas id="sharpLinechart2" height="90"></canvas>
                         </div>
                         <!--End chart-->
 
@@ -331,7 +331,7 @@
     <script src="/admin-assets/plugins/morris-chart/morris.js"></script>
     <script src="/admin-assets/plugins/morris-chart/raphael-min.js"></script>
     <script src="/admin-assets/plugins/jquery-sparkline/jquery.charts-sparkline.js"></script>
-    <script src="/admin-assets/pages/dashboard2.js"></script>
+    <!-- <script src="/admin-assets/pages/dashboard2.js"></script> -->
     <script src="/admin-assets/plugins/chart-js/Chart.js"></script>
 
 
@@ -352,6 +352,51 @@
                 }
             },
             methods: {
+                initChart(list) {
+                    let a = list.reverse()
+                    let labels = []
+                    let datas = []
+                    a.forEach(function (item) {
+                        item.create_time = moment(item.create_time).format('YYYY/MM/DD HH:mm:ss')
+                        item.amount = item.amount / 1000000
+                        labels.push(item.create_time)
+                        datas.push(item.amount)
+                    })
+                    var sharpLineData = {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: "充值",
+                                fillColor: "rgba(3,169,243,0.7)",
+                                strokeColor: "rgba(23,112,233,0.7)",
+                                pointColor: "rgba(23,112,233,1)",
+                                pointStrokeColor: "#fff",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(23,112,233,1)",
+                                data: datas
+                            }
+                        ]
+                    };
+
+                    var sharpLineOptions = {
+                        scaleShowGridLines: true,
+                        scaleGridLineColor: "rgba(0,0,0,.00)",
+                        scaleGridLineWidth: 1,
+                        bezierCurve: false,
+                        pointDot: true,
+                        pointDotRadius: 4,
+                        pointDotStrokeWidth: 1,
+                        pointHitDetectionRadius: 20,
+                        datasetStroke: false,
+                        datasetStrokeWidth: 1,
+                        datasetFill: true,
+                        responsive: true,
+                        resize: true
+                    };
+
+                    var ctx = document.getElementById("sharpLinechart2").getContext("2d");
+                    var myNewChart = new Chart(ctx).Line(sharpLineData, sharpLineOptions);
+                },
                 post(url, params, callback) {
                     this.loading = true;
                     $.post(url, params, res => {
@@ -383,6 +428,11 @@
                     this.get('/admin/api/dashboard', {}, (data) => {
                         this.result = data.data
                         console.log(data.data)
+                        console.log(this.result)
+                    })
+
+                    this.get('/admin/api/trade-log', {}, (data) => {
+                        this.initChart(data.data.list)
                     })
                 }
             },
