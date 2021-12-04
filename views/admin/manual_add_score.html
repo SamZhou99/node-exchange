@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="/admin-assets/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
+    <!-- END PAGE LEVEL STYLES -->
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">人工上分</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/admin">网站首页</a>
+                    </li>
+                    <li class="active">
+                        人工上分
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+                        <h2 class="header-title">上分表单</h2>
+
+
+
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">要上分的帐号</label>
+                                <div class="col-md-10">
+                                    <select @change="onChangeSelected" v-model="form.id" class="form-control" id="type"
+                                        name="type">
+                                        <option disabled value="0">请选择</option>
+                                        <option v-for="option in user_list" :value="option.id">帐号：{[option.account]},
+                                            电话：{[option.mobile]}, 邮箱：{[option.email]}, 帐号类型：{[option.value]}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">USDT</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.usdt" class="form-control" value="" type="number" min="0">
+                                    系统钱包地址：{[form.usdt_wallet_address]}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">ETH</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.eth" class="form-control" value="" type="number" min="0">
+                                    系统钱包地址：{[form.eth_wallet_address]}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">BTC</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.btc" class="form-control" value="" type="number" min="0">
+                                    系统钱包地址：{[form.btc_wallet_address]}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label"></label>
+                                <div class="col-md-10">
+                                    <button @click="onClickSubmit()" type="button"
+                                        class="btn btn-primary col-md-1">Submit</button>
+                                </div>
+                            </div>
+
+
+
+                        </form>
+
+
+
+
+                    </div>
+                </div>
+            </div>
+            <!--End row-->
+
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/admin-assets/plugins/sweetalert/sweet-alert.js"></script>
+    <script src="/admin-assets/pages/jquery.sweet-alert.custom.js"></script>
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+
+
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                user_list: [],
+                form: {
+                    id: 0,
+                    usdt: 0,
+                    eth: 0,
+                    btc: 0,
+                    usdt_wallet_address: '-',
+                    eth_wallet_address: '-',
+                    btc_wallet_address: '-'
+                },
+            },
+            methods: {
+                onChangeSelected() {
+                    this.updateUserInfoAndWalletAddress()
+                },
+                onClickSubmit() {
+                    if (this.form.id <= 0) {
+                        return
+                    }
+                    console.log(this.form)
+                    if (Number(this.form.usdt) == 0 && Number(this.form.eth) == 0 && Number(this.form.btc) == 0) {
+                        alert('请填写要添加的金额数量。')
+                        return
+                    }
+                    this.loading = true
+                    this.post('/admin/api/manual-add-score', this.form, (data) => {
+                        this.loading = false
+                        if(data.flag != 'ok'){
+                            swal("修改完成！", "数据已修改完成！", "error")
+                            return
+                        }
+                        this.resetFrom()
+                        swal("修改完成！", "数据已修改完成！", "success")
+                    })
+                },
+                updateUserInfoAndWalletAddress() {
+                    if (this.form.id <= 0) {
+                        return
+                    }
+                    let userItem = this.getUserItem(this.form.id)
+                    this.form.usdt_wallet_address = userItem.wallet[0].wallet_address
+                    this.form.eth_wallet_address = userItem.wallet[1].wallet_address
+                    this.form.btc_wallet_address = userItem.wallet[2].wallet_address
+                },
+                getUserItem(id) {
+                    for (let i = 0; i < this.user_list.length; i++) {
+                        let item = this.user_list[i]
+                        if (item.id == id) {
+                            return item
+                        }
+                    }
+                    return null
+                },
+                resetFrom() {
+                    this.form = {
+                        id: 0,
+                        usdt: 0,
+                        eth: 0,
+                        btc: 0,
+                        usdt_wallet_address: '-',
+                        eth_wallet_address: '-',
+                        btc_wallet_address: '-'
+                    }
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+
+                // 初始化
+                init() {
+                    this.get('/admin/api/user-list', {}, (data) => {
+                        let a = data.data.list
+                        this.user_list = a
+                        this.updateUserInfoAndWalletAddress()
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</body>
+
+</html>
