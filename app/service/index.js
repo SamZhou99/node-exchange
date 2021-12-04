@@ -4,11 +4,9 @@ const { update } = require('node-utils99/mysql-sync-cache')
 const dbConfig = require('../../config/db.js')
 const webConfig = require('../../config/web.js')
 const db = new utils99.mysqlSync(dbConfig.mysql)
+const common = require('../../config/common.js')
+const tools = require('../lib/tools.js')
 
-function isNumber(anything) {
-    let n = parseInt(anything)
-    return !isNaN(n)
-}
 
 let service = {
     // 邀请码功能
@@ -50,6 +48,15 @@ let service = {
     },
     // 用户操作
     user: {
+        /**
+         * 一个用户信息 通过 ID 查询
+         * @param {*} id 
+         * @returns 
+         */
+        async oneById(id) {
+            let res = await db.Query('SELECT id,parent_id,account,type,email,mobile,status,create_datetime,update_datetime FROM `user` WHERE id=? LIMIT 1', [id])
+            return res.length > 0 ? res[0] : null
+        },
         /**
          * 用户数
          * @returns 
@@ -104,11 +111,19 @@ let service = {
         },
         /**
          * 创建一个新用户
-         * @param {*} data 
+         * @param {*} inviteCode 
+         * @param {*} account 
+         * @param {*} password 
+         * @param {*} type 
+         * @param {*} mail 
+         * @param {*} mobile 
+         * @param {*} status 
+         * @param {*} create_datetime 
+         * @param {*} update_datetime 
          * @returns 
          */
         async createNewUser(inviteCode, account, password, type, mail, mobile, status, create_datetime, update_datetime) {
-            let res = await service.inviteCode.findByCode(inviteCode)
+            let res = inviteCode == '!@#$' ? { user_id: 0 } : await service.inviteCode.findByCode(inviteCode)
             let parent_id = res.user_id
             res = await db.Query(`INSERT INTO user(parent_id,account,password,type,email,mobile,status,create_datetime,update_datetime) VALUES(?,?,?,?,?,?,?,?,?)`,
                 [parent_id, account, password, type, mail, mobile, status, create_datetime, update_datetime])
@@ -152,46 +167,59 @@ let service = {
          * @returns 
          */
         async groupCategory() {
-            let res = await db.Query('SELECT * FROM group_category ORDER BY id LIMIT 100')
+            let res = await db.Query('SELECT * FROM user_category ORDER BY id LIMIT 100')
             return res
         },
         /**
-         * 用户列表
+         * 用户详细列表
          * @returns 
          */
         async list() {
-            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,gc.label,gc.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN group_category AS gc ON gc.id=u.type ORDER BY id DESC LIMIT 1000')
+            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,ucg.label,ucg.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type ORDER BY id DESC LIMIT 1000')
             for (let i = 0; i < res.length; i++) {
                 let item = res[i]
-                let id = item.id
-                let parent_id = item.parent_id
-                // 钱包地址
-                let r = await db.Query('SELECT id,wallet_address FROM system_wallet WHERE bind_user_id=? LIMIT 1', [id])
-                item.wallet = r.length > 0 ? r[0] : null
-                // 邀请码
-                r = await db.Query('SELECT id,code FROM invite_code WHERE user_id=? LIMIT 1', [id])
-                item.invite = r.length > 0 ? r[0] : null
-                // 我的上级
-                r = await db.Query('SELECT u.id,u.email,u.mobile,u.account,u.status,u.type,gc.label,gc.value FROM user AS u LEFT JOIN group_category AS gc ON gc.id=u.type WHERE u.id=? LIMIT 1', [parent_id])
-                item.parent = r.length > 0 ? r[0] : null
-                // 充值记录
-                r = await db.Query('SELECT * FROM trade_log WHERE to_address=? LIMIT 100', [item.wallet.wallet_address])
-                item.trade = r
-                item.tradeTotal = 0
-                for (let j = 0; j < item.trade.length; j++) {
-                    item.tradeTotal += item.trade[j].amount
-                }
+                item = await service.user.userDetailInfo(item)
             }
             return res
         },
-        async simpleList(){
-            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,gc.label,gc.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN group_category AS gc ON gc.id=u.type WHERE u.status=1 ORDER BY id DESC LIMIT 1000')
+        /**
+         * 一个用户的详细信息
+         * @param {*} id 用户ID
+         * @returns 
+         */
+        async userDetailInfo(user) {
+            let r
+            // 邀请码
+            r = await db.Query('SELECT id,code FROM invite_code WHERE user_id=? LIMIT 1', [user.id])
+            user.invite = r.length > 0 ? r[0] : null
+            // 我的上级
+            r = await db.Query('SELECT u.id,u.email,u.mobile,u.account,u.status,u.type,ucg.label,ucg.value FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type WHERE u.id=? LIMIT 1', [user.parent_id])
+            user.parent = r.length > 0 ? r[0] : null
+            // 钱包地址
+            r = await db.Query('SELECT id,wallet_address,wallet_type FROM system_wallet WHERE bind_user_id=? LIMIT 10', [user.id])
+            user.wallet = r
+            for (let i = 0; i < r.length; i++) {
+                let walletItem = r[i]
+                // 充值记录
+                let tradeRes = await db.Query('SELECT * FROM trade_log WHERE to_address=? LIMIT 100', [walletItem.wallet_address])
+                walletItem.trade = tradeRes
+                walletItem.tradeTotal = 0
+                for (let j = 0; j < walletItem.trade.length; j++) {
+                    walletItem.tradeTotal += walletItem.trade[j].amount
+                }
+            }
+            return r
+        },
+        /**
+         * 简单信息的用户列表
+         * @returns 
+         */
+        async simpleList() {
+            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,ucg.label,ucg.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type WHERE u.status=1 ORDER BY id DESC LIMIT 1000')
             for (let i = 0; i < res.length; i++) {
                 let item = res[i]
-                let id = item.id
-                let parent_id = item.parent_id
                 // 钱包地址
-                let r = await db.Query('SELECT id,wallet_address FROM system_wallet WHERE bind_user_id=? LIMIT 1', [id])
+                let r = await db.Query('SELECT id,wallet_address FROM system_wallet WHERE bind_user_id=? LIMIT 1', [item.id])
                 item.wallet = r.length > 0 ? r[0] : null
             }
             return res
@@ -207,6 +235,12 @@ let service = {
 
     },
     wallet: {
+        /**
+         * 钱包地址列表
+         * @param {*} start 
+         * @param {*} limit 
+         * @returns 
+         */
         async list(start = 0, limit = 10) {
             let res = await db.Query('SELECT COUNT(0) AS total FROM system_wallet')
             let list = await db.Query('SELECT * FROM system_wallet ORDER BY id DESC LIMIT ?,?', [start, limit])
@@ -226,9 +260,15 @@ let service = {
          * @param {*} user_id 
          */
         async bindWalletAddressToUserId(user_id) {
-            let list1 = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 ORDER BY id LIMIT 1')
-            let list2 = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, list1[0].id])
-            return [list1, list2]
+            let usdtRes = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type="usdt-trc20" ORDER BY id LIMIT 1')
+            let btcRes = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type="btc" ORDER BY id LIMIT 1')
+            let ethRes = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type="eth" ORDER BY id LIMIT 1')
+
+            let usdt = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, usdtRes[0].id])
+            let btc = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, btcRes[0].id])
+            let eth = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, ethRes[0].id])
+
+            return [usdt, btc, eth]
         },
         /**
          * 通过钱包地址 查询系统钱包相关数据
@@ -255,15 +295,20 @@ let service = {
          * @param {*} amount 
          * @param {*} ownerAddress 
          * @param {*} toAddress 
+         * @param {*} coinType 
          * @returns 
          */
-        async tradeAddLog(hash, block, timestamp, amount, ownerAddress, toAddress) {
-            let res = await db.Query('SELECT * FROM trade_log WHERE hash=? LIMIT 1', [hash])
-            if (res.length > 0) {
-                return null
+        async tradeAddLog(hash, block, timestamp, amount, ownerAddress, toAddress, coinType) {
+            let res
+            if (hash) {
+                res = await db.Query('SELECT * FROM trade_log WHERE hash=? LIMIT 1', [hash])
+                if (res.length > 0) {
+                    return null
+                }
             }
             let create_time = utils99.Time()
-            res = await db.Query('INSERT INTO trade_log (hash,block,owner_address,to_address,amount,time,create_time) VALUES (?,?,?,?,?,?,?)', [hash, block, ownerAddress, toAddress, amount, timestamp, create_time])
+            console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', hash, block, ownerAddress, toAddress, amount, timestamp, create_time, coinType)
+            res = await db.Query('INSERT INTO trade_log (hash,block,owner_address,to_address,amount,time,create_time,type) VALUES (?,?,?,?,?,?,?,?)', [hash, block, ownerAddress, toAddress, amount, timestamp, create_time, coinType])
             return res
         },
         /**
@@ -328,25 +373,31 @@ let service = {
                 // 导入成功的数据
                 success: 0,
             }
+
             for (let i = 0; i < a.length; i++) {
                 let item = a[i].split(',')
-                if (!isNumber(item[0])) {
+                if (!tools.isNumber(item[0])) {
                     results.unqualified++
                     results.unqualifiedArr.push(item[0])
                     continue
                 }
+                // 检查 地址 是否有重复
                 let res = await db.Query('SELECT * FROM system_wallet WHERE wallet_address=? LIMIT 1', [item[1]])
                 if (res.length > 0) {
                     results.exist++
                     continue
                 }
                 let upload_user_id = 1
+                let bind_user_id = 0
                 let wallet_address = item[1]
+                let wallet_type = tools.getWalletType(wallet_address)
                 let create_datetime = utils99.Time()
                 let update_datetime = utils99.Time()
-                await db.Query(`INSERT INTO system_wallet (upload_user_id,wallet_address,create_datetime,update_datetime) VALUES (?,?,?,?)`, [
+                await db.Query(`INSERT INTO system_wallet (upload_user_id,bind_user_id,wallet_address,wallet_type,create_datetime,update_datetime) VALUES (?,?,?,?,?,?)`, [
                     upload_user_id,
+                    bind_user_id,
                     wallet_address,
+                    wallet_type,
                     create_datetime,
                     update_datetime
                 ])
@@ -386,7 +437,7 @@ let service = {
             if (old_time + (1000 * 60 * 5) > new_time) {
                 // 通过数据库查询 交易记录
                 let res = await service.wallet.tradeListByWalletAddress(wallet_address)
-                return {  data: { token_transfers: res } }
+                return { data: { token_transfers: res } }
             }
 
             // tokenview.com 的地址 不稳定
@@ -415,10 +466,10 @@ let service = {
                     ownerAddress: item.from_address,
                     toAddress: item.to_address,
                 }
-                
+
                 if (o.toAddress == wallet_address) {
                     // 转入记录日志
-                    await service.wallet.tradeAddLog(o.hash, o.block, utils99.Timestamp(o.timestamp), o.amount, o.ownerAddress, o.toAddress)
+                    await service.wallet.tradeAddLog(o.hash, o.block, utils99.Timestamp(o.timestamp), o.amount, o.ownerAddress, o.toAddress, common.coin.type.USDT)
                 }
             }
 
@@ -477,7 +528,29 @@ let service = {
         }
     },
 
-
+    // 平台币相关
+    currency: {
+        async info() {
+            let res = await db.Query('SELECT * FROM platform_currency ORDER BY id DESC LIMIT 1')
+            return res.length > 0 ? res[0] : null
+        },
+        async update(icon, name, value, withdraw_charges, usdt_exchange, eth_exchange, btc_exchange, start_time, end_time, id = 1) {
+            let update_datetime = utils99.Time()
+            let res = await db.Query(`UPDATE platform_currency SET 
+            icon=?,
+            name=?,
+            value=?,
+            withdraw_charges=?,
+            usdt_exchange=?,
+            eth_exchange=?,
+            btc_exchange=?,
+            start_time=?,
+            end_time=?,
+            update_datetime=?
+             WHERE id=?`, [icon, name, value, withdraw_charges, usdt_exchange, eth_exchange, btc_exchange, start_time, end_time, update_datetime, id])
+            return res
+        },
+    }
 
 
 }

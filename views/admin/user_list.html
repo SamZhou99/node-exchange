@@ -49,12 +49,13 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>帐号</th>
-                                        <th>邮箱</th>
-                                        <th>手机</th>
                                         <th>用户类型</th>
                                         <th>邀请码</th>
-                                        <th>系统钱包地址/充值总额</th>
                                         <th>邀请人(上级)</th>
+                                        <th>平台币</th>
+                                        <th>USDT-RTC20</th>
+                                        <th>ETH</th>
+                                        <th>BTC</th>
                                         <th>当前状态</th>
                                         <th>操作</th>
                                     </tr>
@@ -62,9 +63,7 @@
                                 <tbody>
                                     <tr v-for="item in this.list">
                                         <td>{[item.id]}</td>
-                                        <td>{[item.account]}</td>
-                                        <td>{[item.email]}</td>
-                                        <td>{[item.mobile]}</td>
+                                        <td><span v-html="item.self_name"></span></td>
                                         <td><a href="#" :id="'selectType'+item.id" :data-item="item.id"
                                                 data-type="select" data-pk="1" data-value="" data-title="选择用户类型"
                                                 class="editable editable-click" style="color: gray;">{[item.value]}</a>
@@ -72,16 +71,36 @@
                                         <td><a :href="'/reg?invite='+item.invite.code"
                                                 target="_blank">{[item.invite.code]}</a>
                                         </td>
+                                        <td><span v-html="item.parent ? item.parent_name : '无'"></span></td>
+
+
                                         <td>
-                                            <button @click="onRefreshWalletAddress(item.wallet.wallet_address)"
-                                                :disabled="refreshButtonStatus" class="btn"><i
-                                                    class="fa fa-refresh"></i></button>
-                                            <a :href="'https://usdt.tokenview.com/cn/address/'+item.wallet.wallet_address"
-                                                target="_blank">{[item.wallet.wallet_address]}</a> <a
-                                                v-if="item.tradeTotal > 0"
-                                                class="label label-danger">{[item.tradeTotal/1000000]} USDT</a>
+                                            地址：-
+                                            <br>
+                                            数量：-
                                         </td>
-                                        <td>{[item.parent ? item.parent.email : '无']}</td>
+                                        <td>
+                                            地址：<a
+                                                :href="'https://usdt.tokenview.com/cn/address/'+item.wallet[0].wallet_address"
+                                                target="_blank">{[item.wallet[0].wallet_address]}</a>
+                                            <br>
+                                            数量：<span v-if="item.wallet[0].tradeTotal > 0" class="badge badge-success" style="background-color:#c02424;">{[item.wallet[0].tradeTotal/1000000]}</span>
+                                        </td>
+                                        <td>
+                                            地址：<a :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address"
+                                                target="_blank">{[item.wallet[1].wallet_address]}</a>
+                                            <br>
+                                            数量：<span v-if="item.wallet[1].tradeTotal > 0" class="badge badge-success" style="background-color:#c02424;">{[item.wallet[1].tradeTotal/1000000]}</span>
+                                        </td>
+                                        <td>
+                                            地址：<a
+                                                :href="'https://www.btc.com/btc/address/'+item.wallet[2].wallet_address"
+                                                target="_blank">{[item.wallet[2].wallet_address]}</a>
+                                            <br>
+                                            数量：<span v-if="item.wallet[2].tradeTotal > 0" class="badge badge-success" style="background-color:#c02424;">{[item.wallet[2].tradeTotal/1000000]}</span>
+                                        </td>
+
+
                                         <td>
                                             <span v-if="!!item.status">
                                                 <button @click="onClickStatus(item)" class="btn btn-success"> <i
@@ -93,6 +112,9 @@
                                             </span>
                                         </td>
                                         <td>
+                                            <button @click="onRefreshWalletAddress(item.wallet[0].wallet_address)"
+                                                :disabled="refreshButtonStatus" class="btn"><i
+                                                    class="fa fa-refresh"></i></button>
                                             <button class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>
                                         </td>
                                     </tr>
@@ -192,6 +214,22 @@
                         this.setEditable()
                     })
                 },
+                accountName(data) {
+                    let str = ''
+                    if (!data) {
+                        return str
+                    }
+                    if (data.account) {
+                        str += '帐号：' + data.account
+                    }
+                    if (data.mobile) {
+                        str += '<br>手机：' + data.mobile
+                    }
+                    if (data.email) {
+                        str += '<br>邮箱：' + data.email
+                    }
+                    return str
+                },
                 post(url, params, callback) {
                     this.loading = true;
                     $.post(url, params, res => {
@@ -220,8 +258,15 @@
 
                 // 初始化
                 init() {
+                    let t = this
                     this.get('/admin/api/user-list', {}, (data) => {
-                        this.list = data.data.list
+                        let a = data.data.list
+                        a.forEach(function (item) {
+                            item.self_name = t.accountName(item)
+                            item.parent_name = t.accountName(item.parent)
+                        })
+                        console.log(a)
+                        this.list = a
                         this.getcCategory()
                     })
                 }

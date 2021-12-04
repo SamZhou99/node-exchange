@@ -291,11 +291,12 @@
 			background-color: #ffffff;
 		}
 
-		.chang24hr-bg{
+		.chang24hr-bg {
 			border-radius: 5px;
 			padding: 5px;
 			text-align: center;
 		}
+
 		.zhang {
 			background: #d4f6f0;
 			color: #0d8551;
@@ -368,15 +369,18 @@
 							<td>{[item.node.supply]}m</td>
 							<td>{[item.node.volumeUsd24Hr]}b</td>
 							<td>
-								<div v-if="item.node.changePercent24Hr>0" class="chang24hr-bg zhang">{[item.node.changePercent24Hr]}% ↑</div>
-								<div v-if="item.node.changePercent24Hr==0" class="chang24hr-bg ping">{[item.node.changePercent24Hr]}%</div>
-								<div v-if="item.node.changePercent24Hr<0" class="chang24hr-bg die">{[item.node.changePercent24Hr]}% ↓</div>
+								<div v-if="item.node.changePercent24Hr>0" class="chang24hr-bg zhang">
+									{[item.node.changePercent24Hr]}% ↑</div>
+								<div v-if="item.node.changePercent24Hr==0" class="chang24hr-bg ping">
+									{[item.node.changePercent24Hr]}%</div>
+								<div v-if="item.node.changePercent24Hr<0" class="chang24hr-bg die">
+									{[item.node.changePercent24Hr]}% ↓</div>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
-			
+
 		</div>
 
 
@@ -428,7 +432,7 @@
 				</div>
 				<div class="listshow">
 					<div class="list-ld">
-						<img src="/images/download-1.png" height="120" />
+						<img src="#/images/download-1.png" height="120" />
 						<ul>
 							<li><a onclick="Downloads()">MAC 下载</a></li>
 							<li><a onclick="Downloads()">Win32位 下载</a></li>
@@ -436,7 +440,7 @@
 						</ul>
 					</div>
 					<div class="list-rd">
-						<img src="/images/download-2.png" height="120" />
+						<img src="#/images/download-2.png" height="120" />
 						<ul>
 							<li><a onclick="Downloads()">IOS 下载</a></li>
 							<li><a onclick="Downloads()">Android 下载</a></li>
@@ -461,18 +465,27 @@
 			el: '#app',
 			data: {
 				loading: false,
-				list: []
+				list: [],
+				statup: {}
 			},
 			methods: {
 				// 保留几位小数
 				round(num, len) {
 					let mult = Number("100000000000000000000000000000".substr(0, len + 1))
 					return Math.round(num * mult) / mult
+
 				},
 				// 小数点向前移，min,保留几位小数
 				lessen(num, min, len) {
 					let n = num / min
 					return this.round(n, len)
+				},
+				moneyFormat(num) {
+					return num.toLocaleString('en', {
+						style: 'currency',
+						currency: 'USD',
+						minimumFractionDigits: 0
+					})
 				},
 				get(url, params, callback) {
 					this.loading = true;
@@ -493,7 +506,7 @@
 					})
 				},
 				coinList() {
-					let _this = this
+					let _t = this
 					fetch('https://graphql.coincap.io/', {
 						method: 'POST',
 						headers: {
@@ -507,19 +520,38 @@
 							let a = data.data.assets.edges
 							a.forEach(function (item) {
 								item.node.logo = `https://assets.coincap.io/assets/icons/${item.node.logo}@2x.png`
-								item.node.priceUsd = _this.round(item.node.priceUsd, 2)
-								item.node.marketCapUsd = _this.lessen(item.node.marketCapUsd, 12, 2)
-								item.node.vwapUsd24Hr = _this.round(item.node.vwapUsd24Hr, 2)
-								item.node.supply = _this.lessen(item.node.supply, 6, 2)
-								item.node.volumeUsd24Hr = _this.lessen(item.node.volumeUsd24Hr, 9, 2)
-								item.node.changePercent24Hr = _this.round(item.node.changePercent24Hr, 2)
+								item.node.priceUsd = _t.round(item.node.priceUsd, 2)
+								item.node.marketCapUsd = _t.lessen(item.node.marketCapUsd, 12, 2)
+								item.node.vwapUsd24Hr = _t.round(item.node.vwapUsd24Hr, 2)
+								item.node.supply = _t.lessen(item.node.supply, 6, 2)
+								item.node.volumeUsd24Hr = _t.lessen(item.node.volumeUsd24Hr, 9, 2)
+								item.node.changePercent24Hr = _t.round(item.node.changePercent24Hr, 2)
+							})
+							a.splice(4, 0, {
+								node:
+								{
+									changePercent24Hr: - 2.39,
+									id: "bitcoin",
+									logo: _t.statup.icon,
+									marketCapUsd: 88811108158.73,
+									name: _t.statup.name,
+									priceUsd: 56421.09,
+									rank: 1,
+									supply: 3148153,
+									symbol: _t.statup.name,
+									volumeUsd24Hr: 4456985117.36,
+									vwapUsd24Hr: 57459.97,
+								}
 							})
 							this.list = a
 						});
 				},
 				// 初始化
 				init() {
-					this.coinList()
+					this.get('/api/startup', {}, (data) => {
+						this.statup = data.data
+						this.coinList()
+					})
 				}
 			},
 			mounted() {

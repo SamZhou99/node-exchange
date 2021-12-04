@@ -3,6 +3,12 @@ const middleware = require('../app/middleware/index.js')
 const { page: controllers } = require('../app/controllers/index.js')
 
 
+
+
+// // 验证码
+// router.get('/api/verificatcode', page.verificatcode) 
+
+
 // 首页
 router.get('/', middleware.commmonData, controllers.index)
 // 设置显示语言
@@ -16,9 +22,6 @@ router.post('/login', middleware.commmonData, controllers.login.post)
 // 登出
 router.get('/logout', middleware.commmonData, controllers.logout.page)
 
-
-// // 验证码
-// router.get('/api/verificatcode', page.verificatcode) 
 
 // 市场行情
 router.get('/market/:tag', middleware.commmonData, controllers.market)
@@ -39,7 +42,6 @@ router.get('/clause', middleware.commmonData, controllers.index)
 // router.get('/chart', middleware.commmonData, controllers.chart.page)
 // router.get('/chart/getMarketSpecialtyJson.html', middleware.commmonData, controllers.chart.getMarketSpecialtyJson)
 // router.get('/chart/getSpecialtyTrades.html', middleware.commmonData, controllers.chart.getSpecialtyTrades)
-
 
 
 // 我的资产
@@ -76,6 +78,10 @@ router.get('/api/invite-list/:user_id', middleware.checkLogin, controllers.api.i
 router.get('/api/trade-list/:user_id', middleware.checkLogin, controllers.api.tradeListByUserJson)
 // 邀请交易列表(上面两个接口合二为一)
 router.get('/api/invite-trade-list/:user_id', middleware.checkLogin, controllers.api.inviteAndTradeListJson)
+// 首发项目
+router.get('/api/startup', middleware.commmonData, controllers.api.startup)
+router.post('/api/startup', middleware.checkLogin, controllers.api.post.startup)
+
 
 
 // // 用户列表
@@ -100,6 +106,9 @@ router.get('/admin/pageview', middleware.checkLogin, middleware.role, controller
 router.get('/admin/market-coin', middleware.checkLogin, middleware.role, controllers.admin.marketCoin)
 // 控制涨跌
 router.get('/admin/market-change', middleware.checkLogin, middleware.role, controllers.admin.marketChange)
+// 人工上分
+router.get('/admin/manual-add-score', middleware.checkLogin, middleware.role, controllers.admin.manualAddScore)
+
 
 // /admin/coin-add
 // /admin/coin-edit
@@ -114,6 +123,8 @@ router.post('/admin/api/upload-file', middleware.checkLogin, middleware.role, co
 router.get('/admin/api/trade-log', middleware.checkLogin, middleware.role, controllers.admin.api.tradeLogJson)
 router.get('/admin/api/pageview', middleware.checkLogin, middleware.role, controllers.admin.api.pageviewJson)
 router.get('/admin/api/pageview-clear', middleware.checkLogin, middleware.role, controllers.admin.api.pageviewClearJson)
+router.post('/admin/api/startup', middleware.checkLogin, middleware.role, controllers.admin.api.post.updateStartupJson)
+router.post('/admin/api/manual-add-score', middleware.checkLogin, middleware.role, controllers.admin.api.post.manualAddScoreJson)
 
 
 

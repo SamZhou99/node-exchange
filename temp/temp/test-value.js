@@ -6,13 +6,13 @@ class BTC {
         this.marketPrice = 2
         this.marketValue = this.count * this.marketPrice
     }
-    加(price, count) {
+    addition(price, count) {
         this.count += count
         this.update()
         this.marketValue -= price * count
         this.marketPrice = this.marketValue / this.count
     }
-    减(price, count) {
+    subtraction(price, count) {
         this.count -= count
         this.update()
         this.marketValue += this.price * this.count + price * count
@@ -33,7 +33,7 @@ class Man {
             this.money.count += count
             this.money.cash -= price * count
             this.tradeLog.push({ type: 'buy', name: target.name, price, count })
-            target.减(price, count)
+            target.subtraction(price, count)
             console.log('购买', this.toString())
             return true
         }
@@ -45,7 +45,7 @@ class Man {
             this.money.count -= count
             this.money.cash += price * count
             this.tradeLog.push({ type: 'sell', name: target.name, price, count })
-            target.加(price, count)
+            target.addition(price, count)
             console.log('卖出', this.toString())
             return true
         }

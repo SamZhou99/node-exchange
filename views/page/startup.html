@@ -3,36 +3,454 @@
 
 <head>
     {{include './_header.html'}}
+
+    <style>
+        .coinType {
+            text-align: left;
+            width: 200px;
+            margin: auto;
+        }
+
+        .textColor1 {
+            color: #333333;
+        }
+
+        .titleStyle {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .convertibleProportionStyle {
+            font-size: 0.9rem;
+            color: #c5c5c5;
+        }
+
+        .bg1 {
+            margin-top: -20px;
+            margin-bottom: 30px;
+            padding: 10px;
+        }
+
+        .bg2 {
+            margin-top: 20px;
+            margin-bottom: 100px;
+            padding: 20px;
+        }
+
+        .jsnr {
+            margin-left: 0px;
+            margin-right: 0px;
+            border-radius: 5px;
+            background-color: #262c47;
+        }
+    </style>
+
 </head>
 
 <body>
     {{include './_menu.html'}}
 
     <div id="app" class="container-fluid main-content">
+
         <div class="container">
-            <div class="row">
-                <h3>首发项目</h3>
-            </div>
-            <div class="row">
-
-
-                <div id="article-content" class="col-12 article-content">
-                    开发中...
-                </div>
-
-                <div class="col-12" style="margin:10px;">
-                    <button class="btn btn-primary">申 购</button>
-                </div>
-
+            <div class="row jsnr bg1">
+                <h5>首发项目</h5>
             </div>
         </div>
+
+
+        <div class="container">
+
+            <div class="row jsnr bg2">
+
+
+                <section class="section-header pb-7 pb-lg-11 bg-soft">
+                    <div class="container">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-12 col-lg-6 order-2 order-lg-1"><img src="/default/img/publish-01.jpg"
+                                    class="w-100 img-fluid rounded" alt=""></div>
+                            <div class="col-12 col-lg-6 order-1 order-lg-2">
+                                <h1 class="display-5 mb-3">{[this.platform_currency.name]}</h1>
+                                <p class="lead">{[this.platform_currency.name]} is the Ethereum token of the
+                                    {[this.platform_currency.name]} network project. It is a new
+                                    generation
+                                    of
+                                    decentralized
+                                    video streaming platform based on native blockchain technology. The platform
+                                    distributes
+                                    {[this.platform_currency.name]}
+                                    token rewards to content viewers who share bandwidth and provides
+                                    high-definition video
+                                    content.
+                                    , To reduce the cost of video distribution. {[this.platform_currency.name]} Network
+                                    aims to develop more
+                                    effective
+                                    methods
+                                    to distribute any type of content and data globally through a paid peer-to-peer
+                                    network.</p>
+                                <p>目标: {[this.platform_currency.value]}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pattern bottom"></div>
+                </section>
+
+
+
+                <div class="col-sm-12">
+
+
+                    <div class="row align-items-center">
+                        <div class="col-12">
+
+                            <br>
+                            <br>
+                            <!-- Divider -->
+                            <hr class="bg-gray-900 mt-0 mb-8">
+
+                        </div>
+                        <div class="col-12 col-md text-center">
+
+                            <div>
+                                <!-- Heading -->
+                                <h1 class="h4 text-white mb-0">
+                                    <div v-if="this.disable">
+                                        距离结束： <span id="entTime" class="text-primary-light">{[endTime]}</span>
+                                    </div>
+                                    <div v-else="">
+                                        结束认购
+                                    </div>
+                                </h1>
+                                <br>
+                                <!-- Text -->
+                                <p class="text-white-60 mb-4 mb-md-0">
+                                    开始时间：{[this.platform_currency.start_time]}
+                                </p>
+                                <br>
+
+                                <p class="text-white-60 mb-4 mb-md-0">
+                                    结束时间：{[this.platform_currency.end_time]}
+                                </p>
+                            </div>
+
+                        </div>
+                        <div class="col-12">
+
+                            <!-- Divider -->
+                            <hr class="bg-gray-900 mb-0 mt-8">
+                            <br>
+                            <br>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-12 col-md-4 text-center">
+                    <div class="coinType">
+                        <p class="titleStyle">目标币种：USDT</p>
+                        <p class="convertibleProportionStyle">兑换比例：1:{[this.platform_currency.usdt_exchange]}</p>
+                        <p><button @click="onClickParticipation('USDT')" :disabled="!this.disable" type="button"
+                                class="btn btn-danger btn-block">参与</button></p>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-4 text-center">
+                    <div class="coinType">
+                        <p class="titleStyle">目标币种：ETH</p>
+                        <p class="convertibleProportionStyle">兑换比例：1:{[this.platform_currency.eth_exchange]}</p>
+                        <p><button @click="onClickParticipation('ETH')" :disabled="!this.disable" type="button"
+                                class="btn btn-danger btn-block">参与</button></p>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-4 text-center">
+                    <div class="coinType">
+                        <p class="titleStyle">目标币种：BTC</p>
+                        <p class="convertibleProportionStyle">兑换比例：1:{[this.platform_currency.btc_exchange]}</p>
+                        <p><button @click="onClickParticipation('BTC')" :disabled="!this.disable" type="button"
+                                class="btn btn-danger btn-block">参与</button></p>
+                    </div>
+                </div>
+
+
+                <div class="col-12">
+                    <br>
+                    <br>
+                    <br>
+                    <p>项目介绍</p>
+
+                    <div class="convertibleProportionStyle">
+                        <p>AbAbout THETA-B:</p>
+
+                        <p>The Theta Network and protocol solves various challenges the video streaming industry faces
+                            today. First, tokens on the Theta blockchain are used as an incentive to encourage
+                            individual
+                            users to share their redundant computing and bandwidth resources as caching or relay nodes
+                            for
+                            video streams. This improves the quality of stream delivery and solves the “last-mile”
+                            delivery
+                            problem, the main bottleneck for traditional content delivery pipelines, especially for high
+                            resolution high bitrate 4k, 8k and next generation streams. Second, with sufficient network
+                            density the majority of viewers will pull streams from peering caching nodes, allowing video
+                            platforms to significantly reduce content delivery network (CDN) costs. More importantly, by
+                            introducing tokens as an end-user incentive mechanism the Theta Network allows video
+                            platforms
+                            to deepen viewer engagement, drive incremental revenues, and differentiate their content and
+                            viewing experience from their competitors.
+                        </p>
+
+                        <p>
+                            The Theta blockchain introduces three main novel concepts:
+                        </p>
+
+                        <p>
+                            ● Multi-Level BFT: A modified BFT consensus mechanism which allows thousands of nodes to
+                            participate in the consensus process, while still supporting very high transaction
+                            throughput
+                            (1,000+ TPS). The core idea is to have a small set of nodes, which form the validator
+                            committee,
+                            produce a chain of blocks as fast as possible using a PBFT-like process. Then, the thousands
+                            of
+                            consensus participants, called guardians, finalize the chain generated by the validator
+                            committee at regular checkpoint blocks. The name multi-level BFT consensus mechanism
+                            reflects
+                            the fact that the validator/guardian division provides multiple levels of security
+                            guarantee.
+                            The validator committee provides the first level of consensus — with 10 to 20 validators,
+                            the
+                            committee can come to consensus quickly. The guardian pool forms the second line of defense.
+                            With thousands of nodes, it is substantially more difficult for attackers to compromise the
+                            integrity of the network, and thus provides a much higher level of security. We believe this
+                            mechanism achieves a good balance among transaction throughput, consistency, and level of
+                            decentralization, the three pillars of the so-called “impossible triangle”.
+                        </p>
+
+                        <p>● Aggregated Signature Gossip Scheme: A basic all-to-all broadcasting of the checkpoint block
+                            hash could work between guardian nodes, but it yields quadratic communication overhead, and
+                            therefore cannot scale to 1,000+ nodes. Instead, we propose an Aggregated Signature Gossip
+                            Scheme which significantly reduces messaging complexity. Each guardian node keeps combining
+                            the
+                            partially aggregated signatures from all its neighbors, and then gossips out the aggregated
+                            signature. This way the signature share of each node can reach other nodes at an exponential
+                            rate, 2 leveraging the gossip protocol. In addition, the signature aggregation keeps the
+                            size of
+                            the node-to-node messages small, and thus further reduces the communication overhead.
+                        </p>
+
+                        <p></p>
+
+                        <p>● Resource Oriented Micropayment Pool: An off-chain “Resource Oriented Micropayment Pool”
+                            that is
+                            purpose-built for video streaming. It allows a user to create an off-chain micropayment pool
+                            that any other user can withdraw from using off-chain transactions, and is double-spend
+                            resistant. It is much more flexible compared to off-chain payment channels.
+                        </p>
+
+                        <p>Ticker: {[this.platform_currency.name]}</p>
+
+                        <p>Total Supply: {[this.platform_currency.value]} {[this.platform_currency.name]}</p>
+
+                        <p>
+                            Protocol: TRC-20</p>
+
+                        <p>Official Website: www.theta-b.com</p>
+
+                        <p>white paper：https:// www.theta-b.com/bps.pdf</p>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+
+
+
+
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="participate" tabindex="-1" role="dialog" aria-labelledby="participateTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="color: black">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="participateTitle">确认参与</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="col-md-8" style="margin-top: 8px;">可用余额：<span
+                                    style="color:#cc3333;">{[this.balance.curr_balance]}</span>
+                            </div>
+                            <div class="col-md-auto ml-auto text-right">
+                                <div @click="onClickAllIn()" class="btn btn-link">全部</div>
+                            </div>
+                        </div>
+                        <form>
+                            <div class="form-group">
+                                <label for="coin_txt" class="col-form-label">{[coinType]}:</label>
+                                <input type="text" class="form-control" id="coin_txt" v-model="form.coin" value="">
+                                <input type="hidden" class="form-control" :value="this.form.type">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer text-center">
+                        <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                        <button @click="onClickEnter()" type="button" class="btn btn-primary btn-block">参与</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
     </div>
 
 
-
-
-
     {{include './_footer.html'}}
+
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                is_login: '{{isLogin}}',
+                loading: false,
+                temp_setInterval: null,
+                alertObj: JSON.parse('{{lang.list[defLang].page.login.alert}}'.replace(/&#34;/g, '"')),
+                coinType: 'usdt',
+                endTime: '0天 0时 0分 0秒',
+                disable: true,
+                platform_currency: {
+                    name: '',
+                    value: 0,
+                    withdraw_charges: 0,
+                    usdt_exchange: 0,
+                    eth_exchange: 0,
+                    btc_exchange: 0,
+                    start_time: 0,
+                    end_time: 0,
+                    curr_time: 0,
+                },
+                balance: {
+                    USDT: 0,
+                    ETH: 0,
+                    BTC: 0,
+                    curr_balance: 0
+                },
+                form: {
+                    type: 'usdt',
+                    coin: 0
+                }
+            },
+            methods: {
+                onClickParticipation(type) {
+                    if (this.is_login == 'false') {
+                        document.location.href = '/login'
+                        return
+                    }
+                    this.form.coin = 0
+                    this.form.type = type
+                    this.coinType = type
+                    this.balance.curr_balance = this.balance[this.coinType]
+                    $('#participate').modal("show");
+                },
+                onClickEnter() {
+                    // console.log('提交后台...')
+                    console.log(this.form)
+                    if(this.form.coin <= 0){
+                        alert('The purchase amount cannot be less than or equal to zero!')
+                        return
+                    }
+                    this.post('/api/startup', this.form, (data) => {
+                        console.log(data)
+                    })
+                },
+                onClickAllIn() {
+                    this.form.type = this.coinType
+                    this.form.coin = this.balance.curr_balance
+                },
+                zero(n) {
+                    return n < 10 ? '0' + n : n
+                },
+                formatTime(t) {
+                    let d = Math.floor(t / (60 * 60 * 24))
+                    let h = this.zero(Math.floor((t / (60 * 60)) % 24))
+                    let m = this.zero(Math.floor(t / (60) % 60))
+                    let s = this.zero(Math.floor(t % 60))
+                    return `${d}天 ${h}时 ${m}分 ${s}秒`
+                },
+                updateTime() {
+                    this.temp_setInterval = setInterval(() => {
+                        // let currTime = new Date(this.platform_currency.curr_time).getTime()
+                        let currTime = new Date().getTime() / 1000
+                        let endTime = new Date(this.platform_currency.end_time).getTime() / 1000
+                        let defTime = endTime - currTime
+                        // this.endTime = this.formatTime(defTime)
+                        $('#entTime').html(this.formatTime(defTime))
+                        if (defTime >= 0) {
+                            this.disable = true
+                        } else {
+                            this.disable = false
+                            clearInterval(this.temp_setInterval)
+                        }
+                    }, 100)
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+
+                // 初始化
+                init() {
+                    this.get('/api/startup', {}, (data) => {
+                        if (this.is_login == 'true') {
+                            this.balance.USDT = data.data.user.wallet[0].tradeTotal
+                            this.balance.ETH = data.data.user.wallet[1].tradeTotal
+                            this.balance.BTC = data.data.user.wallet[2].tradeTotal
+                        }
+                        this.platform_currency = data.data.currency
+                        this.platform_currency.start_time = moment(this.platform_currency.start_time).format('YYYY-MM-DD HH:mm:ss')
+                        this.platform_currency.end_time = moment(this.platform_currency.end_time).format('YYYY-MM-DD HH:mm:ss')
+                        this.updateTime()
+                    })
+
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+
 </body>
 
 </html>

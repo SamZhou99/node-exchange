@@ -3,6 +3,9 @@
 
 <head>
     {{include './_header.html'}}
+    <!-- BEGIN PAGE LEVEL STYLES -->
+    <link href="/admin-assets/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
+    <!-- END PAGE LEVEL STYLES -->
 </head>
 
 <body class="sticky-header">
@@ -21,13 +24,13 @@
 
             <!--Start Page Title-->
             <div class="page-title-box">
-                <h4 class="page-title">控制涨跌价格</h4>
+                <h4 class="page-title">平台币</h4>
                 <ol class="breadcrumb">
                     <li>
                         <a href="/admin">网站首页</a>
                     </li>
                     <li class="active">
-                        控制涨跌价格
+                        平台币
                     </li>
                 </ol>
                 <div class="clearfix"></div>
@@ -39,10 +42,82 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="white-box">
-                        <h2 class="header-title">控制涨跌价格</h2>
-                        <div>
-                            <h1>正在开发中</h1>
-                        </div>
+                        <h2 class="header-title">平台币设置</h2>
+
+
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">名称</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.name" class="form-control" value="" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">图标</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.icon" class="form-control" value="" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">总发行量</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.value" class="form-control" value="" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">提现手续费</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.withdraw_charges" class="form-control" value="" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">USDT兑换比例</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.usdt_exchange" class="form-control" value="" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">ETH兑换比例</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.eth_exchange" class="form-control" value="" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">BTC兑换比例</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.btc_exchange" class="form-control" value="" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">开始发售时间</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.start_time" class="form-control"
+                                        placeholder="YYYY-MM-DD 00:00:00" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">结束发售时间</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.end_time" class="form-control"
+                                        placeholder="YYYY-MM-DD 00:00:00" type="text">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">提交数据</label>
+                                <div class="col-md-10">
+                                    <button :disabled="this.loading" @click="onClickSubmit()" type="button"
+                                        class="btn btn-primary col-md-1">Submit</button>
+                                </div>
+                            </div>
+
+
+
+                        </form>
+
+
+
+
                     </div>
                 </div>
             </div>
@@ -63,7 +138,10 @@
 
     {{include './_footer.html'}}
 
-
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
+    <script src="/admin-assets/plugins/sweetalert/sweet-alert.js"></script>
+    <script src="/admin-assets/pages/jquery.sweet-alert.custom.js"></script>
+    <!-- BEGIN PAGE LEVEL SCRIPTS -->
 
     <script>
         let appVue = new Vue({
@@ -71,36 +149,29 @@
             el: '#app',
             data: {
                 loading: false,
-                list: [],
-                refreshButtonStatus: false,
-
-                ws: null,
-                ws_data: null,
-
+                form: {
+                    id: 0,
+                    icon: '',
+                    name: '',
+                    value: '',
+                    withdraw_charges: '',
+                    usdt_exchange: '',
+                    eth_exchange: '',
+                    btc_exchange: '',
+                    start_time: '',
+                    end_time: ''
+                }
             },
             methods: {
-                onClickMarkup() {
-                    this.wsSend({ status: 'up' })
-                },
-                onClickMarkdown() {
-                    this.wsSend({ status: 'down' })
-                },
-                onClickRandom() {
-                    this.wsSend({ status: 'random' })
-                },
-                wsSend(data) {
-                    this.ws.send(JSON.stringify(data));
-                },
-                initWebSocket() {
-                    let t = this
-                    t.ws = new WebSocket("ws://127.0.0.1:3031");
-                    t.ws.onopen = function () {
-                        console.log('websocket init ...')
-                    };
-                    t.ws.onmessage = function (event) {
-                        t.ws_data = JSON.parse(event.data);
-                        t.price = t.ws_data.price
-                    }
+                onClickSubmit() {
+                    this.loading = true
+                    this.post('/admin/api/startup', this.form, (data) => {
+                        this.loading = false
+                        console.log(data)
+                        if (data.data.changedRows >= 1) {
+                            swal("修改完成！", "数据已修改完成！", "success")
+                        }
+                    })
                 },
                 post(url, params, callback) {
                     this.loading = true;
@@ -127,10 +198,14 @@
                         }
                     })
                 },
-
                 // 初始化
                 init() {
-                    // this.initWebSocket()
+                    this.get('/api/startup', {}, (data) => {
+                        let o = data.data.currency
+                        o.start_time = moment(o.start_time).format('YYYY-MM-DD HH:mm:ss')
+                        o.end_time = moment(o.end_time).format('YYYY-MM-DD HH:mm:ss')
+                        this.form = o
+                    })
                 }
             },
             mounted() {

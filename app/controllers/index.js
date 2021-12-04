@@ -1,8 +1,9 @@
 const utils99 = require('node-utils99')
 const { init } = require('node-utils99/mysql-sync-cache')
-let lang = require('../../config/language.js')
-let config = require('../../config/web.js')
-let service = require('../service/index.js')
+const tools = require('../lib/tools.js')
+const lang = require('../../config/language.js')
+const config = require('../../config/web.js')
+const service = require('../service/index.js')
 
 
 
@@ -201,6 +202,13 @@ let __this = {
 
         // api
         api: {
+            post: {
+                async startup(ctx) {
+                    let form = ctx.request.body
+                    let user_id = ctx.session.user.id
+                    ctx.body = { flag: 'ok', data: { form, user_id } }
+                },
+            },
             // 获取系统绑定的钱包地址
             async walletAddressJson(ctx) {
                 let wallet_address = ctx.params.wallet_address
@@ -216,11 +224,6 @@ let __this = {
                 }
                 ctx.body = { flag: 'ok', data: res.data }
             },
-            // // 用户列表
-            // async userListJson(ctx) {
-            //     let list = await service.user.list()
-            //     ctx.body = { flag: 'ok', data: list }
-            // },
             // 邀请列表
             async inviteListJson(ctx) {
                 let list = await service.user.inviteList(ctx.params.user_id)
@@ -238,6 +241,17 @@ let __this = {
                     list[i]['trade'] = await service.wallet.tradeListByUser(list[i].id)
                 }
                 ctx.body = { flag: 'ok', data: list }
+            },
+            // 首发项目
+            async startup(ctx) {
+                let currency = await service.currency.info()
+                currency.curr_time = utils99.Time()
+                let user
+                if (ctx.session.isLogin) {
+                    user = await service.user.oneById(ctx.session.user.id)
+                    user.wallet = await service.user.userDetailInfo(user)
+                }
+                ctx.body = { flag: 'ok', data: { user, currency } }
             },
         },
 
@@ -322,6 +336,10 @@ let __this = {
             async marketChange(ctx) {
                 await ctx.render('admin/martket_change', ctx.data)
             },
+            // 人工上分
+            async manualAddScore(ctx) {
+                await ctx.render('admin/manual_add_score', ctx.data)
+            },
 
             // 
             api: {
@@ -329,6 +347,37 @@ let __this = {
                     async userAddJson(ctx) {
                         let form = ctx.request.body
                         await userAdd(ctx, form.inviteCode, form.account, form.password, form.type, form.mail, form.mobile, form.status, utils99.Time(), utils99.Time())
+                    },
+                    async updateStartupJson(ctx) {
+                        let form = ctx.request.body
+                        let res = await service.currency.update(form.icon, form.name, form.value, form.withdraw_charges, form.usdt_exchange, form.eth_exchange, form.btc_exchange, form.start_time, form.end_time, form.id)
+                        ctx.body = { flag: 'ok', data: res }
+                    },
+                    async manualAddScoreJson(ctx) {
+                        let form = ctx.request.body
+
+                        if (form.btc > 0) {
+                            let amount = form.btc
+                            let wallet_address = form.btc_wallet_address
+                            let coin_type = tools.getWalletType(wallet_address)
+                            let res = await service.wallet.tradeAddLog('', '', utils99.Time(), amount, '', wallet_address, coin_type)
+                        }
+
+                        if (form.eth > 0) {
+                            let amount = form.eth
+                            let wallet_address = form.eth_wallet_address
+                            let coin_type = tools.getWalletType(wallet_address)
+                            let res = await service.wallet.tradeAddLog('', '', utils99.Time(), amount, '', wallet_address, coin_type)
+                        }
+
+                        if (form.usdt > 0) {
+                            let amount = form.usdt
+                            let wallet_address = form.usdt_wallet_address
+                            let coin_type = tools.getWalletType(wallet_address)
+                            let res = await service.wallet.tradeAddLog('', '', utils99.Time(), amount, '', wallet_address, coin_type)
+                        }
+
+                        ctx.body = { flag: 'ok', form }
                     },
                 },
                 async init(ctx) {
@@ -423,7 +472,8 @@ let __this = {
                 async pageviewClearJson(ctx) {
                     let res = await service.pageview.clear()
                     ctx.body = { flag: 'ok', data: res }
-                }
+                },
+
             }
         }
     },

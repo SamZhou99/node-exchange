@@ -58,6 +58,7 @@
                                         <th>ID</th>
                                         <th>上传人</th>
                                         <th>绑定的用户</th>
+                                        <th>钱包类型</th>
                                         <th>钱包地址</th>
                                         <th>操作</th>
                                     </tr>
@@ -67,6 +68,7 @@
                                         <td>{[item.id]}</td>
                                         <td><span v-html="item.uploaderName"></span></td>
                                         <td><span v-html="item.binderName"></span></td>
+                                        <td>{[item.wallet_type]}</td>
                                         <td>{[item.wallet_address]}</td>
                                         <td>
                                             <button class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>
