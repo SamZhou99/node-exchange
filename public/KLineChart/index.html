@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<!-- saved from url=(0036)https://liihuu.github.io/KLineChart/ -->
+<html lang="en">
+  
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="icon" href="https://liihuu.github.io/KLineChart/favicon.ico">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#000000">
+    <meta name="keywords" content="kline time-line candlestick stock chart canvas k线 行情 蜡烛图 分时图 技术指标 图表">
+    <meta name="description" content="Lightweight k-line chart built with html5 canvas . Zero dependencies. Support mobile（基于html5 canvas的轻量级k线图，无第三方依赖，支持移动端）.">
+    <script type="text/javascript" src="./assets/core.min.js">
+    </script>
+    <link rel="manifest" href="https://liihuu.github.io/KLineChart/manifest.json">
+    <link rel="stylesheet" href="./assets/style.css">
+    <title>KLineChart(K线图)</title>
+    <link href="./assets/2.c2f4a4b5.chunk.css" rel="stylesheet">
+    <link href="./assets/main.59f63fb8.chunk.css" rel="stylesheet">
+  </head>
+  
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root">
+      <div class="k-line-chart-dark">
+        <div class="top-bar-dark">
+          <div class="top-bar-periods-small">
+            <span class="top-bar-item false">Line</span>
+            <span class="top-bar-item false">1m</span>
+            <span class="top-bar-item top-bar-item-selected">15m</span>
+            <span class="top-bar-item false">1H</span>
+            <span class="top-bar-item false">4H</span>
+            <span class="top-bar-item false">1D</span>
+            <span class="top-bar-item false">1W</span>
+          </div>
+          <div class="top-bar-periods">
+            <span class="top-bar-item false">Line</span>
+            <span class="top-bar-item false">1m</span>
+            <span class="top-bar-item false">5m</span>
+            <span class="top-bar-item top-bar-item-selected">15m</span>
+            <span class="top-bar-item false">30m</span>
+            <span class="top-bar-item false">1H</span>
+            <span class="top-bar-item false">2H</span>
+            <span class="top-bar-item false">4H</span>
+            <span class="top-bar-item false">6H</span>
+            <span class="top-bar-item false">12H</span>
+            <span class="top-bar-item false">1D</span>
+            <span class="top-bar-item false">1W</span>
+          </div>
+          <div class="top-bar-tools">
+            <i class="top-bar-split-line">
+            </i>
+            <span class="top-bar-icon-item top-bar-item">
+              <i class="top-bar-icon icon-technical-indicator">
+              </i>
+              <span>Indicator</span>
+            </span>
+            <i class="top-bar-split-line">
+            </i>
+            <span class="top-bar-icon-item top-bar-item">
+              <i class="top-bar-icon icon-setting">
+              </i>
+              <span>Setting</span>
+            </span>
+            <i class="top-bar-split-line">
+            </i>
+            <span class="top-bar-icon-item top-bar-item">
+              <i class="top-bar-icon icon-screen-shot">
+              </i>
+              <span>Screenshot</span>
+            </span>
+            <i class="top-bar-split-line">
+            </i>
+            <span class="top-bar-icon-item top-bar-item">
+              <i class="top-bar-icon icon-sun" style="font-size: 20px;">
+              </i>
+              <span>Light</span>
+            </span>
+            <i class="top-bar-split-line">
+            </i>
+            <span class="top-bar-icon-item top-bar-item">
+              <i class="top-bar-icon icon-earth">
+              </i>中</span>
+            <i class="top-bar-split-line">
+            </i>
+          </div>
+          <a class="version-container" target="_blank" rel="noopener noreferrer" href="https://github.com/liihuu/KLineChart">
+            <i class="github-icon icon-github">
+            </i>
+          </a>
+        </div>
+        <div class="row stock-chart k-line-chart-container">
+          <div class="col tools-dark">
+            <ul class="tools-list">
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <rect x="1" y="14.5" width="28" height="1">
+                      </rect>
+                      <circle cx="15" cy="15" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <rect x="3" y="14.5" width="26" height="1">
+                      </rect>
+                      <circle cx="3" cy="15" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <rect x="3" y="14.5" width="24" height="1">
+                      </rect>
+                      <circle cx="3" cy="15" r="3">
+                      </circle>
+                      <circle cx="27" cy="15" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <rect x="15" y="1" width="1" height="28">
+                      </rect>
+                      <circle cx="15.5" cy="15" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <rect x="15" y="1" width="1" height="28">
+                      </rect>
+                      <circle cx="15.5" cy="27" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <rect x="15" y="1" width="1" height="28">
+                      </rect>
+                      <circle cx="15.6" cy="3" r="3">
+                      </circle>
+                      <circle cx="15.6" cy="27" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <path d="M5 25 L25 5 L26 6 L6 26 Z">
+                      </path>
+                      <circle cx="15" cy="16" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <path d="M5 25 L25 5 L26 6 L6 26 Z">
+                      </path>
+                      <circle cx="7" cy="24" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <path d="M6 24 L24 6 L25 7 7 25 Z">
+                      </path>
+                      <circle cx="6" cy="25" r="3">
+                      </circle>
+                      <circle cx="25" cy="6" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <rect x="3" y="19.5" width="26" height="1">
+                      </rect>
+                      <circle cx="3" cy="20" r="3">
+                      </circle>
+                      <rect x="8" y="10" width="1" height="7">
+                      </rect>
+                      <g>
+                        <rect x="11" y="10" width="3" height="1">
+                        </rect>
+                        <rect x="14" y="10" width="1" height="4">
+                        </rect>
+                        <rect x="11" y="13" width="3" height="1">
+                        </rect>
+                        <rect x="11" y="13" width="1" height="4">
+                        </rect>
+                        <rect x="11" y="16" width="4" height="1">
+                        </rect>
+                      </g>
+                      <g>
+                        <rect x="17" y="10" width="3" height="1">
+                        </rect>
+                        <rect x="20" y="10" width="1" height="7">
+                        </rect>
+                        <rect x="17" y="13" width="3" height="1">
+                        </rect>
+                        <rect x="17" y="16" width="4" height="1">
+                        </rect>
+                      </g>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <path d="M2 16 L16 2 L17 3 L3 17 Z">
+                      </path>
+                      <circle cx="10" cy="9" r="3">
+                      </circle>
+                      <path d="M5 25 L25 5 L26 6 L6 26 Z">
+                      </path>
+                      <line x1="5" y1="25" x2="25" y2="5">
+                      </line>
+                      <circle cx="11" cy="20" r="3">
+                      </circle>
+                      <circle cx="21" cy="10" r="3">
+                      </circle>
+                      <path d="M14 28 L28 14 L29 15 L15 29 Z">
+                      </path>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <path d="M2 22 L22 2 L21 1 L1 21 Z">
+                      </path>
+                      <circle cx="7" cy="16" r="3">
+                      </circle>
+                      <circle cx="16" cy="7" r="3">
+                      </circle>
+                      <path d="M8 28 L28 8 L29 9 L9 29 Z">
+                      </path>
+                      <circle cx="19" cy="18" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 30 30">
+                    <g>
+                      <rect x="1" y="2.5" width="28" height="1">
+                      </rect>
+                      <circle cx="15" cy="3" r="3">
+                      </circle>
+                      <rect x="1" y="8.5" width="28" height="1">
+                      </rect>
+                      <rect x="1" y="14.5" width="28" height="1">
+                      </rect>
+                      <rect x="1" y="20.5" width="28" height="1">
+                      </rect>
+                      <rect x="1" y="26.5" width="28" height="1">
+                      </rect>
+                      <circle cx="15" cy="27" r="3">
+                      </circle>
+                    </g>
+                  </svg>
+                </div>
+              </li>
+              <li class="tools-list-row tools-list-delete-row">
+                <div class="row tools-list-row-icon-wrapper">
+                  <svg class="tools-list-row-icon" viewBox="0 0 1024 1024">
+                    <path d="M845.12256 287.55456v572.62592c0 15.77984 10.89024 86.44096-15.2576 86.44096H247.7568c-11.74528 0-36.38784 4.56704-37.92384-12.53888-0.90112-10.0352 0-20.57216 0-30.63296V287.55968c0-33.01888-51.2-33.01888-51.2 0v572.62592c0 44.94848-10.20416 99.40992 31.56992 128.94208 15.00672 10.60352 35.80928 8.69888 53.31968 8.69888h531.38432c48.04096 0 121.41568 6.58432 121.41568-63.7952V287.55968c0-33.024-51.2-33.024-51.2-0.00512z">
+                    </path>
+                    <path d="M501.86752 420.46976v361.33888c0 33.01376 51.22048 33.01376 51.22048 0V420.46976c0-33.01888-51.22048-33.01888-51.22048 0zM325.35552 420.46976v361.33888c0 33.01376 51.2 33.01376 51.2 0V420.46976c0-33.01888-51.2-33.01888-51.2 0zM676.00384 420.46976v361.33888c0 33.01376 51.2 33.01376 51.2 0V420.46976c0-33.01888-51.2-33.01888-51.2 0zM102.5024 217.5232h849.95584c33.01376 0 33.01376-51.2 0-51.2H102.5024c-33.01888 0-33.01888 51.2 0 51.2z">
+                    </path>
+                    <path d="M338.7648 174.82752V94.53056c0-18.37056 1.00864-30.9248 21.6832-30.9248h334.0544c20.67456 0 21.6832 12.55424 21.6832 30.9248v80.29696c0 33.01888 51.2 33.01888 51.2 0 0-54.73792 18.51392-162.42176-65.26464-162.42176H352.82432c-83.77344 0-65.25952 107.68384-65.25952 162.42176 0 33.01888 51.2 33.01888 51.2 0z">
+                    </path>
+                  </svg>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="chart-widget">
+            <div id="k-line-chart" style="width: 100%; height: 100%;">
+              <div tabindex="1" style="user-select: none; -webkit-tap-highlight-color: transparent; position: relative; outline: none; border-style: none; width: 100%; cursor: crosshair;">
+                <div style="width: 100%; margin: 0px; padding: 0px; position: relative; overflow: hidden; height: 931px;">
+                  <div style="margin: 0px; padding: 0px; position: absolute; top: 0px; overflow: hidden; left: 0px; width: 1168px; height: 931px;">
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 1168px; height: 931px;" width="1752" height="1396">
+                    </canvas>
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 1168px; height: 931px;" width="1752" height="1396">
+                    </canvas>
+                  </div>
+                  <div style="margin: 0px; padding: 0px; position: absolute; top: 0px; overflow: hidden; left: 1168px; width: 64px; height: 931px;">
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 64px; height: 931px;" width="96" height="1396">
+                    </canvas>
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 64px; height: 931px;" width="96" height="1396">
+                    </canvas>
+                  </div>
+                </div>
+                <div style="margin: 0px; padding: 0px; position: relative; background-color: rgb(51, 51, 51); height: 1px; width: 100%;">
+                  <div style="width: 100%; height: 7px; margin: 0px; padding: 0px; position: absolute; top: -3px; z-index: 20; cursor: ns-resize;">
+                  </div>
+                </div>
+                <div style="width: 100%; margin: 0px; padding: 0px; position: relative; overflow: hidden; height: 120px;">
+                  <div style="margin: 0px; padding: 0px; position: absolute; top: 0px; overflow: hidden; left: 0px; width: 1168px; height: 120px;">
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 1168px; height: 120px;" width="1752" height="180">
+                    </canvas>
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 1168px; height: 120px;" width="1752" height="180">
+                    </canvas>
+                  </div>
+                  <div style="margin: 0px; padding: 0px; position: absolute; top: 0px; overflow: hidden; left: 1168px; width: 64px; height: 120px;">
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 64px; height: 120px;" width="96" height="180">
+                    </canvas>
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 64px; height: 120px;" width="96" height="180">
+                    </canvas>
+                  </div>
+                </div>
+                <div style="margin: 0px; padding: 0px; position: relative; background-color: rgb(51, 51, 51); height: 1px; width: 100%;">
+                  <div style="width: 100%; height: 7px; margin: 0px; padding: 0px; position: absolute; top: -3px; z-index: 20; cursor: ns-resize;">
+                  </div>
+                </div>
+                <div style="width: 100%; margin: 0px; padding: 0px; position: relative; overflow: hidden; height: 120px;">
+                  <div style="margin: 0px; padding: 0px; position: absolute; top: 0px; overflow: hidden; left: 0px; width: 1168px; height: 120px;">
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 1168px; height: 120px;" width="1752" height="180">
+                    </canvas>
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 1168px; height: 120px;" width="1752" height="180">
+                    </canvas>
+                  </div>
+                  <div style="margin: 0px; padding: 0px; position: absolute; top: 0px; overflow: hidden; left: 1168px; width: 64px; height: 120px;">
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 64px; height: 120px;" width="96" height="180">
+                    </canvas>
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 64px; height: 120px;" width="96" height="180">
+                    </canvas>
+                  </div>
+                </div>
+                <div style="width: 100%; margin: 0px; padding: 0px; position: relative; overflow: hidden; height: 25px;">
+                  <div style="margin: 0px; padding: 0px; position: absolute; top: 0px; overflow: hidden; left: 0px; width: 1168px; height: 25px;">
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 1168px; height: 25px;" width="1752" height="37">
+                    </canvas>
+                    <canvas style="position: absolute; top: 0px; left: 0px; z-index: 2; width: 1168px; height: 25px;" width="1752" height="37">
+                    </canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>!
+      function(e) {
+        function t(t) {
+          for (var n, i, l = t[0], a = t[1], f = t[2], p = 0, s = []; p < l.length; p++) i = l[p],
+          Object.prototype.hasOwnProperty.call(o, i) && o[i] && s.push(o[i][0]),
+          o[i] = 0;
+          for (n in a) Object.prototype.hasOwnProperty.call(a, n) && (e[n] = a[n]);
+          for (c && c(t); s.length;) s.shift()();
+          return u.push.apply(u, f || []),
+          r()
+        }
+        function r() {
+          for (var e, t = 0; t < u.length; t++) {
+            for (var r = u[t], n = !0, l = 1; l < r.length; l++) {
+              var a = r[l];
+              0 !== o[a] && (n = !1)
+            }
+            n && (u.splice(t--, 1), e = i(i.s = r[0]))
+          }
+          return e
+        }
+        var n = {},
+        o = {
+          1 : 0
+        },
+        u = [];
+        function i(t) {
+          if (n[t]) return n[t].exports;
+          var r = n[t] = {
+            i: t,
+            l: !1,
+            exports: {}
+          };
+          return e[t].call(r.exports, r, r.exports, i),
+          r.l = !0,
+          r.exports
+        }
+        i.m = e,
+        i.c = n,
+        i.d = function(e, t, r) {
+          i.o(e, t) || Object.defineProperty(e, t, {
+            enumerable: !0,
+            get: r
+          })
+        },
+        i.r = function(e) {
+          "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, {
+            value: "Module"
+          }),
+          Object.defineProperty(e, "__esModule", {
+            value: !0
+          })
+        },
+        i.t = function(e, t) {
+          if (1 & t && (e = i(e)), 8 & t) return e;
+          if (4 & t && "object" == typeof e && e && e.__esModule) return e;
+          var r = Object.create(null);
+          if (i.r(r), Object.defineProperty(r, "default", {
+            enumerable: !0,
+            value: e
+          }), 2 & t && "string" != typeof e) for (var n in e) i.d(r, n,
+          function(t) {
+            return e[t]
+          }.bind(null, n));
+          return r
+        },
+        i.n = function(e) {
+          var t = e && e.__esModule ?
+          function() {
+            return e.
+          default
+          }:
+          function() {
+            return e
+          };
+          return i.d(t, "a", t),
+          t
+        },
+        i.o = function(e, t) {
+          return Object.prototype.hasOwnProperty.call(e, t)
+        },
+        i.p = "/KLineChart/";
+        var l = this.webpackJsonpklinechartwebsite = this.webpackJsonpklinechartwebsite || [],
+        a = l.push.bind(l);
+        l.push = t,
+        l = l.slice();
+        for (var f = 0; f < l.length; f++) t(l[f]);
+        var c = a;
+        r()
+      } ([])
+      
+      
+      let temp_setInterval = setInterval(function () {
+        let q = document.querySelector(".version-container")
+        if(q.parentNode.removeChild(q)){
+          clearInterval(temp_setInterval)
+        }
+      }, 10)
+
+      
+      </script>
+    <script src="./assets/2.b7611daf.chunk.js">
+    </script>
+    <script src="./assets/main.ce6826c6.chunk.js">
+    </script>
+  </body>
+
+</html>
