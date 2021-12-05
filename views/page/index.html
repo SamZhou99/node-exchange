@@ -549,7 +549,7 @@
 				// 初始化
 				init() {
 					this.get('/api/startup', {}, (data) => {
-						this.statup = data.data
+						this.statup = data.data.currency
 						this.coinList()
 					})
 				}
