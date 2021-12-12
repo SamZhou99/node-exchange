@@ -1,6 +1,6 @@
 module.exports = {
     default: 'en',
-    domain:'temp02.go9488.cn',
+    domain:'127.0.0.1',
     copyright: 'Copyright © 2021 temp02.go9488.cn',   // 版权 域名要 改
     list: {
         en: {
