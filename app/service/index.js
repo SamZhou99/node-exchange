@@ -575,13 +575,14 @@ let service = {
             let res = await db.Query('SELECT * FROM platform_currency ORDER BY id DESC LIMIT 1')
             return res.length > 0 ? res[0] : null
         },
-        async update(icon, symbol, name, value, withdraw_charges, usdt_exchange, eth_exchange, btc_exchange, start_time, end_time, id = 1) {
+        async update(icon, symbol, name, value, sort, withdraw_charges, usdt_exchange, eth_exchange, btc_exchange, start_time, end_time, id = 1) {
             let update_datetime = utils99.Time()
             let res = await db.Query(`UPDATE platform_currency SET 
             icon=?,
             symbol=?,
             name=?,
             value=?,
+            sort=?,
             withdraw_charges=?,
             usdt_exchange=?,
             eth_exchange=?,
@@ -589,7 +590,7 @@ let service = {
             start_time=?,
             end_time=?,
             update_datetime=?
-             WHERE id=?`, [icon, symbol, name, value, withdraw_charges, usdt_exchange, eth_exchange, btc_exchange, start_time, end_time, update_datetime, id])
+             WHERE id=?`, [icon, symbol, name, value, sort, withdraw_charges, usdt_exchange, eth_exchange, btc_exchange, start_time, end_time, update_datetime, id])
             return res
         },
     },

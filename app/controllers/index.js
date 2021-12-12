@@ -398,7 +398,7 @@ let __this = {
                     },
                     async updateStartupJson(ctx) {
                         let form = ctx.request.body
-                        let res = await service.currency.update(form.icon, form.symbol, form.name, form.value, form.withdraw_charges, form.usdt_exchange, form.eth_exchange, form.btc_exchange, form.start_time, form.end_time, form.id)
+                        let res = await service.currency.update(form.icon, form.symbol, form.name, form.value, form.sort, form.withdraw_charges, form.usdt_exchange, form.eth_exchange, form.btc_exchange, form.start_time, form.end_time, form.id)
                         ctx.body = { flag: 'ok', data: res }
                     },
                     async manualAddScoreJson(ctx) {
