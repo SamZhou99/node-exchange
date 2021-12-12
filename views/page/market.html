@@ -408,7 +408,7 @@
                             priceUsd: 56421.09,
                             rank: 1,
                             supply: 3148153,
-                            symbol: _t.statup.name,
+                            symbol: _t.statup.symbol,
                             volumeUsd24Hr: 4456985117.36,
                             vwapUsd24Hr: 57459.97,
                         }
@@ -428,7 +428,7 @@
                     }
                 },
                 initWS() {
-                    let ws = new WebSocket('ws://127.0.0.1:3031/coin-list')
+                    let ws = new WebSocket('ws://{{lang.domain}}:3031/coin-list')
                     ws.onopen = () => {
                         console.log('websocket init ...')
                     };

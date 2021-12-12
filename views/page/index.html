@@ -520,6 +520,7 @@
 						item.node.symbol = item.symbol
 						item.node.id = item.name.toLocaleLowerCase()
 					})
+					console.log('这里这里', this.statup.sort)
 					a.splice(this.statup.sort, 0, {
 						node:
 						{
@@ -550,7 +551,7 @@
 					}
 				},
 				initWS() {
-					let ws = new WebSocket('ws://127.0.0.1:3031/coin-list')
+					let ws = new WebSocket('ws://{{lang.domain}}:3031/coin-list')
 					ws.onopen = () => {
 						console.log('websocket init ...')
 					};
