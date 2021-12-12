@@ -47,13 +47,19 @@
 
                         <form class="form-horizontal">
                             <div class="form-group">
-                                <label class="col-md-2 control-label">名称</label>
+                                <label class="col-md-2 control-label">(一般是大写如：BTC) 标志</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.symbol" class="form-control" value="" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">(一般首字母大写如：Bitcoin) 名称</label>
                                 <div class="col-md-10">
                                     <input v-model="form.name" class="form-control" value="" type="text">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-2 control-label">图标</label>
+                                <label class="col-md-2 control-label"><img :src="form.icon" alt="" width="32"> 图标</label>
                                 <div class="col-md-10">
                                     <input v-model="form.icon" class="form-control" value="" type="text">
                                 </div>
@@ -65,49 +71,55 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="col-md-2 control-label">(BTC,ETH汇率根据USDT来换算) USDT兑换比例</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.usdt_exchange" class="form-control" value="" type="text">
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-md-2 control-label">提现手续费</label>
                                 <div class="col-md-10">
                                     <input v-model="form.withdraw_charges" class="form-control" value="" type="text">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-2 control-label">USDT兑换比例</label>
+                                <label class="col-md-2 control-label">(0是放在最后) 位置排序</label>
                                 <div class="col-md-10">
-                                    <input v-model="form.usdt_exchange" class="form-control" value="" type="text">
+                                    <input v-model="form.sort" class="form-control" value="" type="text">
                                 </div>
                             </div>
+                            <!-- 
                             <div class="form-group">
-                                <label class="col-md-2 control-label">ETH兑换比例</label>
-                                <div class="col-md-10">
-                                    <input v-model="form.eth_exchange" class="form-control" value="" type="text">
-                                </div>
+                            <label class="col-md-2 control-label">ETH兑换比例</label>
+                            <div class="col-md-10">
+                            <input v-model="form.eth_exchange" class="form-control" value="" type="text">
                             </div>
+                            </div> 
+
                             <div class="form-group">
-                                <label class="col-md-2 control-label">BTC兑换比例</label>
-                                <div class="col-md-10">
-                                    <input v-model="form.btc_exchange" class="form-control" value="" type="text">
-                                </div>
+                            <label class="col-md-2 control-label">BTC兑换比例</label>
+                            <div class="col-md-10">
+                            <input v-model="form.btc_exchange" class="form-control" value="" type="text">
                             </div>
+                            </div>
+                            -->
                             <div class="form-group">
                                 <label class="col-md-2 control-label">开始发售时间</label>
                                 <div class="col-md-10">
-                                    <input v-model="form.start_time" class="form-control"
-                                        placeholder="YYYY-MM-DD 00:00:00" type="text">
+                                    <input v-model="form.start_time" class="form-control" placeholder="YYYY-MM-DD 00:00:00" type="text">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-md-2 control-label">结束发售时间</label>
                                 <div class="col-md-10">
-                                    <input v-model="form.end_time" class="form-control"
-                                        placeholder="YYYY-MM-DD 00:00:00" type="text">
+                                    <input v-model="form.end_time" class="form-control" placeholder="YYYY-MM-DD 00:00:00" type="text">
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-2 control-label">提交数据</label>
+                                <label class="col-md-2 control-label"> </label>
                                 <div class="col-md-10">
-                                    <button :disabled="this.loading" @click="onClickSubmit()" type="button"
-                                        class="btn btn-primary col-md-1">Submit</button>
+                                    <button :disabled="this.loading" @click="onClickSubmit()" type="button" class="btn btn-primary col-md-1">Submit</button>
                                 </div>
                             </div>
 
@@ -152,12 +164,14 @@
                 form: {
                     id: 0,
                     icon: '',
+                    symbol: '',
                     name: '',
                     value: '',
+                    sort: '',
                     withdraw_charges: '',
                     usdt_exchange: '',
-                    eth_exchange: '',
-                    btc_exchange: '',
+                    // eth_exchange: '',
+                    // btc_exchange: '',
                     start_time: '',
                     end_time: ''
                 }

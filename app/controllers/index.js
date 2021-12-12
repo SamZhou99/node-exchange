@@ -48,19 +48,28 @@ let __this = {
         },
         // 市场
         async market(ctx) {
-            let tag = ctx.params.tag
-            console.log('货币标签 如 btc_usdt    : ', tag)
+            let query = ctx.request.query
+            console.log('货币标签 如 btc_usdt    : ', query)
+            ctx.data.query = query
             await ctx.render('page/market', ctx.data)
         },
         // 语言
         async language(ctx) {
             let defLang = ctx.params.lang
+            if (!lang.list[defLang]) {
+                ctx.redirect(`/`);
+                return
+            }
             ctx.cookies.set('lang', defLang, {
                 // 有效时长999天
                 maxAge: 1000 * 60 * 60 * 24 * 999,
                 httpOnly: true,
                 overwrite: false
             });
+            if (!ctx.request.headers.referer) {
+                ctx.redirect(`/`);
+                return
+            }
             ctx.redirect(`${ctx.request.headers.referer}`);
         },
         // 注册
@@ -206,8 +215,35 @@ let __this = {
                 async startup(ctx) {
                     let form = ctx.request.body
                     let user_id = ctx.session.user.id
-                    ctx.body = { flag: 'ok', data: { form, user_id } }
+                    let coin_amount = form.coin_amount
+                    let coin_price = form.coin_price
+                    let coin_type = form.coin_type
+                    let target_amount = form.target_amount
+
+                    let user = await service.user.oneById(user_id)
+                    let user_balance = user[coin_type]
+                    if (!user_balance) {
+                        // 错误的币种
+                        ctx.body = { flag: `wrong ${coin_type}.` }
+                        return
+                    }
+                    if (user_balance < coin_amount) {
+                        // 余额不足
+                        ctx.body = { flag: `${coin_type}:not sufficient funds.` }
+                        return
+                    }
+
+                    
+                    let res = await service.user.buyLog(user_balance, user_id, coin_amount, coin_price, coin_type, target_amount)
+                    ctx.body = { flag: 'ok', data: { form, user_id, res } }
                 },
+            },
+            //我的钱包
+            async walletJson(ctx) {
+                let user_id = ctx.session['user'].id
+                let user = await service.user.oneById(user_id)
+                let userDetailInfo = await service.user.userDetailInfo(user)
+                ctx.body = { flag: 'ok', data: { user_id, user } }
             },
             // 获取系统绑定的钱包地址
             async walletAddressJson(ctx) {
@@ -252,6 +288,18 @@ let __this = {
                     user.wallet = await service.user.userDetailInfo(user)
                 }
                 ctx.body = { flag: 'ok', data: { user, currency } }
+            },
+            // K线图数据
+            async kline(ctx) {
+                let query = ctx.request.query
+                let kline = await service.kline.get(symbol = query.symbol || 'btcusdt', period = query.period || '1day', size = query.size || '500')
+                ctx.body = { flag: 'ok', data: kline }
+            },
+            // BTC ETH 实时价
+            async pricesAssets(ctx) {
+                let query = ctx.request.query
+                let data = await service.pricesAssets.get('coincap-prices-assets')
+                ctx.body = { flag: 'ok', data }
             },
         },
 
@@ -350,7 +398,7 @@ let __this = {
                     },
                     async updateStartupJson(ctx) {
                         let form = ctx.request.body
-                        let res = await service.currency.update(form.icon, form.name, form.value, form.withdraw_charges, form.usdt_exchange, form.eth_exchange, form.btc_exchange, form.start_time, form.end_time, form.id)
+                        let res = await service.currency.update(form.icon, form.symbol, form.name, form.value, form.withdraw_charges, form.usdt_exchange, form.eth_exchange, form.btc_exchange, form.start_time, form.end_time, form.id)
                         ctx.body = { flag: 'ok', data: res }
                     },
                     async manualAddScoreJson(ctx) {

@@ -24,7 +24,7 @@ router.get('/logout', middleware.commmonData, controllers.logout.page)
 
 
 // 市场行情
-router.get('/market/:tag', middleware.commmonData, controllers.market)
+router.get('/market', middleware.commmonData, controllers.market)
 // 币币交易
 router.get('/exchange', middleware.commmonData, controllers.exchange)
 // 首发项目
@@ -69,7 +69,9 @@ router.get('/me/withdraw', middleware.checkLogin, controllers.me.withdraw)
 // router.get('/me/security', middleware.checkLogin, controllers.index)
 
 
-// API
+// Me API
+// 我的钱包列表
+router.get('/api/wallet', middleware.checkLogin, controllers.api.walletJson)
 // 钱包地址，交易记录
 router.get('/api/wallet-address/:wallet_address', middleware.checkLogin, controllers.api.walletAddressJson)
 // 邀请列表
@@ -81,11 +83,17 @@ router.get('/api/invite-trade-list/:user_id', middleware.checkLogin, controllers
 // 首发项目
 router.get('/api/startup', middleware.commmonData, controllers.api.startup)
 router.post('/api/startup', middleware.checkLogin, controllers.api.post.startup)
-
-
+// KLineChart
+router.get('/api/kline', middleware.commmonData, controllers.api.kline)
+// prices-assets
+router.get('/api/prices-assets', middleware.commmonData, controllers.api.pricesAssets)
 
 // // 用户列表
 // router.get('/api/user-list', middleware.checkLogin, controllers.api.userListJson)
+
+
+
+
 
 
 // 管理首页

@@ -12,13 +12,13 @@ async function truncateTable() {
     await db.Query('TRUNCATE `user`')
     await db.Query('TRUNCATE `user_category`')
     await db.Query('TRUNCATE `login_log`')
-    await db.Query('TRUNCATE `trade_log`')
+    await db.Query('TRUNCATE `recharge_log`')
     await db.Query('TRUNCATE `invite_code`')
     await db.Query('TRUNCATE `system_wallet`')
     await db.Query('TRUNCATE `page_view_log`')
-
-    await db.Query('TRUNCATE `user_wallet`')
-    await db.Query('TRUNCATE `user_wallet_log`')
+    await db.Query('TRUNCATE `platform_currency`')
+    // 删减后没有初始化
+    await db.Query('TRUNCATE `platform_currency_buy_log`')
 }
 
 async function initUserCategory() {
@@ -85,11 +85,16 @@ async function importCSV() {
     return results
 }
 
+async function initPlatformCurrency() {
+    await db.Query("INSERT INTO `platform_currency` VALUES ('1', 'https://uploadfile.huiyi8.com/up/3e/d1/3e/3ed13e27028c0dfca77505ef22884414.png', 'LETH', 'Leth', '999999999', '0', '0.00010000', '2.00000000', '4.00000000', '8.00000000', '2021-12-01 23:59:59', '2022-01-01 23:59:59', '2021-12-01 16:55:31', '2021-12-11 00:58:30');")
+}
+
 async function init() {
     await truncateTable()
     await initUserCategory()
     let res = await importCSV()
     await initUser()
+    await initPlatformCurrency()
     console.log('over', res)
 }
 

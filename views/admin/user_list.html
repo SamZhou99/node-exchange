@@ -52,7 +52,7 @@
                                         <th>用户类型</th>
                                         <th>邀请码</th>
                                         <th>邀请人(上级)</th>
-                                        <th>平台币</th>
+                                        <th>平台币({[this.platform_currency.symbol]})</th>
                                         <th>USDT-RTC20</th>
                                         <th>ETH</th>
                                         <th>BTC</th>
@@ -77,44 +77,37 @@
                                         <td>
                                             地址：-
                                             <br>
-                                            数量：-
+                                            数量：<span v-if="item.platform_currency_buy_total > 0" class="badge badge-success" style="background-color:#6fa30f;">{[item.platform_currency_buy_total]}</span>
                                         </td>
                                         <td>
-                                            地址：<a
-                                                :href="'https://usdt.tokenview.com/cn/address/'+item.wallet[0].wallet_address"
-                                                target="_blank">{[item.wallet[0].wallet_address]}</a>
+                                            地址：<a :href="'https://usdt.tokenview.com/cn/address/'+item.wallet[0].wallet_address" target="_blank">{[item.wallet[0].wallet_address]}</a>
                                             <br>
-                                            数量：<span v-if="item.wallet[0].tradeTotal > 0" class="badge badge-success" style="background-color:#c02424;">{[item.wallet[0].tradeTotal/1000000]}</span>
+                                            数量：<span v-if="item.usdt_trc20 > 0" class="badge badge-success" style="background-color:#c02424;">{[item.usdt_trc20]}</span>
                                         </td>
                                         <td>
-                                            地址：<a :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address"
-                                                target="_blank">{[item.wallet[1].wallet_address]}</a>
+                                            地址：<a :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address" target="_blank">{[item.wallet[1].wallet_address]}</a>
                                             <br>
-                                            数量：<span v-if="item.wallet[1].tradeTotal > 0" class="badge badge-success" style="background-color:#c02424;">{[item.wallet[1].tradeTotal/1000000]}</span>
+                                            数量：<span v-if="item.eth > 0" class="badge badge-success" style="background-color:#c02424;">{[item.eth]}</span>
                                         </td>
                                         <td>
-                                            地址：<a
-                                                :href="'https://www.btc.com/btc/address/'+item.wallet[2].wallet_address"
-                                                target="_blank">{[item.wallet[2].wallet_address]}</a>
+                                            地址：<a :href="'https://www.btc.com/btc/address/'+item.wallet[2].wallet_address" target="_blank">{[item.wallet[2].wallet_address]}</a>
                                             <br>
-                                            数量：<span v-if="item.wallet[2].tradeTotal > 0" class="badge badge-success" style="background-color:#c02424;">{[item.wallet[2].tradeTotal/1000000]}</span>
+                                            数量：<span v-if="item.btc > 0" class="badge badge-success" style="background-color:#c02424;">{[item.btc]}</span>
                                         </td>
 
 
                                         <td>
                                             <span v-if="!!item.status">
-                                                <button @click="onClickStatus(item)" class="btn btn-success"> <i
-                                                        class="fa fa-check"></i> </button>
+                                                <button @click="onClickStatus(item)" class="btn btn-success"> <i class="fa fa-check"></i> </button>
                                             </span>
                                             <span v-else>
-                                                <button @click="onClickStatus(item)" class="btn btn-danger"> <i
-                                                        class="fa fa-remove"></i> </button>
+                                                <button @click="onClickStatus(item)" class="btn btn-danger"> <i class="fa fa-remove"></i> </button>
                                             </span>
                                         </td>
                                         <td>
-                                            <button @click="onRefreshWalletAddress(item.wallet[0].wallet_address)"
-                                                :disabled="refreshButtonStatus" class="btn"><i
-                                                    class="fa fa-refresh"></i></button>
+                                            <button @click="onRefreshWalletAddress(item.wallet[0].wallet_address)" :disabled="refreshButtonStatus" class="btn">
+                                                <i class="fa fa-refresh"></i>
+                                            </button>
                                             <button class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>
                                         </td>
                                     </tr>
@@ -157,7 +150,8 @@
                 loading: false,
                 list: [],
                 refreshButtonStatus: false,
-                categoryList: []
+                categoryList: [],
+                platform_currency: {}
             },
             methods: {
                 onClickStatus(item) {
@@ -268,6 +262,10 @@
                         console.log(a)
                         this.list = a
                         this.getcCategory()
+                    })
+
+                    this.get('/api/startup', {}, (data) => {
+                        this.platform_currency = data.data.currency
                     })
                 }
             },

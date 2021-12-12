@@ -7,6 +7,25 @@
     <link href="/admin-assets/plugins/datatables/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
     <link href="/admin-assets/plugins/datatables/css/jquery.dataTables-custom.css" rel="stylesheet" type="text/css" />
     <!-- END PAGE LEVEL STYLES -->
+    <style>
+        * {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .usdt-trc20 {
+            background-color: #Fff;
+        }
+
+        .eth {
+            background-color: rgb(232, 255, 241);
+        }
+
+        .btc {
+            background-color: rgb(253, 238, 238);
+        }
+    </style>
 </head>
 
 <body class="sticky-header">
@@ -49,22 +68,24 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>数额(usdt)</th>
-                                        <th>区块高度</th>
+                                        <th>数额</th>
+                                        <th>类型</th>
+                                        <!-- <th>区块高度</th> -->
                                         <th>哈希</th>
-                                        <th>他人钱包地址</th>
+                                        <!-- <th>他人钱包地址</th> -->
                                         <th>系统钱包地址</th>
                                         <th>交易时间</th>
                                         <!-- <th>记录时间</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="item in this.list">
+                                    <tr v-for="item in this.list" :class="item.type">
                                         <td>{[item.id]}</td>
-                                        <td>{[item.amount/1000000]}</td>
-                                        <td>{[item.block]}</td>
+                                        <td>{[item.amount]}</td>
+                                        <td>{[item.type]}</td>
+                                        <!-- <td>{[item.block]}</td> -->
                                         <td>{[item.hash]}</td>
-                                        <td><a :href="'https://usdt.tokenview.com/cn/address/'+item.owner_address" target="_blank">{[item.owner_address]}</td>
+                                        <!-- <td><a :href="'https://usdt.tokenview.com/cn/address/'+item.owner_address" target="_blank">{[item.owner_address]}</td> -->
                                         <td><a :href="'https://usdt.tokenview.com/cn/address/'+item.to_address" target="_blank">{[item.to_address]}</a></td>
                                         <td>{[item.time]}</td>
                                         <!-- <td>{[item.create_time]}</td> -->

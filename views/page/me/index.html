@@ -40,6 +40,18 @@
         .thead-dark>tr>th {
             font-size: 8px;
         }
+
+        .h5 {
+            color: rgb(90, 182, 90);
+        }
+
+        .h6 {
+            color: #999;
+        }
+
+        .bg-dark2 {
+            background-color: rgb(37, 46, 75);
+        }
     </style>
 </head>
 
@@ -72,7 +84,7 @@
                     {{include './_menu.html'}}
                 </div>
                 <div class="col-md-9 col-sm-12">
-                    <p>
+                    <!-- <p>
                     <h1>转入资产USDT</h1>
                     </p>
                     <p>
@@ -96,13 +108,62 @@
                     <p>
                     <div id="qrcode"></div>
                     </p>
-                    <p>单击二维码，保存二维码图片到本地。</p>
+                    <p>单击二维码，保存二维码图片到本地。</p> -->
+
+                    <div class="card mb-3 bg-dark2">
+                        <div class="row no-gutters">
+                            <div class="col-md-12">
+                                <div class="card-body">
+                                    <h3 class="card-title">BTC</h3>
+                                    <p class="card-text"><span class="h5">{[user.btc]} BTC</span><span class="h6"> ≈ {[usd.btc]} USD</span></p>
+                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3 bg-dark2">
+                        <div class="row no-gutters">
+                            <div class="col-md-12">
+                                <div class="card-body">
+                                    <h3 class="card-title">ETH</h3>
+                                    <p class="card-text"><span class="h5">{[user.eth]} ETH</span><span class="h6"> ≈ {[usd.eth]} USD</span></p>
+                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3 bg-dark2">
+                        <div class="row no-gutters">
+                            <div class="col-md-12">
+                                <div class="card-body">
+                                    <h3 class="card-title">USDT-TRC20</h3>
+                                    <p class="card-text"><span class="h5">{[user.usdt_trc20]} USDT-TRC20</span><span class="h6"> ≈ {[usd.usdt_trc20]} USD</span></p>
+                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3 bg-dark2">
+                        <div class="row no-gutters">
+                            <div class="col-md-12">
+                                <div class="card-body">
+                                    <h3 class="card-title">{[currency.symbol]}</h3>
+                                    <p class="card-text"><span class="h5">{[user.platform_currency_buy_total]} {[currency.symbol]}</span><span class="h6"> ≈ {[usd.platform_currency]} USD</span></p>
+                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
 
 
-        <div class="container">
+        <!-- <div class="container">
             <div class="row">
                 <div v-if="this.loading" class="row">
                     <div class="col">Loading...</div>
@@ -129,7 +190,7 @@
                 </div>
 
             </div>
-        </div>
+        </div> -->
     </div>
 
     <script>
@@ -142,6 +203,15 @@
                 readOnly: 'readOnly',
                 wallet_address: '{{wallet_address}}',
                 list: [],
+
+                currency: {},
+                user: {},
+                usd: {
+                    btc: 0,
+                    eth: 0,
+                    usdt_trc20: 0,
+                    platform_currency: 0,
+                },
             },
             methods: {
                 onClickCopyText(e) {
@@ -214,16 +284,28 @@
                 init() {
                     jQuery('#qrcode').qrcode({ width: 128, height: 128, text: this.wallet_address })
 
-                    // 
+                    // 二维码
                     $('#qrcode > canvas').on('click', () => {
                         this.downloadCanvasImamge('canvas', '二维码-' + this.wallet_address + '.png')
                     })
 
-                    this.getWallet()
-                    setInterval(() => {
-                        this.getWallet()
-                    }, 1000 * 60 * 5)
+                    // this.getWallet()
+                    // setInterval(() => {
+                    //     this.getWallet()
+                    // }, 1000 * 60 * 5)
 
+                    this.get('/api/startup', {}, (data) => {
+                        this.currency = data.data.currency
+                        this.user = data.data.user
+
+                        this.get('/api/prices-assets', {}, (data) => {
+                            let o = JSON.parse(data.data.value)
+                            this.usd.btc = o.bitcoin * this.user.btc
+                            this.usd.eth = o.ethereum * this.user.eth
+                            this.usd.usdt_trc20 = this.user.usdt_trc20
+                            this.usd.platform_currency = this.user.platform_currency_buy_total * 1.1
+                        })
+                    })
                 }
             },
             mounted() {

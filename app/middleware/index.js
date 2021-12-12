@@ -60,6 +60,7 @@ let middleware = {
         // cookie里有设置过，就用cookie里的。没有就使用默认配置
         shareLanguageData(ctx)
         checkSessionLogin(ctx)
+        shareSessionData(ctx)
         await pageViewLog(ctx)
         await next()
     },

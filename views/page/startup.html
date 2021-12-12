@@ -284,7 +284,7 @@
                     <div class="modal-body">
                         <div class="form-row">
                             <div class="col-md-8" style="margin-top: 8px;">可用余额：<span
-                                    style="color:#cc3333;">{[this.balance.curr_balance]}</span>
+                                    style="color:#cc3333;">{[this.balance.curr_balance]} {[coinType]}</span>
                             </div>
                             <div class="col-md-auto ml-auto text-right">
                                 <div @click="onClickAllIn()" class="btn btn-link">全部</div>
@@ -292,15 +292,29 @@
                         </div>
                         <form>
                             <div class="form-group">
-                                <label for="coin_txt" class="col-form-label">{[coinType]}:</label>
-                                <input type="text" class="form-control" id="coin_txt" v-model="form.coin" value="">
-                                <input type="hidden" class="form-control" :value="this.form.type">
+                                <!-- <form> -->
+                                <div class="form-row">
+                                    <div class="col-md-5 mb-5 text-right">
+                                        <label for="coin_txt" class="col-form-label text-right">{[coinType]}</label>
+                                        <input id="coin_txt" v-model="form.coin_amount" type="text" class="form-control text-right">
+                                    </div>
+                                    <div class="col-md-1 mb-1 text-center">
+                                        <label class="col-form-label">=></label>
+                                        <label class="col-form-label">≈</label>
+                                    </div>
+                                    <div class="col">
+                                        <label class="col-form-label" for="target_coin">{[platform_currency.symbol]}</label>
+                                        <input id="target_coin" :value="(this.exchange/1)*this.form.coin_amount" type="text" class="form-control" readonly="readonly">
+                                    </div>
+                                </div>
+                                <input type="hidden" class="form-control" :value="this.form.coin_type">
+                                <!-- </form> -->
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer text-center">
                         <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-                        <button @click="onClickEnter()" type="button" class="btn btn-primary btn-block">参与</button>
+                        <button @click="onClickEnter()" :disabled="this.loading" type="button" class="btn btn-primary btn-block">参与</button>
                     </div>
                 </div>
             </div>
@@ -326,11 +340,13 @@
                 temp_setInterval: null,
                 alertObj: JSON.parse('{{lang.list[defLang].page.login.alert}}'.replace(/&#34;/g, '"')),
                 coinType: 'usdt',
+                exchange: 0,
                 endTime: '0天 0时 0分 0秒',
                 disable: true,
                 platform_currency: {
                     name: '',
                     value: 0,
+                    usdt: 0,
                     withdraw_charges: 0,
                     usdt_exchange: 0,
                     eth_exchange: 0,
@@ -346,8 +362,10 @@
                     curr_balance: 0
                 },
                 form: {
-                    type: 'usdt',
-                    coin: 0
+                    target_amount: 0,
+                    coin_price: 0,
+                    coin_amount: 0,
+                    coin_type: 'usdt',
                 }
             },
             methods: {
@@ -356,26 +374,48 @@
                         document.location.href = '/login'
                         return
                     }
-                    this.form.coin = 0
-                    this.form.type = type
+
                     this.coinType = type
+                    this.exchange = this.platform_currency[type.toLocaleLowerCase() + '_exchange']
                     this.balance.curr_balance = this.balance[this.coinType]
+
+                    this.form.coin_type = type
+                    this.form.coin_amount = 0
+                    this.form.coin_price = 0
+                    this.form.target_amount = 0
+
                     $('#participate').modal("show");
                 },
                 onClickEnter() {
-                    // console.log('提交后台...')
+                    this.form.coin_price = this.exchange
+                    this.form.target_amount = $('#target_coin').val()
+                    this.form.coin_type = this.form.coin_type.toLocaleLowerCase()
+                    if (this.form.coin_type == "usdt") {
+                        this.form.coin_type = 'usdt_trc20'
+                    }
+
+                    console.log('提交后台...')
                     console.log(this.form)
-                    if(this.form.coin <= 0){
+
+                    if (this.form.target_amount <= 0) {
                         alert('The purchase amount cannot be less than or equal to zero!')
                         return
                     }
+
+                    this.loading = true
                     this.post('/api/startup', this.form, (data) => {
-                        console.log(data)
+                        this.loading = false
+                        if (data.flag != 'ok') {
+                            alert(data.flag)
+                        } else {
+                            alert('purchase succeeded!')
+                            document.location.reload()
+                        }
                     })
                 },
                 onClickAllIn() {
-                    this.form.type = this.coinType
-                    this.form.coin = this.balance.curr_balance
+                    this.form.coin_type = this.coinType
+                    this.form.coin_amount = this.balance.curr_balance
                 },
                 zero(n) {
                     return n < 10 ? '0' + n : n
@@ -429,18 +469,40 @@
                     })
                 },
 
+                getPrice() {
+                    this.get('/api/prices-assets', {}, (data) => {
+                        let p = JSON.parse(data.data.value)
+                        console.log('pppppppppppppppppppppppppppppppppppppppppppp')
+                        console.log(p)
+                        this.platform_currency.eth_exchange = this.platform_currency.usdt_exchange * p.ethereum
+                        this.platform_currency.btc_exchange = this.platform_currency.usdt_exchange * p.bitcoin
+                    })
+                },
+
                 // 初始化
                 init() {
                     this.get('/api/startup', {}, (data) => {
                         if (this.is_login == 'true') {
-                            this.balance.USDT = data.data.user.wallet[0].tradeTotal
-                            this.balance.ETH = data.data.user.wallet[1].tradeTotal
-                            this.balance.BTC = data.data.user.wallet[2].tradeTotal
+                            this.balance.USDT = data.data.user['usdt_trc20']
+                            this.balance.ETH = data.data.user['eth']
+                            this.balance.BTC = data.data.user['btc']
                         }
+
                         this.platform_currency = data.data.currency
+
+                        this.platform_currency.usdt_exchange = data.data.currency.usdt_exchange
+                        this.platform_currency.eth_exchange = 0
+                        this.platform_currency.btc_exchange = 0
+
                         this.platform_currency.start_time = moment(this.platform_currency.start_time).format('YYYY-MM-DD HH:mm:ss')
                         this.platform_currency.end_time = moment(this.platform_currency.end_time).format('YYYY-MM-DD HH:mm:ss')
                         this.updateTime()
+
+
+                        this.getPrice()
+                        setInterval(() => {
+                            this.getPrice()
+                        }, 1000 * 60)
                     })
 
                 }
