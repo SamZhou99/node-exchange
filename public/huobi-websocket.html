@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>火币API测试</title>
+    <script src="/default/js/vue.js"></script>
+    <script src="/pako.min.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <div>
+            <button @click="onClickInit()">初始化</button>
+            <button @click="onClickEnter()">{[this.button_label]}</button>
+            <button @click="onClickClose()">断开</button>
+        </div>
+    </div>
+
+    <div>
+        <script>
+            let market = {
+                ticker: {
+                    "sub": "market.btcusdt.ticker"
+                }
+            }
+            let app = new Vue({
+                delimiters: ["{[", "]}"],
+                el: '#app',
+                data: {
+                    loading: false,
+                    starting: false,
+                    button_label: '-',
+                    websocket: null,
+                    index: 0,
+                },
+                methods: {
+                    onClickInit() {
+                        this.initWebSocket()
+                    },
+                    onClickEnter() {
+                        let socket = this.websocket;
+                        socket.send(JSON.stringify(market.ticker))
+                    },
+                    onClickClose(){
+                        this.websocket.close()
+                    },
+                    initWebSocket() {
+                        this.button_label = '开始联机...'
+                        const socket = this.websocket = new WebSocket("wss://api.huobi.pro/ws");
+                        // const socket = this.websocket = new WebSocket("wss://api-aws.huobi.pro/ws");
+                        // const socket = this.websocket = new WebSocket("wss://api.hadax.com/ws");
+                        socket.onopen = () => {
+                            console.log('websocket init ...')
+                            this.button_label = '联机成功...'
+                        };
+                        socket.onclose = () => {
+                            this.button_label = '联机断开...'
+                        }
+                        socket.onmessage = (event) => {
+                            this.button_label = '接收消息...' + this.index
+                            this.index++
+
+                            const fr = new FileReader();
+                            fr.onload = function () {
+                                let data = pako.ungzip(new Uint8Array(fr.result), { to: 'string' })
+                                data = JSON.parse(data)
+                                if (data.ping) {
+                                    socket.send(JSON.stringify({ pong: data.ping }))
+                                } else if (data.ch == 'market.btcusdt.ticker') {
+                                    console.log(data)
+                                }else {
+                                    console.log(data)
+                                }
+                            }
+                            fr.readAsArrayBuffer(event.data);
+                        }
+                    },
+                    post(url, params, callback) {
+                        this.loading = true;
+                        $.post(url, params, res => {
+                            this.loading = false;
+                            callback(res);
+                        })
+                    },
+                    get(url, params, callback) {
+                        this.loading = true;
+                        $.ajax({
+                            'url': url,
+                            'type': 'GET',
+                            'dataType': 'json',
+                            'data': params,
+                            'success': res => {
+                                this.loading = false;
+                                callback(res);
+                            },
+                            'error': err => {
+                                this.loading = false;
+                                console.log(err);
+                                alert(err.statusText);
+                            }
+                        })
+                    },
+                    init() {
+                        // this.onClickInit()
+                    }
+                },
+                mounted() {
+                    this.init();
+                }
+            });
+
+        </script>
+    </div>
+</body>
+
+</html>

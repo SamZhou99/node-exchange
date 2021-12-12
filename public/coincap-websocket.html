@@ -331,6 +331,47 @@
                         }
                     })
                 },
+				// coinList() {
+				// 	let _t = this
+				// 	fetch('https://graphql.coincap.io/', {
+				// 		method: 'POST',
+				// 		headers: {
+				// 			"content-type": "application/json"
+				// 		},
+				// 		body: JSON.stringify({ "variables": { "direction": "ASC", "first": 20, "sort": "rank" }, "query": "query ($after: String, $before: String, $direction: SortDirection, $first: Int, $last: Int, $sort: AssetSortInput) {\n  assets(\n    after: $after\n    before: $before\n    direction: $direction\n    first: $first\n    last: $last\n    sort: $sort\n  ) {\n    pageInfo {\n      startCursor\n      endCursor\n      hasNextPage\n      hasPreviousPage\n      __typename\n    }\n    edges {\n      cursor\n      node {\n        changePercent24Hr\n        name\n        id\n        logo\n        marketCapUsd\n        priceUsd\n        rank\n        supply\n        symbol\n        volumeUsd24Hr\n        vwapUsd24Hr\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n" })
+				// 	})
+				// 		.then(response => response.json())
+				// 		.then(data => {
+				// 			console.log(data)
+				// 			let a = data.data.assets.edges
+				// 			a.forEach(function (item) {
+				// 				item.node.logo = `https://assets.coincap.io/assets/icons/${item.node.logo}@2x.png`
+				// 				item.node.priceUsd = _t.round(item.node.priceUsd, 2)
+				// 				item.node.marketCapUsd = _t.lessen(item.node.marketCapUsd, 12, 2)
+				// 				item.node.vwapUsd24Hr = _t.round(item.node.vwapUsd24Hr, 2)
+				// 				item.node.supply = _t.lessen(item.node.supply, 6, 2)
+				// 				item.node.volumeUsd24Hr = _t.lessen(item.node.volumeUsd24Hr, 9, 2)
+				// 				item.node.changePercent24Hr = _t.round(item.node.changePercent24Hr, 2)
+				// 			})
+				// 			a.splice(4, 0, {
+				// 				node:
+				// 				{
+				// 					changePercent24Hr: - 2.39,
+				// 					id: "bitcoin",
+				// 					logo: _t.statup.icon,
+				// 					marketCapUsd: 88811108158.73,
+				// 					name: _t.statup.name,
+				// 					priceUsd: 56421.09,
+				// 					rank: 1,
+				// 					supply: 3148153,
+				// 					symbol: _t.statup.name,
+				// 					volumeUsd24Hr: 4456985117.36,
+				// 					vwapUsd24Hr: 57459.97,
+				// 				}
+				// 			})
+				// 			this.list = a
+				// 		});
+				// },
                 coinList() {
                     let _this = this
                     fetch('https://graphql.coincap.io/', {

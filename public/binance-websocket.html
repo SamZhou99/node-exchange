@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>币安API测试</title>
+    <script src="/default/js/vue.js"></script>
+</head>
+
+<body>
+
+    <div id="app">
+        <div>
+            <button @click="onClickEnter()">{[this.button_label]}</button>
+        </div>
+    </div>
+
+    <div>
+        <script>
+            let app = new Vue({
+                delimiters: ["{[", "]}"],
+                el: '#app',
+                data: {
+                    loading: false,
+                    starting: false,
+                    button_label: '开始联机',
+                    websocket: null,
+                },
+                methods: {
+                    onClickEnter() {
+                        let socket = this.websocket;
+                        if (this.starting) {
+                            socket.close();
+                            this.starting = false;
+                        } else {
+                            // id: 1
+                            // method: "SUBSCRIBE"
+                            // params: ["!miniTicker@arr@3000ms"]
+                            let data = {
+                                "method": "SUBSCRIBE",
+                                "params":
+                                    [
+                                        // "btcusdt@aggTrade",
+                                        // "btcusdt@depth",
+                                        "btcusdt@kline_1m",
+                                    ],
+                                "id": 1
+                            }
+                            socket.send(JSON.stringify(data))
+                            this.starting = true
+                        }
+                    },
+                    initWebSocket() {
+                        const socket = this.websocket = new WebSocket("wss://stream.binance.com:9443/ws");
+                        socket.onopen = () => {
+                            console.log('websocket init ...')
+                            this.button_label = '联机成功...'
+                        };
+                        socket.onclose = () => {
+                            this.button_label = '联机断开...'
+                        }
+                        socket.onmessage = (event) => {
+                            let data = JSON.parse(event.data)
+                            console.log(data)
+                        }
+                    },
+                    post(url, params, callback) {
+                        this.loading = true;
+                        $.post(url, params, res => {
+                            this.loading = false;
+                            callback(res);
+                        })
+                    },
+                    get(url, params, callback) {
+                        this.loading = true;
+                        $.ajax({
+                            'url': url,
+                            'type': 'GET',
+                            'dataType': 'json',
+                            'data': params,
+                            'success': res => {
+                                this.loading = false;
+                                callback(res);
+                            },
+                            'error': err => {
+                                this.loading = false;
+                                console.log(err);
+                                alert(err.statusText);
+                            }
+                        })
+                    },
+                    init() {
+                        this.initWebSocket()
+                    }
+                },
+                mounted() {
+                    this.init();
+                }
+            });
+        </script>
+    </div>
+</body>
+
+</html>
