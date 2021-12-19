@@ -19,6 +19,7 @@ async function truncateTable() {
     await db.Query('TRUNCATE `platform_currency`')
     // 删减后没有初始化
     await db.Query('TRUNCATE `platform_currency_buy_log`')
+    await db.Query('TRUNCATE `user_authentication`')
 }
 
 async function initUserCategory() {

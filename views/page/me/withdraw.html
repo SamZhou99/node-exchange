@@ -26,23 +26,8 @@
     {{include '../_menu.html'}}
 
     <div id="app" class="container-fluid main-content p0">
-        <div class="container-fluid bg01">
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <h2 class="form-signin-heading">
-                            <img class="profilePicture" src="/images/profile01.png" alt="{{session.user.email}}">
-                            {{session.user.email}}
-                        </h2>
-                    </div>
-                    <div class="col-1 offset-6">
-                        <h2 class="form-signin-heading">
-                            <button class="btn btn-primary">充值</button>
-                        </h2>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {{include './_user_info.html'}}
+
 
 
         <div class="container">
@@ -51,11 +36,13 @@
                     {{include './_menu.html'}}
                 </div>
                 <div class="col-md-9 col-sm-12">
-                    
-                    请认证后，提交审核申请！
-                    <p>
-                        开发中...
-                    </p>
+
+                    <div v-if="status==3">
+                        通过审核
+                    </div>
+                    <div v-else="">
+                        请 <a href="/me/authentication">身份认证</a> 通过后，再回来提交提现申请！
+                    </div>
 
                 </div>
             </div>
@@ -64,6 +51,55 @@
     </div>
 
     {{include '../_footer.html'}}
+
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                id: '{{session.user.id}}',
+                loading: false,
+                status: ''
+            },
+            methods: {
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                init() {
+
+                    this.get('/api/authentication', {}, (data) => {
+                        if (data.flag != 'ok') {
+                            console.log(data.falg)
+                            return
+                        }
+                        this.status = data.data.status
+                    })
+
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+
+
 </body>
 
 </html>

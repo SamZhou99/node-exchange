@@ -1,7 +1,9 @@
 module.exports = {
     default: 'en',
-    domain:'127.0.0.1',
+    domain: '127.0.0.1',
     copyright: 'Copyright © 2021 temp02.go9488.cn',   // 版权 域名要 改
+    mail: 'admin@go9488.cn',
+    name: 'LETH',
     list: {
         en: {
             name: 'English',
@@ -206,6 +208,14 @@ module.exports = {
                         reg_success: '注册成功，请使用您的邮箱和密码登录验证。',
                         check_form_whole: '检查表单是否填写完整？'
                     }
+                },
+                auth: {
+                    note: `to do
+                    important note ：
+                    1. 请上传清晰的证件照片
+                    2. 图片支持JPG/PNG/JPEG格式，大小不超过1M
+                    3. 手持证件照通过标准，护照信息清晰，需包括“LETH”字样和当天日期
+                    4. 遇到问题联系客服 admin@go9488.cn`
                 }
             }
         },

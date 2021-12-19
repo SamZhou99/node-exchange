@@ -520,7 +520,6 @@
 						item.node.symbol = item.symbol
 						item.node.id = item.name.toLocaleLowerCase()
 					})
-					console.log('这里这里', this.statup.sort)
 					a.splice(this.statup.sort, 0, {
 						node:
 						{
@@ -544,7 +543,6 @@
 						let coin_value = data[coin_name]
 						this.list.forEach(function (item) {
 							if (coin_name == item.id) {
-								// item.node.volumeUsd24Hr = _t.lessen(coin_value, 9, 2)
 								item.node.volumeUsd24Hr = coin_value
 							}
 						})
@@ -560,18 +558,24 @@
 					}
 					ws.onmessage = (event) => {
 						let res = JSON.parse(event.data)
-						if (res.key == 'coincap-home-list') {
+						if (res.key == 'coincap-coin-list') {
 							this.coinList(JSON.parse(res.value))
 						} else {
 							this.coinListUpdate(res)
 						}
 					}
 				},
+				getList() {
+					this.get('/api/coincap-coin-list/caches', {}, (data) => {
+						this.coinList(data.data.value)
+					})
+				},
 				// 初始化
 				init() {
 					this.get('/api/startup', {}, (data) => {
 						this.statup = data.data.currency
-						this.initWS()
+						// this.initWS()
+						this.getList()
 					})
 				}
 			},

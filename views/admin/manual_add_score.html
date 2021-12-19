@@ -50,8 +50,7 @@
                             <div class="form-group">
                                 <label class="col-md-2 control-label">要上分的帐号</label>
                                 <div class="col-md-10">
-                                    <select @change="onChangeSelected" v-model="form.id" class="form-control" id="type"
-                                        name="type">
+                                    <select @change="onChangeSelected" v-model="form.id" class="form-control" id="type" name="type">
                                         <option disabled value="0">请选择</option>
                                         <option v-for="option in user_list" :value="option.id">帐号：{[option.account]},
                                             电话：{[option.mobile]}, 邮箱：{[option.email]}, 帐号类型：{[option.value]}
@@ -59,6 +58,7 @@
                                     </select>
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label class="col-md-2 control-label">USDT</label>
                                 <div class="col-md-10">
@@ -66,6 +66,7 @@
                                     系统钱包地址：{[form.usdt_wallet_address]}
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label class="col-md-2 control-label">ETH</label>
                                 <div class="col-md-10">
@@ -73,6 +74,7 @@
                                     系统钱包地址：{[form.eth_wallet_address]}
                                 </div>
                             </div>
+
                             <div class="form-group">
                                 <label class="col-md-2 control-label">BTC</label>
                                 <div class="col-md-10">
@@ -80,6 +82,14 @@
                                     系统钱包地址：{[form.btc_wallet_address]}
                                 </div>
                             </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">(平台币){[this.platform_currency.currency.symbol]}</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.platform_currency" class="form-control" value="" type="number" min="0">
+                                </div>
+                            </div>
+
                             <div class="form-group">
                                 <label class="col-md-2 control-label"></label>
                                 <div class="col-md-10">
@@ -87,8 +97,6 @@
                                         class="btn btn-primary col-md-1">Submit</button>
                                 </div>
                             </div>
-
-
 
                         </form>
 
@@ -137,7 +145,13 @@
                     btc: 0,
                     usdt_wallet_address: '-',
                     eth_wallet_address: '-',
-                    btc_wallet_address: '-'
+                    btc_wallet_address: '-',
+                    platform_currency: 0
+                },
+                platform_currency: {
+                    currency: {
+                        symbol: ''
+                    }
                 },
             },
             methods: {
@@ -146,17 +160,18 @@
                 },
                 onClickSubmit() {
                     if (this.form.id <= 0) {
+                        alert('请选择一个用户')
                         return
                     }
                     console.log(this.form)
-                    if (Number(this.form.usdt) == 0 && Number(this.form.eth) == 0 && Number(this.form.btc) == 0) {
+                    if (Number(this.form.usdt) == 0 && Number(this.form.eth) == 0 && Number(this.form.btc) == 0 && Number(this.form.platform_currency) == 0) {
                         alert('请填写要添加的金额数量。')
                         return
                     }
                     this.loading = true
                     this.post('/admin/api/manual-add-score', this.form, (data) => {
                         this.loading = false
-                        if(data.flag != 'ok'){
+                        if (data.flag != 'ok') {
                             swal("修改完成！", "数据已修改完成！", "error")
                             return
                         }
@@ -190,7 +205,8 @@
                         btc: 0,
                         usdt_wallet_address: '-',
                         eth_wallet_address: '-',
-                        btc_wallet_address: '-'
+                        btc_wallet_address: '-',
+                        platform_currency: 0
                     }
                 },
                 post(url, params, callback) {
@@ -225,6 +241,11 @@
                         let a = data.data.list
                         this.user_list = a
                         this.updateUserInfoAndWalletAddress()
+                    })
+
+                    this.get('/api/startup', {}, (data) => {
+                        this.platform_currency = data.data
+                        console.log(this.platform_currency)
                     })
                 }
             },

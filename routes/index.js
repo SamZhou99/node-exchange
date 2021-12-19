@@ -50,13 +50,15 @@ router.get('/me', middleware.checkLogin, controllers.me.page)
 router.get('/me/invite-friends', middleware.checkLogin, controllers.me.inviteFriends)
 // 登录日志
 router.get('/me/login-log', middleware.checkLogin, controllers.me.loginLog)
-
+// 资产转出
+router.get('/me/withdraw', middleware.checkLogin, controllers.me.withdraw)
+// 身份认证
+router.get('/me/authentication', middleware.checkLogin, controllers.me.authentication)
 
 // router.get('/me/finance', middleware.checkLogin, controllers.index)
 // // 资产转入
 // router.get('/me/deposit', middleware.checkLogin, controllers.index)
-// 资产转出
-router.get('/me/withdraw', middleware.checkLogin, controllers.me.withdraw)
+
 // // 委托管理
 // router.get('/me/entrust', middleware.checkLogin, controllers.index)
 // // 成交查询
@@ -85,12 +87,15 @@ router.get('/api/startup', middleware.commmonData, controllers.api.startup)
 router.post('/api/startup', middleware.checkLogin, controllers.api.post.startup)
 // KLineChart
 router.get('/api/kline', middleware.commmonData, controllers.api.kline)
-// prices-assets
-router.get('/api/prices-assets', middleware.commmonData, controllers.api.pricesAssets)
-
+// 获取缓存数据
+router.get('/api/:key/caches', middleware.commmonData, controllers.api.caches)
+// 上传身份照片
+router.post('/api/upload-file', middleware.checkLogin, controllers.api.uploadFileJson)
+router.post('/api/update-authentication', middleware.checkLogin, controllers.api.post.updateAuthentication)
 // // 用户列表
 // router.get('/api/user-list', middleware.checkLogin, controllers.api.userListJson)
-
+// 获取用户认证信息
+router.get('/api/authentication', middleware.checkLogin, controllers.api.authenticationJson)
 
 
 
@@ -98,41 +103,55 @@ router.get('/api/prices-assets', middleware.commmonData, controllers.api.pricesA
 
 // 管理首页
 router.get('/admin', middleware.checkLogin, middleware.role, controllers.admin.index)
-// 仪表面板
+// 仪表面板页面
 router.get('/admin/dashboard', middleware.checkLogin, middleware.role, controllers.admin.dashboard)
-// 用户列表
+// 用户列表页面
 router.get('/admin/user-list', middleware.checkLogin, middleware.role, controllers.admin.userList)
 router.get('/admin/user-add', middleware.checkLogin, middleware.role, controllers.admin.userAdd)
-// 系统钱包
+// 系统钱包页面
 router.get('/admin/system-wallet', middleware.checkLogin, middleware.role, controllers.admin.systemWallet)
 router.get('/admin/upload-wallet-address', middleware.checkLogin, middleware.role, controllers.admin.uploadWalletAddress)
 router.get('/admin/trade-log', middleware.checkLogin, middleware.role, controllers.admin.tradeLog)
-// 浏览记录
+// 浏览记录页面
 router.get('/admin/pageview', middleware.checkLogin, middleware.role, controllers.admin.pageview)
 // 行情
-// 添加货币
+// 添加货币页面
 router.get('/admin/market-coin', middleware.checkLogin, middleware.role, controllers.admin.marketCoin)
-// 控制涨跌
+// 控制涨跌页面
 router.get('/admin/market-change', middleware.checkLogin, middleware.role, controllers.admin.marketChange)
-// 人工上分
+// 人工上分页面
 router.get('/admin/manual-add-score', middleware.checkLogin, middleware.role, controllers.admin.manualAddScore)
 
 
 // /admin/coin-add
 // /admin/coin-edit
 // admin api
+// 管理首页图表
 router.get('/admin/api/dashboard', middleware.checkLogin, middleware.role, controllers.admin.api.dashboardJson)
+// 用户列表详细信息
 router.get('/admin/api/user-list', middleware.checkLogin, middleware.role, controllers.admin.api.userListJson)
+// 人工添加用户
 router.post('/admin/api/user-add', middleware.checkLogin, middleware.role, controllers.admin.api.post.userAddJson)
+// 用户分类
 router.get('/admin/api/user-group-category', middleware.checkLogin, middleware.role, controllers.admin.api.userGroupCategoryJson)
+// 更新用户状态
 router.get('/admin/api/user/update-one-field', middleware.checkLogin, middleware.role, controllers.admin.api.userUpdateOneFieldJson)
+// 钱包列表
 router.get('/admin/api/wallet-list', middleware.checkLogin, middleware.role, controllers.admin.api.walletListJson)
+// 上传钱包
 router.post('/admin/api/upload-file', middleware.checkLogin, middleware.role, controllers.admin.api.uploadFileJson)
+// 交易日志
 router.get('/admin/api/trade-log', middleware.checkLogin, middleware.role, controllers.admin.api.tradeLogJson)
+// 浏览日志
 router.get('/admin/api/pageview', middleware.checkLogin, middleware.role, controllers.admin.api.pageviewJson)
+// 清除浏览日志
 router.get('/admin/api/pageview-clear', middleware.checkLogin, middleware.role, controllers.admin.api.pageviewClearJson)
+// 修改平台币信息
 router.post('/admin/api/startup', middleware.checkLogin, middleware.role, controllers.admin.api.post.updateStartupJson)
+// 手动上分
 router.post('/admin/api/manual-add-score', middleware.checkLogin, middleware.role, controllers.admin.api.post.manualAddScoreJson)
+// 保存K线图数据
+router.post('/admin/api/kline', middleware.checkLogin, middleware.role, controllers.admin.api.post.saveKLineDataJson)
 
 
 

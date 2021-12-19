@@ -3,6 +3,8 @@
 
 <head>
     {{include './_header.html'}}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts@8.0.0-alpha4/dist/klinecharts.min.js"></script>
+    <script src="/default/js/moment.js"></script>
 </head>
 
 <body class="sticky-header">
@@ -17,7 +19,7 @@
 
 
         <!--body wrapper start-->
-        <div id="app" class="wrapper">
+        <div class="wrapper">
 
             <!--Start Page Title-->
             <div class="page-title-box">
@@ -37,30 +39,156 @@
 
             <!--Start row-->
             <div class="row">
+
+
                 <div class="col-md-12">
                     <div class="white-box">
-                        <h2 class="header-title">控制涨跌价格</h2>
-                        <div>
-                            <button @click="onClickMarkup()" class="btn btn-primary">涨</button>
-                            <button @click="onClickRandom()" class="btn btn-default">随机走势</button>
-                            <button @click="onClickMarkdown()" class="btn btn-danger">跌</button>
-                            <div>
-                                {[this.wx_data]}
+
+                        <h2 class="header-title">走势图</h2>
+
+                        <div id="chart" style="height:450px"></div>
+
+                        <h2 class="header-title">填写走势图参数</h2>
+
+                        <div id="app" class="form-horizontal">
+
+                            <div class="form-group">
+
+                                <label class="col-sm-1 control-label"><button @click="onClickShowDay()">今天</button>开始日期</label>
+                                <div class="col-sm-2">
+                                    <input v-model="testData.startDate" class="form-control" placeholder="年/月/日" type="text">
+                                </div>
+
+                                <label class="col-sm-1 control-label">往后多少天走势图</label>
+                                <div class="col-sm-2">
+                                    <input v-model="testData.laterDay" class="form-control" placeholder="365" type="number">
+                                </div>
+
+                                <label class="col-sm-1 control-label">价格波动比例(n%)</label>
+                                <div class="col-sm-2">
+                                    <input v-model="testData.priceVolatility " class="form-control" placeholder="10" type="number">
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">每天上涨概率(n%)</label>
+                                <div class="col-sm-2">
+                                    <input v-model="testData.everydayUpProbability" class="form-control" placeholder="60" type="number">
+                                </div>
+                                <label class="col-sm-1 control-label">上涨波动比例(n%)</label>
+                                <div class="col-sm-2">
+                                    <input v-model="testData.upProbability" class="form-control" placeholder="50" type="number">
+                                </div>
+                                <label class="col-sm-1 control-label">下跌波动比例(n%)</label>
+                                <div class="col-sm-2">
+                                    <input v-model="testData.downProbability" class="form-control" placeholder="50" type="number">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label">初始价格</label>
+                                <div class="col-sm-2">
+                                    <input v-model="testData.initPrice" class="form-control" placeholder="0.01" type="number" readonly="readonly">
+                                </div>
+                                <label class="col-sm-1 control-label">行情类型</label>
+                                <div class="col-sm-2">
+                                    <select name="" id="" disabled="disabled">
+                                        <option value="1day">1day</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <button @click="onClickRandom()" class="btn btn-primary">随机生成新走势图</button>
+
+                                    <button @click="onClickRadnomAdd()" class="btn btn-primary">随机加一天</button>
+                                    <button @click="onClickSub()" class="btn btn-primary">减一天</button>
+
+                                    <button @click="onClickUp()" class="btn btn-primary">涨一天</button>
+                                    <button @click="onClickDown()" class="btn btn-primary">跌一天</button>
+
+                                    <button @click="onClickSave()" class="btn btn-primary">保存数据</button>
+                                </div>
+                            </div>
+
+
+
+
+
+                            <hr>
+
+
+                            <div class="form-group">
+                                <h2 class="header-title">修改某一天的数据</h2>
+
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">日期</label>
+                                    <div class="col-sm-2">
+                                        <input v-model="moment(updateData.timestamp).format('YYYY/MM/DD')" class="form-control" placeholder="年/月/日" type="text">
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-1 control-label">开盘价</label>
+                                    <div class="col-sm-1">
+                                        <input v-model="updateData.open" class="form-control" placeholder="50" type="number">
+                                    </div>
+                                    <label class="col-sm-1 control-label">收盘价</label>
+                                    <div class="col-sm-1">
+                                        <input v-model="updateData.close" class="form-control" placeholder="50" type="number">
+                                    </div>
+                                    <label class="col-sm-1 control-label">最高价</label>
+                                    <div class="col-sm-1">
+                                        <input v-model="updateData.high" class="form-control" placeholder="50" type="number">
+                                    </div>
+                                    <label class="col-sm-1 control-label">最低价</label>
+                                    <div class="col-sm-1">
+                                        <input v-model="updateData.low" class="form-control" placeholder="50" type="number">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <button @click="onClickApply()" class="btn btn-primary">应用数据</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+
+
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="mm/dd/yyyy" id="datepickerQWE">
+                                    <span class="input-group-addon b-0 text-white"><i class="icon-calender"></i></span>
+                                </div>
                             </div>
                         </div>
+
+
+
+
                     </div>
                 </div>
             </div>
             <!--End row-->
 
-
         </div>
         <!-- End Wrapper-->
 
-
+        
         <!--Start  Footer -->
         <footer class="footer-main">{{include './_copyright.html'}}</footer>
         <!--End footer -->
+
+        
 
     </div>
     <!--End main content -->
@@ -68,7 +196,11 @@
 
     {{include './_footer.html'}}
 
-
+    <script src="/admin-assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script>
+        // Date Picker
+        jQuery('#datepickerQWE').datepicker();
+    </script>
 
     <script>
         let appVue = new Vue({
@@ -77,35 +209,178 @@
             data: {
                 loading: false,
                 list: [],
-                refreshButtonStatus: false,
-
-                ws: null,
-                ws_data: null,
-
+                chart: null,
+                chartData: [],
+                currency: {},
+                testData: {
+                    startDate: moment().format('YYYY/MM/DD'),
+                    laterDay: 100,
+                    priceVolatility: 10,
+                    initPrice: 0.05,
+                    everydayUpProbability: 80,
+                    upProbability: 15,
+                    downProbability: 5,
+                },
+                updateData: {
+                    "timestamp": 0,
+                    "open": 0,
+                    "close": 0,
+                    "high": 0,
+                    "low": 0,
+                    "volume": 0,
+                    "amount": 0,
+                    "count": 0
+                },
+                moment: moment
             },
             methods: {
-                onClickMarkup() {
-                    this.wsSend({ status: 'up' })
+                onClickApply() {
+                    this.updateData.timestamp = Number(this.updateData.timestamp)
+                    this.updateData.open = Number(this.updateData.open)
+                    this.updateData.close = Number(this.updateData.close)
+                    this.updateData.high = Number(this.updateData.high)
+                    this.updateData.low = Number(this.updateData.low)
+                    this.updateData.volume = Number(this.updateData.volume)
+                    this.updateData.amount = Number(this.updateData.amount)
+                    this.updateData.count = Number(this.updateData.count)
+
+                    console.log(this.chartData[this.chartData.length - 1])
+                    this.chart.applyNewData(this.chartData)
                 },
-                onClickMarkdown() {
-                    this.wsSend({ status: 'down' })
+                onClickShowDay() {
+                    this.testData.startDate = moment().format('YYYY/MM/DD')
                 },
                 onClickRandom() {
-                    this.wsSend({ status: 'random' })
-                },
-                wsSend(data) {
-                    this.ws.send(JSON.stringify(data));
-                },
-                initWebSocket() {
-                    let t = this
-                    t.ws = new WebSocket("ws://127.0.0.1:3031");
-                    t.ws.onopen = function () {
-                        console.log('websocket init ...')
-                    };
-                    t.ws.onmessage = function (event) {
-                        t.ws_data = JSON.parse(event.data);
-                        t.price = t.ws_data.price
+                    // console.log(this.testData)
+                    this.chartData = []
+                    let dayLen = Number(this.testData.laterDay) //one year
+                    let startTs = new Date(this.testData.startDate + ' 00:00:00').getTime() //start time
+                    let startPrice = Number(this.testData.initPrice) //1usdt:price
+                    for (let i = 0; i < dayLen; i++) {
+                        let isUp = this.random(0, 100) < Number(this.testData.everydayUpProbability)
+                        let d = this.candle(isUp, startPrice, Number(this.testData.upProbability) / 100, Number(this.testData.downProbability) / 100)
+                        let item = {
+                            "timestamp": startTs,
+                            "open": d.open,
+                            "close": d.close,
+                            "high": d.high,
+                            "low": d.low,
+                            "volume": Math.random() * d.close,
+                            "amount": 0,
+                            "count": 0
+                        }
+                        startTs += 1000 * 60 * 60 * 24 //one day
+                        startPrice = Number(item.close)
+                        this.chartData.push(item)
                     }
+                    this.chart.applyNewData(this.chartData);
+                    this.updateData = this.chartData[this.chartData.length - 1]
+                },
+                onClickRadnomAdd() {
+                    let isUp = this.random(0, 100) < Number(this.testData.everydayUpProbability)
+                    let startTs = Number(this.chartData[this.chartData.length - 1].timestamp)
+                    startTs += 1000 * 60 * 60 * 24 //one day
+                    let startPrice = Number(this.chartData[this.chartData.length - 1].close)
+                    let d = this.candle(isUp, startPrice, Number(this.testData.upProbability) / 100, Number(this.testData.downProbability) / 100)
+                    let item = {
+                        "timestamp": startTs,
+                        "open": d.open,
+                        "close": d.close,
+                        "high": d.high,
+                        "low": d.low,
+                        "volume": Math.random() * d.close,
+                        "amount": 0,
+                        "count": 0
+                    }
+                    startPrice = Number(item.close)
+                    this.chartData.push(item)
+                    this.chart.applyNewData(this.chartData);
+                },
+                onClickSub() {
+                    this.chartData.pop()
+                    this.chart.applyNewData(this.chartData);
+                },
+                onClickUp() {
+                    let isUp = true
+                    let startTs = Number(this.chartData[this.chartData.length - 1].timestamp)
+                    startTs += 1000 * 60 * 60 * 24 //one day
+                    let startPrice = Number(this.chartData[this.chartData.length - 1].close)
+                    let d = this.candle(isUp, startPrice, Number(this.testData.upProbability) / 100, Number(this.testData.downProbability) / 100)
+                    let item = {
+                        "timestamp": startTs,
+                        "open": d.open,
+                        "close": d.close,
+                        "high": d.high,
+                        "low": d.low,
+                        "volume": Math.random() * d.close,
+                        "amount": 0,
+                        "count": 0
+                    }
+                    startPrice = Number(item.close)
+                    this.chartData.push(item)
+                    this.chart.applyNewData(this.chartData);
+                },
+                onClickDown() {
+                    let isUp = false
+                    let startTs = Number(this.chartData[this.chartData.length - 1].timestamp)
+                    startTs += 1000 * 60 * 60 * 24 //one day
+                    let startPrice = Number(this.chartData[this.chartData.length - 1].close)
+                    let d = this.candle(isUp, startPrice, Number(this.testData.upProbability) / 100, Number(this.testData.downProbability) / 100)
+                    let item = {
+                        "timestamp": startTs,
+                        "open": d.open,
+                        "close": d.close,
+                        "high": d.high,
+                        "low": d.low,
+                        "volume": Math.random() * d.close,
+                        "amount": 0,
+                        "count": 0
+                    }
+                    startPrice = Number(item.close)
+                    this.chartData.push(item)
+                    this.chart.applyNewData(this.chartData);
+                },
+                onClickSave() {
+                    // {"id":1639324800,"open":129.017,"close":128.898,"high":129.191,"low":128.469,"vol":60.348,"amount":0,"count":0}
+                    let a = this.chartData.concat()
+                    a.forEach(function (item) {
+                        item.id = item.timestamp / 1000
+                        item.vol = item.volume
+                        delete item.volume
+                        delete item.timestamp
+                    })
+                    let form = {
+                        chartData: JSON.stringify(a.reverse())
+                    }
+                    this.post('/admin/api/kline', form, (data) => {
+                        if (data.flag != 'ok') {
+                            alert("失败：" + data.flag)
+                        } else {
+                            alert('保存成功')
+                        }
+                    })
+                },
+                candle(isUp, price, upPercent, volatility) {
+                    let item = { "open": 0, "close": 0, "high": 0, "low": 0 }
+                    if (isUp) {
+                        item.open = price
+                        item.close = item.open + (item.open * this.random(upPercent / 10, upPercent))
+                        item.high = item.close + (item.close * this.random(volatility / 10, volatility))
+                        item.low = item.open - (item.open * this.random(volatility / 10, volatility))
+                    } else {
+                        item.open = price
+                        item.close = item.open - (item.open * this.random(upPercent / 10, upPercent))
+                        item.high = item.open + (item.open * this.random(volatility / 10, volatility))
+                        item.low = item.close - (item.close * this.random(volatility / 10, volatility))
+                    }
+                    return item
+                },
+                random(min, max) {
+                    return min + Math.random() * (max - min)
+                },
+                round(num) {
+                    let len = 1000000
+                    return Math.round(num * len) / len
                 },
                 post(url, params, callback) {
                     this.loading = true;
@@ -132,10 +407,41 @@
                         }
                     })
                 },
-
                 // 初始化
                 init() {
-                    this.initWebSocket()
+
+                    this.chart = klinecharts.init('chart')
+                    this.chart.createTechnicalIndicator('MA', false, { id: 'candle_pane' })
+                    this.chart.createTechnicalIndicator('VOL')
+                    this.chart.setStyleOptions()
+
+                    this.get('/api/startup', {}, (data) => {
+                        this.currency = data.data.currency
+                        this.testData.initPrice = 1 / this.currency.usdt_exchange
+                        let symbol = this.currency.symbol.toLocaleLowerCase()
+                        this.get('/api/kline?period=1day&size=all&symbol=' + symbol + 'usdt', {}, (data) => {
+                            let a = data.data.data.reverse()
+                            let chartDataList = []
+                            for (let i = 0; i < a.length; i++) {
+                                let item = a[i]
+                                let item_data = {
+                                    timestamp: Number(item.id) * 1000,
+                                    open: item.open,
+                                    high: item.high,
+                                    low: item.low,
+                                    close: item.close,
+                                    volume: item.vol,
+                                }
+                                chartDataList.push(item_data)
+                            }
+                            this.chart.applyNewData(chartDataList)
+                            this.chartData = chartDataList
+                            this.testData.startDate = moment(this.chartData[0].timestamp).format('YYYY/MM/DD')
+
+                            this.updateData = this.chartData[this.chartData.length - 1]
+                        })
+                    })
+
                 }
             },
             mounted() {

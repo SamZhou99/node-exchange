@@ -128,77 +128,6 @@ let __this = {
                 ctx.redirect('/login')
             }
         },
-        // // 蜡烛图表
-        // chart: {
-        //     random(min, max) {
-        //         return min + Math.random() * (max - min)
-        //     },
-        //     async page(ctx) {
-        //         await ctx.render('page/chart', ctx.data)
-        //     },
-        //     async getMarketSpecialtyJson(ctx) {
-        //         let a = []
-        //         for (let i = 0; i < 300; i++) {
-        //             // 0: 1564492500
-        //             // 1: 0
-        //             // 2: 0
-        //             // 3: "9545.00000000"
-        //             // 4: "9545.00000000"
-        //             // 5: "9545.00000000"
-        //             // 6: "9545.00000000"
-        //             // 7: "61.36180000"
-        //             // a.push([
-        //             //     1564492500 + 300 * i,
-        //             //     __this.page.chart.random(1, 9),
-        //             //     __this.page.chart.random(1, 9),
-        //             //     __this.page.chart.random(9535, 9555),
-        //             //     __this.page.chart.random(9535, 9555),
-        //             //     __this.page.chart.random(9535, 9555),
-        //             //     __this.page.chart.random(9535, 9555),
-        //             //     __this.page.chart.random(1, 999)
-        //             // ])
-
-        //             // var newDate = new Date(firstDate);
-        //             // newDate.setDate(newDate.getDate() + i);
-        //             let value = 1200
-        //             value += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
-        //             var open = value + Math.round(Math.random() * 16 - 8);
-        //             var low = Math.min(value, open) - Math.round(Math.random() * 5);
-        //             var high = Math.max(value, open) + Math.round(Math.random() * 5);
-
-        //             let time = 1564492500 + 1000 * 60 * i
-        //             __this.page.chart.currTime = time
-        //             a.push([
-        //                 time,
-        //                 0,
-        //                 0,
-        //                 // __this.page.chart.random(9535, 9540),
-        //                 // __this.page.chart.random(9541, 9549),
-        //                 // __this.page.chart.random(9531, 9541),
-        //                 // __this.page.chart.random(9535, 9555),
-        //                 open,
-        //                 high,
-        //                 low,
-        //                 value,
-        //                 __this.page.chart.random(value - 5, value + 5)
-        //             ])
-        //         }
-        //         ctx.body = a
-        //     },
-        //     currTime: 0,
-        //     async getSpecialtyTrades(ctx) {
-        //         // console.log(ctx.request.query)
-        //         let query = ctx.request.query
-        //         // ctx.body = [{ tid: 54, date: query.nonce, price: __this.page.chart.random(9030 - 19, 9536.5575 + 90), amount: 0, trade_type: "bid" }]
-        //         let n = 50
-        //         let price = __this.page.chart.random(1200 - n, 1200 + n)
-        //         console.log(__this.page.chart.currTime, query.nonce, price)
-        //         let date = query.nonce
-        //         ctx.body = [{ tid: 54, date: date, price: price, amount: 0, trade_type: "bid" }]
-        //     },
-        // },
-
-
         // 帮助中心
         help: {
             async userGreement(ctx) {
@@ -213,12 +142,12 @@ let __this = {
         api: {
             post: {
                 async startup(ctx) {
-                    let form = ctx.request.body
-                    let user_id = ctx.session.user.id
-                    let coin_amount = form.coin_amount
-                    let coin_price = form.coin_price
-                    let coin_type = form.coin_type
-                    let target_amount = form.target_amount
+                    const form = ctx.request.body
+                    const user_id = ctx.session.user.id
+                    const coin_amount = form.coin_amount
+                    const coin_price = form.coin_price
+                    const coin_type = form.coin_type
+                    const target_amount = form.target_amount
 
                     let user = await service.user.oneById(user_id)
                     let user_balance = user[coin_type]
@@ -233,11 +162,27 @@ let __this = {
                         return
                     }
 
-                    
-                    let res = await service.user.buyLog(user_balance, user_id, coin_amount, coin_price, coin_type, target_amount)
+                    let res = await service.user.buyLog(user_id, target_amount, user_balance, coin_amount, coin_price, coin_type)
                     ctx.body = { flag: 'ok', data: { form, user_id, res } }
                 },
+                /**
+                 * 更新认证信息
+                 * @param {*} ctx 
+                 * @returns 
+                 */
+                async updateAuthentication(ctx) {
+                    const user_id = ctx.session.user.id
+                    const form = ctx.request.body
+                    if (!form.country || !form.full_name || !form.id_number) {
+                        ctx.body = { flag: 'Please fill out the form completely!' }
+                        return
+                    }
+                    const status = 1
+                    const res = await service.user.saveAuthenticationInfo(user_id, status, form.country, form.full_name, form.id_number)
+                    ctx.body = { flag: 'ok', data: res }
+                },
             },
+
             //我的钱包
             async walletJson(ctx) {
                 let user_id = ctx.session['user'].id
@@ -285,22 +230,53 @@ let __this = {
                 let user
                 if (ctx.session.isLogin) {
                     user = await service.user.oneById(ctx.session.user.id)
-                    user.wallet = await service.user.userDetailInfo(user)
+                    await service.user.userDetailInfo(user)
                 }
                 ctx.body = { flag: 'ok', data: { user, currency } }
             },
             // K线图数据
             async kline(ctx) {
                 let query = ctx.request.query
-                let kline = await service.kline.get(symbol = query.symbol || 'btcusdt', period = query.period || '1day', size = query.size || '500')
+                let symbol = query.symbol || 'btcusdt'
+                let period = query.period || '1day'
+                let size = query.size || '500'
+
+                let currency = await service.currency.info()
+                if (currency.symbol.toLocaleLowerCase() == symbol.substr(0, symbol.length - 4)) {
+                    // 平台币
+                    let kline = await service.kline.platform_currency(symbol, period, size)
+                    ctx.body = { flag: 'ok', data: kline }
+                    return;
+                }
+
+                let kline = await service.kline.get(symbol, period, size)
                 ctx.body = { flag: 'ok', data: kline }
             },
-            // BTC ETH 实时价
-            async pricesAssets(ctx) {
+            // 获取缓存数据
+            async caches(ctx) {
+                let key = ctx.params.key
                 let query = ctx.request.query
-                let data = await service.pricesAssets.get('coincap-prices-assets')
+                let data = await service.pricesAssets.get(key)
+                if (data) {
+                    data.value = JSON.parse(data.value)
+                }
                 ctx.body = { flag: 'ok', data }
             },
+            async uploadFileJson(ctx) {
+                const user_id = ctx.session.user.id
+                const file = ctx.request.files.file
+                if (file.type.indexOf('image') == -1) {
+                    ctx.body = { flag: 'Not a picture, upload file type error!' }
+                    return
+                }
+                let filename = await service.user.uploadPhoto(user_id, file)
+                ctx.body = { flag: 'ok', data: { user_id, filename } }
+            },
+            async authenticationJson(ctx) {
+                const user_id = ctx.session.user.id
+                let res = await service.user.userAuthenticationInfo(user_id)
+                ctx.body = { flag: 'ok', data: res }
+            }
         },
 
 
@@ -330,10 +306,16 @@ let __this = {
                 ctx.data.session = ctx.session
                 await ctx.render('page/me/login_log', ctx.data)
             },
+            // 提现
             async withdraw(ctx) {
                 ctx.data.session = ctx.session
                 await ctx.render('page/me/withdraw', ctx.data)
-            }
+            },
+            // 用户认证
+            async authentication(ctx) {
+                ctx.data.session = ctx.session
+                await ctx.render('page/me/authentication', ctx.data)
+            },
         },
 
 
@@ -403,6 +385,7 @@ let __this = {
                     },
                     async manualAddScoreJson(ctx) {
                         let form = ctx.request.body
+                        let user_id = form.id
 
                         if (form.btc > 0) {
                             let amount = form.btc
@@ -425,7 +408,27 @@ let __this = {
                             let res = await service.wallet.tradeAddLog('', '', utils99.Time(), amount, '', wallet_address, coin_type)
                         }
 
+                        // 平台币上分
+                        if (form.platform_currency > 0) {
+                            let target_amount = form.platform_currency
+                            let res = await service.user.buyLog(user_id, target_amount)
+                        }
+
                         ctx.body = { flag: 'ok', form }
+                    },
+                    async saveKLineDataJson(ctx) {
+                        let body = ctx.request.body
+                        let symbol = body.symbol || 'lethusdt'
+                        let chartData = body.chartData || '[]'
+                        console.log(body)
+                        let data = {
+                            "ch": "market." + symbol + ".kline.1day",
+                            "status": "ok",
+                            "ts": new Date().getTime(),
+                            "data": JSON.parse(chartData)
+                        }
+                        await service.kline.saveKlineData(symbol, data)
+                        ctx.body = { flag: 'ok' }
                     },
                 },
                 async init(ctx) {
@@ -435,11 +438,11 @@ let __this = {
                 },
                 async dashboardJson(ctx) {
                     let userCount = await service.user.count()
-                    let usdtCount = await service.wallet.usdtAmount()
+                    let coinAmount = await service.wallet.coinAmount()
                     let walletAddressCount = await service.wallet.walletAddressCount()
                     let pageViewCount = await service.pageview.count()
 
-                    ctx.body = { flag: 'ok', data: { userCount, usdtCount, walletAddressCount, pageViewCount } }
+                    ctx.body = { flag: 'ok', data: { userCount, coinCount: coinAmount, walletAddressCount, pageViewCount } }
                 },
                 async userListJson(ctx) {
                     let list = await service.user.list()

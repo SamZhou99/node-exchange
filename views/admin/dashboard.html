@@ -3,6 +3,13 @@
 
 <head>
     {{include './_header.html'}}
+    <style>
+        .analytics-stats > label > span {
+            margin-left: 4px;
+            margin-right: 10px;
+            font-size:12px;
+        }
+    </style>
 </head>
 
 <body class="sticky-header">
@@ -55,10 +62,12 @@
 
                         <div class="col-md-3">
                             <div class="analytics-box white-box">
-                                <h3>充值额 USDT</h3>
+                                <h3>充值额</h3>
                                 <div class="analytics-info">
                                     <div class="analytics-stats">
-                                        {[result.usdtCount/1000000]} USDT
+                                        <label class="text-danger">{[result.coinCount.usdt]} <span>USDT</span></label>
+                                        <label class="text-primary">{[result.coinCount.eth]} <span>ETH</span></label>
+                                        <label class="text-info">{[result.coinCount.btc]} <span>BTC</span></label>
                                     </div>
                                     <span id="sparklinestats2"></span>
                                 </div>
@@ -202,50 +211,50 @@
 
 
 
-                
 
-            <!--Start row-->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="white-box">
-                        <h2 class="header-title">充值统计</h2>
-                        <!--Start chart-->
-                        <div class="col-md-9">
-                            <canvas id="sharpLinechart2" height="60"></canvas>
+
+                <!--Start row-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="white-box">
+                            <h2 class="header-title">充值统计</h2>
+                            <!--Start chart-->
+                            <div class="col-md-9">
+                                <canvas id="sharpLinechart2" height="60"></canvas>
+                            </div>
+                            <!--End chart-->
+
+                            <div class="col-md-3">
+                                <div class="progress-main">
+                                    <span class="progress-text">Total orders in period</span>
+                                    <span class="progress-stats">48%</span>
+                                    <div class="progress progress-sm">
+                                        <div style="width: 48%;" class="progress-bar"></div>
+                                    </div>
+                                </div>
+
+                                <div class="progress-main">
+                                    <span class="progress-text">Orders in last month</span>
+                                    <span class="progress-stats">60%</span>
+                                    <div class="progress progress-sm">
+                                        <div style="width: 60%;" class="progress-bar progress-bar-success"></div>
+                                    </div>
+                                </div>
+
+                                <div class="progress-main">
+                                    <span class="progress-text">Monthly income</span>
+                                    <span class="progress-stats">22%</span>
+                                    <div class="progress progress-sm">
+                                        <div style="width: 22%;" class="progress-bar progress-bar-danger"></div>
+                                    </div>
+                                </div>
+
+                            </div>
+
                         </div>
-                        <!--End chart-->
-
-                        <div class="col-md-3">
-                            <div class="progress-main">
-                                <span class="progress-text">Total orders in period</span>
-                                <span class="progress-stats">48%</span>
-                                <div class="progress progress-sm">
-                                    <div style="width: 48%;" class="progress-bar"></div>
-                                </div>
-                            </div>
-
-                            <div class="progress-main">
-                                <span class="progress-text">Orders in last month</span>
-                                <span class="progress-stats">60%</span>
-                                <div class="progress progress-sm">
-                                    <div style="width: 60%;" class="progress-bar progress-bar-success"></div>
-                                </div>
-                            </div>
-
-                            <div class="progress-main">
-                                <span class="progress-text">Monthly income</span>
-                                <span class="progress-stats">22%</span>
-                                <div class="progress progress-sm">
-                                    <div style="width: 22%;" class="progress-bar progress-bar-danger"></div>
-                                </div>
-                            </div>
-
-                        </div>
-
                     </div>
                 </div>
-            </div>
-            <!--End row-->
+                <!--End row-->
 
 
             </div>
@@ -280,7 +289,11 @@
                 loading: false,
                 result: {
                     "userCount": 0,
-                    "usdtCount": 0,
+                    "coinCount": {
+                        usdt: 0,
+                        eth: 0,
+                        btc: 0
+                    },
                     "walletAddressCount": {
                         "total": 0,
                         "used": 0
@@ -295,7 +308,7 @@
                     let datas = []
                     a.forEach(function (item) {
                         item.create_time = moment(item.create_time).format('YYYY/MM/DD HH:mm:ss')
-                        item.amount = item.amount / 1000000
+                        item.amount = item.amount
                         labels.push(item.create_time)
                         datas.push(item.amount)
                     })

@@ -31,6 +31,8 @@ app.use(session({
 // form数据解析文件上传等 request.body request.files
 app.use(koaBody({
     multipart: true,
+    formLimit: "10mb",
+    jsonLimit: "10mb",
     formidable: {
         // 上传目录
         uploadDir: path.join(__dirname, '/temp/csv'),
@@ -40,6 +42,7 @@ app.use(koaBody({
         keepExtensions: true
     }
 }));
+
 
 // // 自定义 404
 // app.use(convert(function* (next) {

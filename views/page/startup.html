@@ -44,6 +44,31 @@
             border-radius: 5px;
             background-color: #262c47;
         }
+
+        .container-t {
+            position: absolute;
+            background-color: #ffecf700;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 2000;
+        }
+
+
+        .item-t {
+            text-align: center;
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 60px;
+            background-color: #000000ad;
+            padding-top: 18px;
+        }
     </style>
 
 </head>
@@ -173,6 +198,8 @@
                 </div>
 
 
+
+
                 <div class="col-12">
                     <br>
                     <br>
@@ -268,7 +295,9 @@
 
 
 
-
+        <div class="container-t">
+            <div class="item-t"></div>
+        </div>
 
         <!-- Modal -->
         <div class="modal fade" id="participate" tabindex="-1" role="dialog" aria-labelledby="participateTitle"
@@ -296,7 +325,7 @@
                                 <div class="form-row">
                                     <div class="col-md-5 mb-5 text-right">
                                         <label for="coin_txt" class="col-form-label text-right">{[coinType]}</label>
-                                        <input id="coin_txt" v-model="form.coin_amount" type="text" class="form-control text-right">
+                                        <input id="coin_txt" v-model="form.coin_amount" type="number" class="form-control text-right" min="0" maxlength="99">
                                     </div>
                                     <div class="col-md-1 mb-1 text-center">
                                         <label class="col-form-label">=></label>
@@ -398,7 +427,6 @@
                     console.log(this.form)
 
                     if (this.form.target_amount <= 0) {
-                        alert('The purchase amount cannot be less than or equal to zero!')
                         return
                     }
 
@@ -406,16 +434,28 @@
                     this.post('/api/startup', this.form, (data) => {
                         this.loading = false
                         if (data.flag != 'ok') {
-                            alert(data.flag)
+                            // alert(data.flag)
+                            this.tip(data.flag)
                         } else {
-                            alert('purchase succeeded!')
-                            document.location.reload()
+                            this.tip('参与成功', () => {
+                                document.location.reload()
+                            })
                         }
                     })
                 },
                 onClickAllIn() {
                     this.form.coin_type = this.coinType
                     this.form.coin_amount = this.balance.curr_balance
+                },
+                tip(text, callback) {
+                    $('.container-t').show()
+                    $('.item-t').text(text)
+                    setTimeout(function () {
+                        $('.container-t').hide()
+                        if (callback) {
+                            callback()
+                        }
+                    }, 2000)
                 },
                 zero(n) {
                     return n < 10 ? '0' + n : n
@@ -464,16 +504,16 @@
                         'error': err => {
                             this.loading = false;
                             console.log(err);
-                            alert(err.statusText);
+                            this.tip(err.statusText);
                         }
                     })
                 },
 
                 getPrice() {
-                    this.get('/api/prices-assets', {}, (data) => {
-                        let p = JSON.parse(data.data.value)
-                        console.log('pppppppppppppppppppppppppppppppppppppppppppp')
-                        console.log(p)
+                    this.get('/api/coincap-prices-assets/caches', {}, (data) => {
+                        let p = data.data.value
+                        // console.log('pppppppppppppppppppppppppppppppppppppppppppp')
+                        // console.log(p)
                         this.platform_currency.eth_exchange = this.platform_currency.usdt_exchange * p.ethereum
                         this.platform_currency.btc_exchange = this.platform_currency.usdt_exchange * p.bitcoin
                     })

@@ -2747,7 +2747,7 @@
 									defaultTechnicalIndicatorParams: c,
 									technicalIndicatorParams: o
 								}), t.props.onChartReady && t.props.onChartReady(T), 
-								console.log('初始化完了了吗')
+								// console.log('初始化完了了吗')
 								jQuery('body').bind('getChart',function(){
 									jQuery("body").trigger("chartInit", t);
 								})

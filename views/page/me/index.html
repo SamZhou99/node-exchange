@@ -41,16 +41,35 @@
             font-size: 8px;
         }
 
-        .h5 {
+        .green {
             color: rgb(90, 182, 90);
         }
 
-        .h6 {
+        .gray1 {
+            color: rgb(251, 252, 220);
+        }
+
+        .gray {
             color: #999;
+        }
+
+        .red {
+            color: rgb(212, 143, 143);
         }
 
         .bg-dark2 {
             background-color: rgb(37, 46, 75);
+        }
+
+        .cztx {
+            height: 154px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .ml-10 {
+            margin-left: 20px;
         }
     </style>
 </head>
@@ -59,23 +78,7 @@
     {{include '../_menu.html'}}
 
     <div id="app" class="container-fluid main-content p0">
-        <div class="container-fluid bg01">
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <h2 class="form-signin-heading">
-                            <img class="profilePicture" src="/images/profile01.png" alt="{{session.user.email}}">
-                            {{session.user.email}}
-                        </h2>
-                    </div>
-                    <div class="col-1 offset-6">
-                        <h2 class="form-signin-heading">
-                            <button class="btn btn-primary">充值</button>
-                        </h2>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {{include './_user_info.html'}}
 
 
         <div class="container">
@@ -84,75 +87,137 @@
                     {{include './_menu.html'}}
                 </div>
                 <div class="col-md-9 col-sm-12">
-                    <!-- <p>
-                    <h1>转入资产USDT</h1>
-                    </p>
-                    <p>
+
                     <div class="row">
-
-                        <div class="form-row align-items-center">
-                            <div class="col-12"><label for="invite_txt">USDT 钱包充币地址</label></div>
-                            <div class="col-sm-10 my-1">
-                                <div class="input-group">
-                                    <input type="text" id="wallet_address_txt" readonly="readonly" class="form-control"
-                                        value="{{wallet_address}}">
-                                </div>
-                            </div>
-                            <div @click="onClickCopyText('wallet_address_txt')" class="col-auto my-1">
-                                <button type="buton"   class="btn btn-primary">复制</button>
-                            </div>
+                        <div class="mb-3">
+                            <h3>总资产：{[round(usd.total,2,8)]} USD</h3>
                         </div>
-
                     </div>
-                    </p>
-                    <p>
-                    <div id="qrcode"></div>
-                    </p>
-                    <p>单击二维码，保存二维码图片到本地。</p> -->
 
                     <div class="card mb-3 bg-dark2">
                         <div class="row no-gutters">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="card-body">
                                     <h3 class="card-title">BTC</h3>
-                                    <p class="card-text"><span class="h5">{[user.btc]} BTC</span><span class="h6"> ≈ {[usd.btc]} USD</span></p>
+                                    <p class="card-text"><span class="gray1">{[user.btc]} BTC</span><span class="gray"> ≈ {[usd.btc]} USD</span></p>
                                     <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="card-body text-right cztx">
+                                    <button @click="onClickShowWallet('btc')" class="btn btn-primary">充值</button>
+                                    <button @click="onClickGo('/me/withdraw')" class="btn btn-primary ml-10">提现</button>
+                                </div>
+                            </div>
                         </div>
+
+                        <div v-if="is_show.btc" class="row no-gutters">
+                            <div class="col-md-12">
+                                <div class="card-body">
+                                    <h5 class="card-title">充币地址</h5>
+                                    <div class="input-group">
+                                        <input id="wallet_address_txt" type="text" readonly="readonly" class="form-control" :value="wallet_address">
+                                        <div @click="onClickCopyText('wallet_address_txt')" class="col-auto my-1"> <button type="buton" class="btn btn-primary">复制</button> </div>
+                                    </div>
+                                    <p class="card-text">
+                                    <div id="qrcode"></div>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+
+
 
                     <div class="card mb-3 bg-dark2">
                         <div class="row no-gutters">
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="card-body">
                                     <h3 class="card-title">ETH</h3>
-                                    <p class="card-text"><span class="h5">{[user.eth]} ETH</span><span class="h6"> ≈ {[usd.eth]} USD</span></p>
+                                    <p class="card-text"><span class="gray1">{[user.eth]} ETH</span><span class="gray"> ≈ {[usd.eth]} USD</span></p>
                                     <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="card-body text-right cztx">
+                                    <button @click="onClickShowWallet('eth')" class="btn btn-primary">充值</button>
+                                    <button @click="onClickGo('/me/withdraw')" class="btn btn-primary ml-10">提现</button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="card mb-3 bg-dark2">
-                        <div class="row no-gutters">
+                        <div v-if="is_show.eth" class="row no-gutters">
                             <div class="col-md-12">
                                 <div class="card-body">
-                                    <h3 class="card-title">USDT-TRC20</h3>
-                                    <p class="card-text"><span class="h5">{[user.usdt_trc20]} USDT-TRC20</span><span class="h6"> ≈ {[usd.usdt_trc20]} USD</span></p>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                    <h5 class="card-title">充币地址</h5>
+                                    <div class="input-group">
+                                        <input id="wallet_address_txt" type="text" readonly="readonly" class="form-control" :value="wallet_address">
+                                        <div @click="onClickCopyText('wallet_address_txt')" class="col-auto my-1"> <button type="buton" class="btn btn-primary">复制</button> </div>
+                                    </div>
+                                    <p class="card-text">
+                                    <div id="qrcode"></div>
+                                    </p>
                                 </div>
                             </div>
                         </div>
+
                     </div>
+
+
 
                     <div class="card mb-3 bg-dark2">
                         <div class="row no-gutters">
+                            <div class="col-md-6">
+                                <div class="card-body">
+                                    <h3 class="card-title">USDT</h3>
+                                    <p class="card-text"><span class="gray1">{[user.usdt_trc20]} USDT</span><span class="gray"> ≈ {[usd.usdt_trc20]} USD</span></p>
+                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card-body text-right cztx">
+                                    <button @click="onClickShowWallet('usdt-trc20')" class="btn btn-primary">充值</button>
+                                    <button @click="onClickGo('/me/withdraw')" class="btn btn-primary ml-10">提现</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="is_show['usdt-trc20']" class="row no-gutters">
                             <div class="col-md-12">
+                                <div class="card-body">
+                                    <h5 class="card-title">充币地址</h5>
+                                    <div class="input-group">
+                                        <input id="wallet_address_txt" type="text" readonly="readonly" class="form-control" :value="wallet_address">
+                                        <div @click="onClickCopyText('wallet_address_txt')" class="col-auto my-1"> <button type="buton" class="btn btn-primary">复制</button> </div>
+                                    </div>
+                                    <p class="card-text">
+                                    <div id="qrcode"></div>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="card mb-3 bg-dark2">
+                        <div class="row no-gutters">
+                            <div class="col-md-6">
                                 <div class="card-body">
                                     <h3 class="card-title">{[currency.symbol]}</h3>
-                                    <p class="card-text"><span class="h5">{[user.platform_currency_buy_total]} {[currency.symbol]}</span><span class="h6"> ≈ {[usd.platform_currency]} USD</span></p>
+                                    <p class="card-text"><span class="gray1">{[user.platform_currency_buy_total]} {[currency.symbol]}</span>
+                                        <span v-if="usd.platform_currency_is_up=='+'" class="green"> ≈ {[round(usd.platform_currency,2,8)]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
+                                        <span v-if="usd.platform_currency_is_up=='-'" class="red"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
+                                        <span v-if="usd.platform_currency_is_up==''" class="gray"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
+                                    </p>
                                     <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card-body text-right cztx">
+                                    <button @click="onClickGo('/startup')" class="btn btn-primary">参与购买</button>
                                 </div>
                             </div>
                         </div>
@@ -201,25 +266,64 @@
                 statusText: '',
                 loading: false,
                 readOnly: 'readOnly',
-                wallet_address: '{{wallet_address}}',
+                wallet_address: '',
                 list: [],
 
                 currency: {},
                 user: {},
                 usd: {
+                    total: 0,
                     btc: 0,
                     eth: 0,
                     usdt_trc20: 0,
                     platform_currency: 0,
+                    platform_currency_percent: 0,
+                    platform_currency_is_up: '',
+                },
+
+                ws: null,
+
+                is_show: {
+                    'btc': false,
+                    'eth': false,
+                    'usdt-trc20': false,
                 },
             },
             methods: {
+                onClickGo(url) {
+                    window.location = url
+                },
+                onClickShowWallet(name) {
+                    let wallet = this.findWalletAddress(name)
+                    setTimeout(() => {
+                        this.wallet_address = wallet.wallet_address
+                        jQuery('#qrcode').qrcode({ width: 128, height: 128, text: wallet.wallet_address })
+                        // 二维码
+                        $('#qrcode > canvas').on('click', () => {
+                            this.downloadCanvasImamge('canvas', '二维码-' + wallet.wallet_address + '.png')
+                        })
+                    }, 1)
+                },
                 onClickCopyText(e) {
                     this.readOnly = ''
                     $('#' + e).val()
                     $('#' + e).select()
                     document.execCommand("copy")
                     alert('复制成功：\n' + $('#' + e).val())
+                },
+                findWalletAddress(name) {
+                    let a = this.user.wallet
+                    let result
+                    for (let i = 0; i < a.length; i++) {
+                        let item = a[i]
+                        if (item.wallet_type == name) {
+                            result = item
+                            this.is_show[item.wallet_type] = !this.is_show[item.wallet_type]
+                        } else {
+                            this.is_show[item.wallet_type] = false
+                        }
+                    }
+                    return result
                 },
                 downloadCanvasImamge(selector, name) {
                     var canvas = document.querySelector(selector)
@@ -254,6 +358,32 @@
                         this.list = list
                     })
                 },
+                round(num, intLen = 2, dotLaterLen = 8) {
+                    let z = '000000000000000000000000000000'
+                    let zn = Number(1 + z.substr(0, dotLaterLen))
+                    num = Math.round(num * zn) / zn
+                    let s = String(num)
+
+                    if (s.indexOf('.') !== -1) {
+                        let a = s.split('.')
+                        let n1 = a[0], n2 = a[1], zn
+
+                        if (a[0].length < intLen) {
+                            n1 = z.substr(0, intLen - a[0].length) + a[0]
+                        }
+
+                        if (a[1].length < dotLaterLen) {
+                            zn = z.substr(0, dotLaterLen - a[1].length)
+                            n2 = String(a[1]) + zn
+                        }
+
+                        let res = `${n1}.${n2}`
+                        return res
+                    }
+
+                    let zl = z.substr(0, dotLaterLen)
+                    return `${s}.${zl}`
+                },
                 post(url, params, callback) {
                     this.loading = true;
                     $.post(url, params, res => {
@@ -279,16 +409,27 @@
                         }
                     })
                 },
-
+                initWS() {
+                    let ws = new WebSocket('ws://{{lang.domain}}:3031/coin/price/platform')
+                    ws.onopen = () => {
+                        console.log('websocket init ...')
+                        if (this.user.platform_currency_buy_total <= 0) {
+                            ws.close()
+                        }
+                    };
+                    ws.onclose = () => {
+                        console.log('websocket close ...')
+                    }
+                    ws.onmessage = (event) => {
+                        let res = JSON.parse(event.data)
+                        this.usd.platform_currency = this.user.platform_currency_buy_total * res.price
+                        this.usd.platform_currency_percent = this.round(res.price_percent * 100, 2, 4)
+                        this.usd.platform_currency_is_up = res.is_up == 1 ? '+' : res.is_up == -1 ? '-' : ''
+                        this.usd.total = this.usd.btc + this.usd.eth + this.usd.usdt_trc20 + this.usd.platform_currency
+                    }
+                },
                 // 初始化
                 init() {
-                    jQuery('#qrcode').qrcode({ width: 128, height: 128, text: this.wallet_address })
-
-                    // 二维码
-                    $('#qrcode > canvas').on('click', () => {
-                        this.downloadCanvasImamge('canvas', '二维码-' + this.wallet_address + '.png')
-                    })
-
                     // this.getWallet()
                     // setInterval(() => {
                     //     this.getWallet()
@@ -298,12 +439,14 @@
                         this.currency = data.data.currency
                         this.user = data.data.user
 
-                        this.get('/api/prices-assets', {}, (data) => {
-                            let o = JSON.parse(data.data.value)
+                        this.get('/api/coincap-prices-assets/caches', {}, (data) => {
+                            let o = data.data.value
                             this.usd.btc = o.bitcoin * this.user.btc
                             this.usd.eth = o.ethereum * this.user.eth
                             this.usd.usdt_trc20 = this.user.usdt_trc20
-                            this.usd.platform_currency = this.user.platform_currency_buy_total * 1.1
+                            this.usd.total = this.usd.btc + this.usd.eth + this.usd.usdt_trc20 + this.usd.platform_currency
+
+                            this.initWS()
                         })
                     })
                 }

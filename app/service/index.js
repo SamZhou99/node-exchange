@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const utils99 = require('node-utils99')
 const { update } = require('node-utils99/mysql-sync-cache')
 const dbConfig = require('../../config/db.js')
@@ -251,17 +252,88 @@ let service = {
             return res
         },
 
-
-        async buyLog(user_balance, user_id, coin_amount, coin_price, coin_type, target_amount) {
+        /**
+         * 首发项目参与
+         * @param {*} user_id 用户ID
+         * @param {*} target_amount 购买数量
+         * @param {*} user_balance 余额(若下面数据为空，为人工添加分)
+         * @param {*} coin_amount 帐户币数量
+         * @param {*} coin_price 帐户币兑换平台币价格
+         * @param {*} coin_type 帐户币类型
+         * @returns 
+         */
+        async buyLog(user_id, target_amount, user_balance = 0, coin_amount = 0, coin_price = 0, coin_type = '') {
             // 更新帐户余额
-            let updateUserBalance = await service.user.updateOneField(user_id, coin_type, user_balance - coin_amount)
+            let updateUserBalance
+            if (coin_type != '') {
+                updateUserBalance = await service.user.updateOneField(user_id, coin_type, user_balance - coin_amount)
+            }
 
             // 写入购买记录
             let create_datetime = utils99.Time()
             let update_datetime = utils99.Time()
             console.log(user_id, coin_amount, coin_price, coin_type, target_amount, create_datetime, update_datetime)
-            let userBuyLogRes = await db.Query('INSERT INTO platform_currency_buy_log(user_id, coin_amount, coin_price, coin_type, target_amount, create_datetime, update_datetime) VALUES (?,?,?,?,?,?,?)', [user_id, coin_amount, coin_price, coin_type, target_amount, create_datetime, update_datetime])
+            let userBuyLogRes = await db.Query('INSERT INTO platform_currency_buy_log(user_id, target_amount, coin_amount, coin_price, coin_type, create_datetime, update_datetime) VALUES (?,?,?,?,?,?,?)', [user_id, target_amount, coin_amount, coin_price, coin_type, create_datetime, update_datetime])
             return { updateUserBalance, userBuyLogRes }
+        },
+        /**
+         * 上传认证照片
+         * @param {*} user_id 
+         * @param {*} file 
+         * @returns 
+         */
+        async uploadPhoto(user_id, file) {
+            // let res = await service.wallet.importCSV(file.path)
+            let b1 = file.path.lastIndexOf('/')
+            let b2 = file.path.lastIndexOf('\\')
+            let filename
+            if (b1 != -1) {
+                filename = file.path.substring(b1 + 1, file.path.length)
+            }
+            if (b2 != -1) {
+                filename = file.path.substring(b2 + 1, file.path.length)
+            }
+            if (!filename) {
+                return null
+            }
+            // 文件移动
+            fs.renameSync(file.path, path.join(__dirname, `../../public/Upload/idcard/`, filename))
+            let res = await db.Query('SELECT * FROM user_authentication WHERE user_id=? LIMIT 1', [user_id])
+            if (res.length > 0) {
+                await db.Query('UPDATE user_authentication SET id_photos=?, update_datetime=? WHERE user_id=?', [`${res[0].id_photos},${filename}`, utils99.Time(), user_id])
+            } else {
+                await db.Query('INSERT INTO user_authentication(user_id, id_photos, create_datetime, update_datetime) VALUES(?, ?, ?, ?)', [user_id, filename, utils99.Time(), utils99.Time()])
+            }
+            return filename
+        },
+        /**
+         * 保存或更新 认证信息
+         * @param {*} user_id 
+         * @param {*} status 
+         * @param {*} country 
+         * @param {*} full_name 
+         * @param {*} id_number 
+         * @returns 
+         */
+        async saveAuthenticationInfo(user_id, status, country, full_name, id_number) {
+            let res = await service.user.userAuthenticationInfo(user_id)
+            let time = utils99.Time()
+            if (!res) {
+                await db.Query('INSERT INTO user_authentication(user_id,status,country,full_name,id_number,create_datetime,update_datetime) VALUES(?,?,?,?,?,?,?)', [user_id, status, country, full_name, id_number, time, time])
+            } else {
+                await db.Query('UPDATE user_authentication SET status=?,country=?,full_name=?,id_number=?,update_datetime=? WHERE user_id=?', [status, country, full_name, id_number, time, user_id])
+            }
+            res = await service.user.userAuthenticationInfo(user_id)
+            return res
+        },
+        /**
+         * 用户认证信息
+         * @param {*} user_id 
+         * @returns 
+         */
+        async userAuthenticationInfo(user_id) {
+            let res = await db.Query('SELECT * FROM user_authentication WHERE user_id=? LIMIT 1', [user_id])
+            return res.length > 0 ? res[0] : null
         }
     },
     wallet: {
@@ -378,9 +450,15 @@ let service = {
          * usdt金额总和
          * @returns 
          */
-        async usdtAmount() {
-            let res = await db.Query('SELECT SUM(recharge_log.amount) AS amount FROM recharge_log')
-            return res[0].amount
+        async coinAmount() {
+            let usdt = await db.Query('SELECT SUM(recharge_log.amount) AS amount FROM recharge_log WHERE type=? ', [common.coin.type.USDT])
+            let eth = await db.Query('SELECT SUM(recharge_log.amount) AS amount FROM recharge_log WHERE type=? ', [common.coin.type.ETH])
+            let btc = await db.Query('SELECT SUM(recharge_log.amount) AS amount FROM recharge_log WHERE type=? ', [common.coin.type.BTC])
+            return {
+                usdt: usdt[0].amount || 0,
+                eth: eth[0].amount || 0,
+                btc: btc[0].amount || 0
+            }
         },
         /**
          * 钱包总数和已使用数

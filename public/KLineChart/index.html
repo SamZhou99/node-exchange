@@ -546,11 +546,16 @@
         let chart
         let ws
         let symbol = getQueryVariable('symbol') || 'btcusdt'
+        let chartDataList = []
         let market = {
             ticker: {
+                // 聚合行情（Ticker）数据
+                // 获取市场聚合行情数据，每100ms推送一次。
+                // market.$symbol.ticker
                 "sub": `market.${symbol}.ticker`
             },
             trade_detail: {
+                // 最近成效记录
                 "sub": `market.${symbol}.trade.detail`,
                 "id": "id1"
             }
@@ -570,9 +575,9 @@
         function getKLineData() {
 
             jQuery.get('/api/kline', { symbol: symbol }, (data) => {
-                console.log(data)
+                // console.log(data)
                 let a = data.data.data.reverse()
-                let chartDataList = []
+                chartDataList = []
                 for (let i = 0; i < a.length; i++) {
                     let item = a[i]
                     chartDataList.push({
@@ -603,31 +608,55 @@
                 volume: item.vol,
             }
             chart.updateData(d)
-            console.log(item)
+
+            window.parent.postMessage({ d }, '/');
         }
 
         function getUpdateDataTrade(data) {
             // console.log('此主题提供市场最新成交逐笔明细。')
             window.parent.postMessage({ data }, '/');
-            // console.log(data.tick.data)
-            // let a = data.tick.data
-            // for (let i = 0; i < a.length; i++) {
-
-            // }
         }
 
         function initWS() {
+
+            if (symbol == 'lethusdt') {
+                let host = window.location.host;
+                let host2 = document.domain;
+
+                let ws = new WebSocket(`ws://${host2}:3031/coin/price/platform`)
+                ws.onopen = () => {
+                    console.log('websocket init ...')
+                };
+                ws.onclose = () => {
+                    console.log('websocket close ...')
+                }
+                ws.onmessage = (event) => {
+                    let res = JSON.parse(event.data)
+                    let lastData = chartDataList[chartDataList.length - 1]
+                    lastData.close = res.price
+                    console.log(res,lastData)
+                    chart.updateData(lastData)
+                }
+                return
+            }
+
+
+
             ws = new WebSocket("wss://api.huobi.pro/ws")
             ws.onopen = () => {
-                console.log('connection open wss://api.huobi.pro/ws')
+                console.log('connection open...')
                 ws.send(JSON.stringify(market.ticker))
                 ws.send(JSON.stringify(market.trade_detail))
             };
             ws.onclose = () => {
-                this.button_label = 'connection close...'
+                console.log('connection close...')
+                // 一分钟后重联
+                setTimeout(() => {
+                    this.initWS()
+                }, 1000 * 60)
             }
             ws.onmessage = (event) => {
-                this.button_label = 'connection message...' + this.index
+                console.log('connection message...' + this.index)
 
                 const fr = new FileReader();
                 fr.onload = function () {
@@ -640,11 +669,13 @@
                     } else if (data.ch == `market.${symbol}.trade.detail`) {
                         getUpdateDataTrade(data)
                     } else {
-                        console.log(data)
+                        console.log('ws data ： ', data)
                     }
                 }
                 fr.readAsArrayBuffer(event.data);
             }
+
+
         }
 
         jQuery.noConflict();
