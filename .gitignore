@@ -3,6 +3,7 @@ backups/
 config/db.js
 public/article/
 public/_upload/
+public/Upload/
 temp/log/
 .DS_Store
 
