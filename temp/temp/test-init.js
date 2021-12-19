@@ -87,7 +87,7 @@ async function importCSV() {
 }
 
 async function initPlatformCurrency() {
-    await db.Query("INSERT INTO `platform_currency` VALUES ('1', 'https://uploadfile.huiyi8.com/up/3e/d1/3e/3ed13e27028c0dfca77505ef22884414.png', 'LETH', 'Leth', '999999999', '0', '0.00010000', '2.00000000', '4.00000000', '8.00000000', '2021-12-01 23:59:59', '2022-01-01 23:59:59', '2021-12-01 16:55:31', '2021-12-11 00:58:30');")
+    await db.Query("INSERT INTO `platform_currency` VALUES ('1', 'https://uploadfile.huiyi8.com/up/3e/d1/3e/3ed13e27028c0dfca77505ef22884414.png', 'LETH', 'Leth', '100000000', '0', '4', '0.03400000', '20.00000000', '0.00000000', '0.00000000', '2021-12-01 00:00:00', '2022-12-01 00:00:00', '2021-12-19 18:43:25', '2021-12-19 18:43:28');")
 }
 
 async function init() {

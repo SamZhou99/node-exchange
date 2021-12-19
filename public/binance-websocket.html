@@ -27,6 +27,26 @@
                     starting: false,
                     button_label: '开始联机',
                     websocket: null,
+                    subscribe: {
+                        btcusdt: {
+                            "method": "SUBSCRIBE",
+                            "params":
+                                [
+                                    // "btcusdt@aggTrade",
+                                    // "btcusdt@depth",
+                                    "btcusdt@kline_1m",
+                                ],
+                            "id": 1
+                        },
+                        miniTicker: {
+                            "method": "SUBSCRIBE",
+                            "params":
+                                [
+                                    "!miniTicker@arr@3000ms",
+                                ],
+                            "id": 1
+                        }
+                    }
                 },
                 methods: {
                     onClickEnter() {
@@ -35,20 +55,7 @@
                             socket.close();
                             this.starting = false;
                         } else {
-                            // id: 1
-                            // method: "SUBSCRIBE"
-                            // params: ["!miniTicker@arr@3000ms"]
-                            let data = {
-                                "method": "SUBSCRIBE",
-                                "params":
-                                    [
-                                        // "btcusdt@aggTrade",
-                                        // "btcusdt@depth",
-                                        "btcusdt@kline_1m",
-                                    ],
-                                "id": 1
-                            }
-                            socket.send(JSON.stringify(data))
+                            socket.send(JSON.stringify(this.subscribe.miniTicker))
                             this.starting = true
                         }
                     },
