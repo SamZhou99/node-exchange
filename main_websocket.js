@@ -24,6 +24,14 @@ huobi.init()
 // coincap
 const coincap = require('./app/service/ws.coincap.js')
 coincap.callback = async function (data) {
+	if (data.key == 'coincap-prices-assets') {
+		let res = {
+			platform: platform_currency_data != '' ? JSON.parse(platform_currency_data) : {},
+			cache: JSON.parse(data.value)
+		}
+		broadcastPathSendText('/coin/price', JSON.stringify(res))
+		return
+	}
 	await service.set(data.key, JSON.stringify(data.value))
 }
 coincap.init()
@@ -42,7 +50,7 @@ const platform_currency = require('./app/service/ws.platform_currency.js')
 let platform_currency_data = ''
 platform_currency.callback = async function (data) {
 	platform_currency_data = JSON.stringify(data)
-	console.log('平台币价格波动：', platform_currency_data)
+	console.log('平台币价格波动：', typeof platform_currency_data, platform_currency_data)
 	broadcastPathSendText('/coin/price/platform', platform_currency_data)
 }
 platform_currency.init()
@@ -143,6 +151,14 @@ wsServer.on('request', async function (request) {
 		console.log('断开联机')
 		connectionObj.remove(conn.id)
 	})
+
+	if (conn.path === '/coin/price') {
+		let data = {
+			platform: JSON.parse(platform_currency_data),
+			cache: coincap.data.cache
+		}
+		conn.sendUTF(JSON.stringify(data))
+	}
 
 	if (conn.path === '/coin/price/platform') {
 		conn.sendUTF(platform_currency_data)

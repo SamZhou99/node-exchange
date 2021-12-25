@@ -299,6 +299,60 @@
 			color: #6b6b6b;
 			background: #ffffff;
 		}
+
+		@keyframes donghua-red {
+			from {
+				background: #ffffff;
+			}
+
+			to {
+				background: #ffe4e4;
+			}
+		}
+
+		@-webkit-keyframes donghua-red {
+			from {
+				background: #ffffff;
+			}
+
+			to {
+				background: #ffe4e4;
+			}
+		}
+
+		@keyframes donghua-green {
+			from {
+				background: #ffffff;
+			}
+
+			to {
+				background: #d4f6f0;
+			}
+		}
+
+		@-webkit-keyframes donghua-green {
+			from {
+				background: #ffffff;
+			}
+
+			to {
+				background: #d4f6f0;
+			}
+		}
+
+		.donghuaRed {
+			animation: donghua-red 0.3s;
+			-moz-animation: donghua-red 0.3s;
+			-webkit-animation: donghua-red 0.3s;
+			-o-animation: donghua-red 0.3s;
+		}
+
+		.donghuaGreen {
+			animation: donghua-green 0.3s;
+			-moz-animation: donghua-green 0.3s;
+			-webkit-animation: donghua-green 0.3s;
+			-o-animation: donghua-green 0.3s;
+		}
 	</style>
 </head>
 
@@ -338,7 +392,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr v-for="item in this.list">
+						<tr v-for="item in this.list" :id="item.node.id">
 							<!-- <th scope="row">{[item.node.rank]}</th> -->
 							<td>
 								<div class="row">
@@ -510,7 +564,8 @@
 					a.splice(this.statup.sort, 0, {
 						node:
 						{
-							changePercent24Hr: - 2.39,
+							id: _t.statup.name.toLocaleLowerCase(),
+							changePercent24Hr: 0,
 							logo: _t.statup.icon,
 							marketCapUsd: 88811108158.73,
 							name: _t.statup.name,
@@ -536,7 +591,8 @@
 					}
 				},
 				initWS() {
-					let ws = new WebSocket('ws://{{lang.domain}}:3031/coin-list')
+					// let ws = new WebSocket('ws://{{lang.domain}}:3031/coin-list')
+					let ws = new WebSocket('ws://{{lang.domain}}:3031/coin/price')
 					ws.onopen = () => {
 						console.log('websocket init ...')
 					};
@@ -544,23 +600,48 @@
 						console.log('websocket close ...')
 					}
 					ws.onmessage = (event) => {
+						let _t = this
 						let res = JSON.parse(event.data)
-						if (res.key == 'coincap-coin-list') {
-							this.coinList(JSON.parse(res.value))
-						} else {
-							this.coinListUpdate(res)
-						}
+						console.log(res)
+						// if (res.key == 'coincap-coin-list') {
+						// 	this.coinList(JSON.parse(res.value))
+						// } else {
+						// 	this.coinListUpdate(res)
+						// }
+						this.list.forEach(function (item) {
+							let key = item.node.id
+							if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
+								let v = res.platform.price
+								let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+								item.node.priceUsd = _t.round(v, 6)
+								item.node.changePercent24Hr = _t.round(res.platform.price_percent, 2)
+								$('#' + key).addClass(className)
+								setTimeout(() => {
+									$('#' + key).removeClass(className)
+								}, 300)
+							}
+							let v = res.cache[key]
+							if (v) {
+								let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+								item.node.priceUsd = v
+								$('#' + key).addClass(className)
+								setTimeout(() => {
+									$('#' + key).removeClass(className)
+								}, 300)
+							}
+						})
+
 					}
 				},
 				getList() {
 					this.get('/api/coincap-coin-list/caches', {}, (data) => {
 						this.coinList(data.data.value)
+						this.initWS()
 					})
 				},
 				init() {
 					this.get('/api/startup', {}, (data) => {
 						this.statup = data.data.currency
-						// this.initWS()
 						this.getList()
 					})
 				}

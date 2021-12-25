@@ -13,14 +13,14 @@ let _t = {
     intervalTime: 1000 * 60 * 60 * 24 / 200, // 一天200次免费请求
     callback: null,
     data: {
-        btc: 0,
-        eth: 0,
+        cache: {}
     },
     coincap_api: {
         ws: {
             prices_assets: {
                 key: 'coincap-prices-assets',
-                url: 'wss://ws.coincap.io/prices?assets=bitcoin,ethereum,tether'
+                // url: 'wss://ws.coincap.io/prices?assets=bitcoin,ethereum,xrp,eos,ethereum-classic,binance'
+                url: 'wss://ws.coincap.io/prices?assets=ALL'
             }
         },
         http: {
@@ -52,14 +52,10 @@ let _t = {
         _t.reConnection()
     },
     onMessage(msg) {
-        console.log(_t.name + '消息数据', msg.utf8Data.length)
-        console.log(_t.name + '消息数据', typeof msg.utf8Data, msg.utf8Data)
-        let data = JSON.parse(msg.utf8Data)
-        _t.data.btc = data.bitcoin || _t.data.btc
-        _t.data.eth = data.ethereum || _t.data.eth
-        // service.set(_t.coincap_api.ws.prices_assets.key, JSON.stringify({ "bitcoin": _t.data.btc, "ethereum": _t.data.eth }))
+        console.log(_t.name + '消息数据', msg.utf8Data.length, typeof msg.utf8Data)
+        _t.addCache(msg.utf8Data)
         if (_t.callback) {
-            _t.callback({ key: _t.coincap_api.ws.prices_assets.key, value: { "bitcoin": _t.data.btc, "ethereum": _t.data.eth } })
+            _t.callback({ key: _t.coincap_api.ws.prices_assets.key, value: msg.utf8Data })
         }
     },
     onConnection(connection) {
@@ -75,6 +71,13 @@ let _t = {
         _t.tempTimeout = setTimeout(() => {
             _t.init()
         }, 1000 * 60) // 一分钟后重联
+    },
+
+    addCache(msg) {
+        let json = JSON.parse(msg)
+        for (let key in json) {
+            _t.data.cache[key] = json[key]
+        }
     },
 
     getFilterData(data) {
@@ -131,7 +134,7 @@ let _t = {
         _t.client = new WebSocketClient()
         _t.client.on('connectFailed', _t.onFailed)
         _t.client.on('connect', _t.onConnection)
-        // __t.client.connect(__t.coincap_api.ws.prices_assets.url, 'echo-protocol')
+        _t.client.connect(_t.coincap_api.ws.prices_assets.url, 'echo-protocol')
         console.log(`${_t.name} WS Init`, _t.coincap_api.ws.prices_assets.url)
 
         await _t.initHttpData()
