@@ -3,9 +3,6 @@
 
 <head>
     {{include './_header.html'}}
-    <!-- BEGIN PAGE LEVEL STYLES -->
-    <link href="/admin-assets/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
-    <!-- END PAGE LEVEL STYLES -->
 </head>
 
 <body class="sticky-header">
@@ -132,11 +129,6 @@
 
 
     <!-- BEGIN PAGE LEVEL SCRIPTS -->
-    <script src="/admin-assets/plugins/sweetalert/sweet-alert.js"></script>
-    <script src="/admin-assets/pages/jquery.sweet-alert.custom.js"></script>
-    <!-- BEGIN PAGE LEVEL SCRIPTS -->
-
-    <!-- BEGIN PAGE LEVEL SCRIPTS -->
     <script src="/admin-assets/plugins/jquery-validation/jquery.validate.min.js"></script>
     <!-- <script src="/admin-assets/pages/validation-custom.js"></script> -->
     <script>
@@ -241,7 +233,7 @@
                         console.log(data)
                         if (data.flag != 'ok') {
                             alert(data.flag)
-                        }else{
+                        } else {
                             alert('注册成功!')
                             document.location = '/admin/user-list'
                         }
@@ -273,14 +265,11 @@
                     })
                 },
 
-                // 初始化
                 init() {
                     this.get('/admin/api/user-group-category', {}, (data) => {
                         this.userCategory = data.data.list
+                        // swal("Good job!", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lorem erat eleifend ex semper, lobortis purus sed.", "success")
                     })
-
-                    swal("Good job!", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed lorem erat eleifend ex semper, lobortis purus sed.", "success")
-
                 }
             },
             mounted() {

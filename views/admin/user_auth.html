@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">用户认证</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/admin">网站首页</a>
+                    </li>
+                    <li class="active">
+                        用户认证
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+                        <h2 class="header-title">认证信息</h2>
+
+                        <div class="form-horizontal">
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="country">国家</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.country" class="form-control" type="text" id="country" name="country" placeholder="国家">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="full_name">完整姓名 </label>
+                                <div class="col-md-10">
+                                    <input v-model="form.full_name" class="form-control" type="text" id="full_name" name="full_name" placeholder="姓名">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="id_number">证件号码 </label>
+                                <div class="col-md-10">
+                                    <input v-model="form.id_number" class="form-control" type="text" id="id_number" name="id_number" placeholder="证件号码">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="id_photo">证件照片 </label>
+                                <div class="col-md-10">
+                                    <a v-for="item in this.photos" :href="'/Upload/idcard/'+item.id_photo" target="_blank"><img :src="'/Upload/idcard/'+item.id_photo" alt="id_photo" class="m-1 rounded float-left" width="100" height=""></a>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="id_photo">驳回原因 </label>
+                                <div class="col-md-10">
+                                    <textarea v-model="form.failed_reason" class="form-control" rows="5"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label" for="type">状态 </label>
+                                <div class="col-md-10">
+                                    <select v-model="form.status" class="form-control" id="type" name="type">
+                                        <option disabled value="">请选择</option>
+                                        <option v-for="option in user_status" v-bind:value="option.value">{[option.label]}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-2 col-md-offset-2">
+                                    <button @click="onClickSubmit()" :disabled="this.loading" class="btn btn-primary"
+                                        type="button">Submit</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!--End row-->
+
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                user_id: '{{authInfo.auth.user_id}}',
+                loading: false,
+                photos: [],
+                user_status: [],
+                form: {
+                    user_id: '',
+                    country: '',
+                    full_name: '',
+                    id_number: '',
+                    status: '',
+                    failed_reason: '',
+                }
+            },
+            methods: {
+                onClickSubmit() {
+                    this.post('/admin/api/update-authentication', this.form, (data) => {
+                        if (data.flag != 'ok') {
+                            alert(data.flag)
+                            return
+                        }
+                        swal("修改完成！", "数据已修改完成！", "success")
+                    })
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+
+                init() {
+                    this.get('/api/authentication', { user_id: this.user_id }, (data) => {
+                        if (data.flag != 'ok') {
+                            alert(data.flag)
+                            return
+                        }
+                        this.photos = data.data.photos
+                        this.form.user_id = data.data.auth.user_id
+                        this.form.country = data.data.auth.country
+                        this.form.full_name = data.data.auth.full_name
+                        this.form.id_number = data.data.auth.id_number
+                        this.form.status = data.data.auth.status
+                        this.form.failed_reason = data.data.auth.failed_reason
+
+                        this.user_status = [
+                            { label: '未认证', value: 0 },
+                            { label: '待审核', value: 1 },
+                            { label: '驳回', value: 2 },
+                            { label: '通过', value: 3 },
+                        ]
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</body>
+
+</html>

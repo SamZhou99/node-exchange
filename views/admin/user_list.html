@@ -49,7 +49,7 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>帐号</th>
-                                        <th>用户类型</th>
+                                        <th>用户类型/认证</th>
                                         <th>邀请码</th>
                                         <th>邀请人(上级)</th>
                                         <th>平台币({[this.platform_currency.symbol]})</th>
@@ -64,9 +64,18 @@
                                     <tr v-for="item in this.list">
                                         <td>{[item.id]}</td>
                                         <td><span v-html="item.self_name"></span></td>
-                                        <td><a href="#" :id="'selectType'+item.id" :data-item="item.id"
-                                                data-type="select" data-pk="1" data-value="" data-title="选择用户类型"
-                                                class="editable editable-click" style="color: gray;">{[item.value]}</a>
+                                        <td>
+                                            <a href="#" :id="'selectType'+item.id" :data-item="item.id" data-type="select" data-pk="1" data-value="" data-title="选择用户类型" class="editable editable-click" style="color: gray;">{[item.value]}</a>
+                                            <p>
+                                            <div v-if="item.auth">
+                                                <a v-if="item.auth.status==1" :href="'/admin/user-auth/'+item.id" class="text-danger bg-warning"><b>待审核</b></a>
+                                                <a v-if="item.auth.status==2" :href="'/admin/user-auth/'+item.id" class="text-danger">未通过</a>
+                                                <a v-if="item.auth.status==3" :href="'/admin/user-auth/'+item.id" class="text-primary">通过认证</a>
+                                            </div>
+                                            <div v-else>
+                                                <span>未认证</span>
+                                            </div>
+                                            </p>
                                         </td>
                                         <td><a :href="'/reg?invite='+item.invite.code"
                                                 target="_blank">{[item.invite.code]}</a>
@@ -250,7 +259,6 @@
                     })
                 },
 
-                // 初始化
                 init() {
                     let t = this
                     this.get('/admin/api/user-list', {}, (data) => {

@@ -167,7 +167,6 @@
                         }
                     })
                 },
-                // 初始化
                 init() {//http://127.0.0.1:3030/admin/api/wallet-list?page=1&limit=4
                     this.get('/admin/api/wallet-list', this.page, (data) => {
                         let a = data.data.list

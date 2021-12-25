@@ -142,7 +142,7 @@
                             </tr>
                         </thead>
                         <tbody class="font-small" style="overflow:scroll;">
-                            <tr v-for="item in this.list" @click="onClickGo(item.node.symbol)">
+                            <tr v-for="item in this.list" @click="onClickGo(item.node.symbol)" style="height:40px;cursor: pointer;">
                                 <td class="col-4 text-left">{[item.node.symbol]}</td>
                                 <td class="col-4 text-right">{[item.node.priceUsd]}</td>
                                 <td class="col-4 text-right">
@@ -415,7 +415,7 @@
                 },
                 coinList(data) {
                     let _t = this
-                    let a = data.data
+                    let a = data
                     a.forEach(function (item) {
                         item.node = {}
                         item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
@@ -480,7 +480,6 @@
                         this.coinList(data.data.value)
                     })
                 },
-                // 初始化
                 init() {
                     let _t = this
                     this.get('/api/startup', {}, (data) => {

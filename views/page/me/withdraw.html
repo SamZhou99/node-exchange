@@ -38,12 +38,104 @@
                 <div class="col-md-9 col-sm-12">
 
                     <div v-if="status==3">
-                        通过审核
+                        <div class="h4">提币</div>
+                        <hr>
+                        <div class="form-group col-md-12">
+                            <label for="cointype">选择提币种类</label>
+                            <select v-model="form.coin_type" @change="onChangeSelect" class="form-control" id="cointype">
+                                <option v-for="item in this.coin_type" :value="item">{[item.label]}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="address">提币地址</label>
+                            <input v-model="form.address" type="text" class="form-control" id="address" aria-describedby="">
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="wallet_address">提币数量</label>
+                            <input v-model="form.apply_amount" @keyup="onChangeInput" type="number" class="form-control" id="wallet_address" aria-describedby="" min="0.00000001">
+                            <div class="form-row m-1">
+                                <div class="col-sm-6 "><small id="" class="form-text text-muted">可用：{[user[form.coin_type.key]]} {[form.coin_type.label]}</small></div>
+                                <div class="col-sm-6 text-right"><button @click="onClickAllIn()" class="btn btn-outline-primary btn-sm">全部</button></div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <label for="wallet_address">手续费</label>
+                            <input :value="form.coin_type.charges" type="email" class="form-control" id="wallet_address" aria-describedby="" readOnly="readOnly">
+                        </div>
+
+                        <div class="form-group row col-md-12">
+                            <div class="col-sm-6 form-text text-muted">到帐数量：</div>
+                            <div class="col-sm-6 text-right">{[form.real_amount]} {[form.coin_type.label]}</div>
+                        </div>
+
+                        <div class="form-group col-md-12">
+                            <button @click="onClickSubmit()" class="btn btn-primary btn-block">提交</button>
+                        </div>
                     </div>
+
                     <div v-else="">
                         请 <a href="/me/authentication">身份认证</a> 通过后，再回来提交提现申请！
                     </div>
 
+                    <hr>
+                    <div class="form-group col-md-12" style="font-size:12px">
+                        <table class="table table-dark">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">币种</th>
+                                    <th scope="col">申请数量</th>
+                                    <th scope="col">到帐数量</th>
+                                    <th scope="col">提币地址</th>
+                                    <th scope="col">申请状态</th>
+                                    <th scope="col">申请时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in this.withdraw_list">
+                                    <th scope="row">{[item.id]}</th>
+                                    <td>{[item.type]}</td>
+                                    <td>{[item.apply_amount]}</td>
+                                    <td>{[item.real_amount]}</td>
+                                    <td>{[item.address]}</td>
+                                    <td>
+                                        <a @click="onClickShowReason(item.failed_reason)" v-if="item.status==2" href="javascript:void(0);">{[item.statusText]}</a>
+                                        <div v-else="">{[item.statusText]}</div>
+                                    </td>
+                                    <td>{[item.create_datetime]}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="participate" tabindex="-1" role="dialog" aria-labelledby="participateTitle"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document" style="color: black">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="participateTitle">驳回原因</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        {[failed_reason]}
+
+                    </div>
+                    <div class="modal-footer text-center">
+                        <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                        <!-- <button @click="onClickEnter()" :disabled="this.loading" type="button" class="btn btn-primary btn-block">保存</button> -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,11 +150,129 @@
             delimiters: ["{[", "]}"],
             el: '#app',
             data: {
-                id: '{{session.user.id}}',
                 loading: false,
-                status: ''
+                status: '',
+                id: '{{session.user.id}}',
+                user: {},
+                coin_type: [
+                    { label: 'BTC', key: 'btc', value: '0', charges: '0.0002' },
+                    { label: 'ETH', key: 'eth', value: '1', charges: '0.002' },
+                    { label: 'USDT-TRC20', key: 'usdt_trc20', value: '2', charges: '1' },
+                ],
+
+                form: {
+                    coin_type: null,
+
+                    user_id: '{{session.user.id}}',
+                    apply_amount: 0,
+                    real_amount: 0,
+                    charges: 0,
+                    type: '',
+                    address: '',
+                },
+
+                withdraw_list: [],
+
+                failed_reason: '',
             },
             methods: {
+                onClickShowReason(failed_reason) {
+                    this.failed_reason = failed_reason
+                    $('#participate').modal("show");
+                },
+                onClickSubmit() {
+                    if (this.loading) {
+                        return
+                    }
+                    this.form.type = this.form.coin_type.key
+                    this.form.charges = this.form.coin_type.charges
+                    console.log(this.form)
+
+                    if (this.form.apply_amount <= 0 || this.form.real_amount <= 0 || this.form.charges <= 0 || this.form.type == '' || this.form.address == '') {
+                        tip('Please fill out the form completely!')
+                        return
+                    }
+
+                    if (this.form.real_amount <= 0) {
+                        tip('The quantity is too small!')
+                        return
+                    }
+
+                    this.post('/api/withdraw-applyfor', this.form, (data) => {
+                        if (data.flag != 'ok') {
+                            tip(data.flag)
+                            return
+                        }
+
+                        tip('submitted successfully!', () => {
+                            window.location.reload()
+                        })
+                    })
+                },
+                onClickAllIn() {
+                    this.form.apply_amount = this.user[this.form.coin_type.key]
+                    this.onChangeInput()
+                },
+                onChangeInput() {
+                    if (this.form.apply_amount <= 0) {
+                        this.form.real_amount = 0
+                        return
+                    }
+                    this.form.real_amount = this.round(this.form.apply_amount - this.form.coin_type.charges)
+                },
+                onChangeSelect(value) {
+                    console.log(value)
+                },
+                round(num, intLen = 2, dotLaterLen = 8) {
+                    let z = '000000000000000000000000000000'
+                    let zn = Number(1 + z.substr(0, dotLaterLen))
+                    num = Math.round(num * zn) / zn
+                    let s = String(num)
+
+                    if (s.indexOf('.') !== -1) {
+                        let a = s.split('.')
+                        let n1 = a[0], n2 = a[1], zn
+
+                        if (a[0].length < intLen) {
+                            n1 = z.substr(0, intLen - a[0].length) + a[0]
+                        }
+
+                        if (a[1].length < dotLaterLen) {
+                            zn = z.substr(0, dotLaterLen - a[1].length)
+                            n2 = String(a[1]) + zn
+                        }
+
+                        let res = `${n1}.${n2}`
+                        return res
+                    }
+
+                    let zl = z.substr(0, dotLaterLen)
+                    return `${s}.${zl}`
+                },
+                getStatus(status) {
+                    if (status == 1) {
+                        return '申请提币'
+                    }
+
+                    if (status == 2) {
+                        return '驳回'
+                    }
+
+                    if (status == 3) {
+                        return '通过'
+                    }
+
+                    if (status == 4) {
+                        return '提现成功'
+                    }
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
                 get(url, params, callback) {
                     this.loading = true;
                     $.ajax({
@@ -81,15 +291,41 @@
                         }
                     })
                 },
+                initWithdrawList() {
+                    const t = this
+                    this.get('/api/withdraw-log', {}, (data) => {
+                        let a = data.data
+                        a.forEach(function (item) {
+                            item.statusText = t.getStatus(item.status)
+                            item.create_datetime = moment(item.create_datetime).format('YYYY-MM-DD HH:mm:ss')
+                        })
+                        this.withdraw_list = a
+                    })
+                },
                 init() {
+                    this.form.coin_type = this.coin_type[0]
 
                     this.get('/api/authentication', {}, (data) => {
                         if (data.flag != 'ok') {
                             console.log(data.falg)
                             return
                         }
-                        this.status = data.data.status
+                        if (data.data.auth) {
+                            this.status = data.data.auth.status
+                        }
+
+                        this.get('/api/me', {}, (data) => {
+                            if (data.flag != 'ok') {
+                                console.log(data.falg)
+                                return
+                            }
+                            if (data.data) {
+                                this.user = data.data
+                            }
+                        })
                     })
+
+                    this.initWithdrawList()
 
                 }
             },

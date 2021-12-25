@@ -44,6 +44,18 @@ app.use(koaBody({
 }));
 
 
+const cors = require('koa2-cors');
+// 配置插件
+app.use(cors({
+    // 任何地址都可以访问
+    // origin: "*",
+    // 指定地址才可以访问
+    origin: 'http://localhost:8080',
+    maxAge: 2592000,
+    // 必要配置
+    credentials: true
+}));
+
 // // 自定义 404
 // app.use(convert(function* (next) {
 //     yield next

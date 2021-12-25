@@ -4,10 +4,10 @@
 <head>
     {{include './_header.html'}}
     <style>
-        .analytics-stats > label > span {
+        .analytics-stats>label>span {
             margin-left: 4px;
             margin-right: 10px;
-            font-size:12px;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -80,7 +80,9 @@
                                 <h3>钱包地址数(已用/总共)</h3>
                                 <div class="analytics-info">
                                     <div class="analytics-stats">
-                                        {[result.walletAddressCount.used]} / {[result.walletAddressCount.total]}
+                                        <label class="text-danger">{[result.walletAddressCount.USDT.used]} / {[result.walletAddressCount.USDT.total]} <span>USDT</span></label>
+                                        <label class="text-primary">{[result.walletAddressCount.ETH.used]} / {[result.walletAddressCount.ETH.total]} <span>ETH</span></label>
+                                        <label class="text-info">{[result.walletAddressCount.BTC.used]} / {[result.walletAddressCount.BTC.total]} <span>BTC</span></label>
                                     </div>
                                     <span id="sparklinestats3"></span>
                                 </div>
@@ -295,8 +297,18 @@
                         btc: 0
                     },
                     "walletAddressCount": {
-                        "total": 0,
-                        "used": 0
+                        "USDT": {
+                            "total": 0,
+                            "used": 0
+                        },
+                        "ETH": {
+                            "total": 0,
+                            "used": 0
+                        },
+                        "BTC": {
+                            "total": 0,
+                            "used": 0
+                        }
                     },
                     "pageViewCount": 0
                 }
@@ -373,7 +385,6 @@
                     })
                 },
 
-                // 初始化
                 init() {
                     this.get('/admin/api/dashboard', {}, (data) => {
                         this.result = data.data

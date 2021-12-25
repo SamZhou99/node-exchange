@@ -13,7 +13,8 @@ module.exports = {
             "eos",
             "bch",
             "etc",
-            "iota"
+            "iota",
+            "bnb"
         ]
     }
 }

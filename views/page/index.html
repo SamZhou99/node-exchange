@@ -18,7 +18,6 @@
 			height: 56px;
 			line-height: 56px;
 			border-bottom: solid 1px #313a56;
-			/*下划线颜色*/
 		}
 
 		.main-table-box5 .table-tab li {
@@ -44,7 +43,6 @@
 			width: 14.28%;
 			font-size: 15px;
 			color: #add5d8;
-			/*首页文字颜色*/
 		}
 
 		.main-table-box5 .table-head li i {
@@ -195,9 +193,6 @@
 
 
 
-
-
-
 		.main-summary {
 			margin: 0 auto;
 			/* width: 1200px; */
@@ -241,13 +236,6 @@
 			font-size: 20px;
 			font-weight: 300;
 		}
-
-
-
-
-
-
-
 
 
 
@@ -505,8 +493,7 @@
 				},
 				coinList(data) {
 					let _t = this
-					console.log(data)
-					let a = data.data
+					let a = data
 					a.forEach(function (item) {
 						item.node = {}
 						item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
@@ -570,7 +557,6 @@
 						this.coinList(data.data.value)
 					})
 				},
-				// 初始化
 				init() {
 					this.get('/api/startup', {}, (data) => {
 						this.statup = data.data.currency

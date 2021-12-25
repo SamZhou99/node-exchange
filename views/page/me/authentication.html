@@ -29,30 +29,6 @@
         .dz-message {
             color: #000;
         }
-
-        .container-t {
-            position: absolute;
-            background-color: #ffecf700;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-            z-index: 2000;
-        }
-
-        .item-t {
-            text-align: center;
-            border-radius: 10px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 60px;
-            background-color: #000000ad;
-            padding-top: 18px;
-        }
     </style>
 </head>
 
@@ -76,10 +52,17 @@
                     </div>
 
 
+                    <div v-if="status==3">
+                        <h1>通过认证</h1>
+                    </div>
+
+
                     <div v-if="status==0 || status==2">
 
                         <div v-if="status==2" class="form-group">
-                            <h1>{[failed_reason]}</h1>
+                            <div class="alert alert-danger" role="alert">
+                                <p class="mb-0">未通过：{[failed_reason]}.</p>
+                            </div>
                         </div>
 
                         <div class="form-row">
@@ -112,6 +95,10 @@
                             </div>
                         </div>
 
+                        <div class="form-row m-1" style="background-color: aliceblue; border-radius: 0.25rem;">
+                            <img v-for="item in this.photos" :src="'/Upload/idcard/'+item.id_photo" alt="id photo" class="m-1 rounded float-left" width="100" height="">
+                        </div>
+
                         <div class="form-row">
                             <div class="form-group col-md-12">
                                 <button @click="onClickSubmit()" class="btn btn-primary btn-block">Submit information</button>
@@ -138,12 +125,6 @@
         </div>
 
 
-
-
-        <div class="container-t">
-            <div class="item-t"></div>
-        </div>
-
     </div>
 
     {{include '../_footer.html'}}
@@ -162,34 +143,43 @@
                     country: '',
                     full_name: '',
                     id_number: '',
-                }
+                },
+                photos: [],
             },
             methods: {
                 onClickSubmit() {
                     console.log(this.form)
                     if (!this.form.country || !this.form.full_name || !this.form.id_number) {
-                        this.tip('Please fill out the form completely!')
+                        tip('Please fill out the form completely!')
                         return
                     }
-                    this.post('/api/update-authentication', this.form, (data) => {
+
+                    // 提交前检查有没有照片
+                    this.get('/api/authentication', {}, (data) => {
                         if (data.flag != 'ok') {
-                            this.tip(data.flag)
+                            tip(data.falg)
                             return
                         }
-                        if (data.data.status == 1) {
-                            console.log('等待审核')
+
+                        if (data.data.photos.length <= 0) {
+                            tip('Please upload id photo!')
+                            return
                         }
+
+                        this.post('/api/update-authentication', this.form, (data) => {
+                            if (data.flag != 'ok') {
+                                tip(data.flag)
+                                return
+                            }
+                            if (data.data.auth.status == 1) {
+                                tip('Complete, Please Wait!', () => {
+                                    window.location.reload()
+                                })
+                            }
+                        })
+
                     })
-                },
-                tip(text, callback) {
-                    $('.container-t').show()
-                    $('.item-t').text(text)
-                    setTimeout(function () {
-                        $('.container-t').hide()
-                        if (callback) {
-                            callback()
-                        }
-                    }, 2000)
+
                 },
                 post(url, params, callback) {
                     this.loading = true;
@@ -232,14 +222,23 @@
                     })
 
 
-             
+
                     this.get('/api/authentication', {}, (data) => {
                         if (data.flag != 'ok') {
                             console.log(data.falg)
                             return
                         }
-                        this.status = data.data.status
-                        this.failed_reason = data.data.failed_reason
+
+                        if (data.data.auth) {
+                            this.status = data.data.auth.status
+                            this.failed_reason = data.data.auth.failed_reason
+
+                            this.form.country = data.data.auth.country
+                            this.form.full_name = data.data.auth.full_name
+                            this.form.id_number = data.data.auth.id_number
+
+                            this.photos = data.data.photos
+                        }
                     })
                 }
             },

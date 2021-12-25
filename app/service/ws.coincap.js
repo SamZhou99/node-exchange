@@ -76,28 +76,67 @@ let _t = {
             _t.init()
         }, 1000 * 60) // 一分钟后重联
     },
-    initHttpGetData() {
+
+    getFilterData(data) {
+        // "data": [
+        //     {
+        //       "id": "bitcoin",
+        //       "rank": "1",
+        //       "symbol": "BTC",
+        //       "name": "Bitcoin",
+        //       "supply": "18908731.0000000000000000",
+        //       "maxSupply": "21000000.0000000000000000",
+        //       "marketCapUsd": "922325126296.9449560958840235",
+        //       "volumeUsd24Hr": "14086730994.4259487632088966",
+        //       "priceUsd": "48777.7379823608975185",
+        //       "changePercent24Hr": "0.7388389360587474",
+        //       "vwap24Hr": "48723.9656716751833886",
+        //       "explorer": "https://blockchain.info/"
+        //     },
+
+        let need = common.coin.need
+        let temp = []
+        for (let i = 0; i < data.length; i++) {
+            let d = data[i]
+            for (let j = 0; j < need.length; j++) {
+                let item = need[j]
+                if (d.symbol.toLocaleLowerCase() == item) {
+                    temp.push(d)
+                }
+            }
+        }
+        return temp
+    },
+
+    async getData() {
+        let axios_result = await utils99.request.axios.get({ url: _t.coincap_api.http.assets.url })
+        if (axios_result && axios_result.statusText == 'OK') {
+            return _t.getFilterData(axios_result.data.data)
+        }
+        return null
+    },
+
+    async initHttpData() {
         // 行情列表
         console.log(_t.name + '行情列表多少秒一次？', _t.intervalTime)
         clearInterval(_t.tempInterval)
         _t.tempInterval = setInterval(async () => {
-            let axios_result = await utils99.request.axios.get({ url: _t.coincap_api.http.assets.url })
-            if (axios_result && axios_result.statusText == 'OK') {
-                console.log(_t.name, axios_result.data.length)
-                if (_t.callback) {
-                    _t.callback({ key: _t.coincap_api.http.assets.key, value: axios_result.data })
-                }
+            const value = await _t.getData()
+            if (_t.callback) {
+                _t.callback({ key: _t.coincap_api.http.assets.key, value: value })
             }
         }, _t.intervalTime)
     },
-    init() {
+    async init() {
         _t.client = new WebSocketClient()
         _t.client.on('connectFailed', _t.onFailed)
         _t.client.on('connect', _t.onConnection)
         // __t.client.connect(__t.coincap_api.ws.prices_assets.url, 'echo-protocol')
         console.log(`${_t.name} WS Init`, _t.coincap_api.ws.prices_assets.url)
 
-        _t.initHttpGetData()
+        await _t.initHttpData()
+
+        // console.log(_t.name, await _t.getData())
     }
 }
 

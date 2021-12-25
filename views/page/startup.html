@@ -45,29 +45,16 @@
             background-color: #262c47;
         }
 
-        .container-t {
-            position: absolute;
-            background-color: #ffecf700;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            display: none;
-            z-index: 2000;
-        }
-
-
-        .item-t {
+        .main {
             text-align: center;
-            border-radius: 10px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            background-color: #fff;
+            border-radius: 20px;
             width: 300px;
-            height: 60px;
-            background-color: #000000ad;
-            padding-top: 18px;
+            height: 350px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 
@@ -292,13 +279,6 @@
         </div>
 
 
-
-
-
-        <div class="container-t">
-            <div class="item-t"></div>
-        </div>
-
         <!-- Modal -->
         <div class="modal fade" id="participate" tabindex="-1" role="dialog" aria-labelledby="participateTitle"
             aria-hidden="true">
@@ -351,9 +331,8 @@
 
 
 
-
-
     </div>
+
 
 
     {{include './_footer.html'}}
@@ -435,9 +414,9 @@
                         this.loading = false
                         if (data.flag != 'ok') {
                             // alert(data.flag)
-                            this.tip(data.flag)
+                            tip(data.flag)
                         } else {
-                            this.tip('参与成功', () => {
+                            tip('参与成功', () => {
                                 document.location.reload()
                             })
                         }
@@ -446,16 +425,6 @@
                 onClickAllIn() {
                     this.form.coin_type = this.coinType
                     this.form.coin_amount = this.balance.curr_balance
-                },
-                tip(text, callback) {
-                    $('.container-t').show()
-                    $('.item-t').text(text)
-                    setTimeout(function () {
-                        $('.container-t').hide()
-                        if (callback) {
-                            callback()
-                        }
-                    }, 2000)
                 },
                 zero(n) {
                     return n < 10 ? '0' + n : n
@@ -504,7 +473,7 @@
                         'error': err => {
                             this.loading = false;
                             console.log(err);
-                            this.tip(err.statusText);
+                            tip(err.statusText);
                         }
                     })
                 },
@@ -519,7 +488,6 @@
                     })
                 },
 
-                // 初始化
                 init() {
                     this.get('/api/startup', {}, (data) => {
                         if (this.is_login == 'true') {
@@ -543,6 +511,7 @@
                         setInterval(() => {
                             this.getPrice()
                         }, 1000 * 60)
+
                     })
 
                 }

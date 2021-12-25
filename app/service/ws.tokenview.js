@@ -1,4 +1,7 @@
 const utils99 = require('node-utils99')
+const common = require('../../config/common.js')
+// const service = require('./ws.js')
+// const WebSocketClient = require('websocket').client;
 
 
 let tokenview_api = {
@@ -46,12 +49,14 @@ let tokenview_api = {
 	// 	  "symbol": "MAX"
 	// 	},
 	// ]
+	key: 'tokenview-market-cap',
 	// 免费API 一分一次
 	url: 'http://www.tokenview.com:8088/market/marketCap?page=0&size=100'
 }
 
 
 let _t = {
+	name: 'tokenview API',
 	tempInterval: 0,
 	callback: null,
 	async getData() {
@@ -65,19 +70,37 @@ let _t = {
 			console.log(res.statusText)
 			return null
 		}
-		return res.data
+		const result = _t.getFilterData(res.data.marketCapData)
+		// console.log(_t.name, result)
+		return result
 	},
+
+	getFilterData(data) {
+		let need = common.coin.need
+		let temp = []
+		for (let i = 0; i < data.length; i++) {
+			let d = data[i]
+			for (let j = 0; j < need.length; j++) {
+				let item = need[j]
+				if (d.uniqueId.toLocaleLowerCase() == item) {
+					temp.push(d)
+				}
+			}
+		}
+		return temp
+	},
+
 	async start() {
 		clearInterval(_t.tempInterval)
 		_t.tempInterval = setInterval(async () => {
 			let res = await _t.getData()
-			console.log(res)
-			if (_t.callback) {
-				_t.callback(res)
+			if (res && _t.callback) {
+				_t.callback({ key: tokenview_api.key, value: res })
 			}
 		}, 1000 * 60 * 1.5) // 一分半执行一次
 	},
 	async init() {
+		console.log(_t.name)
 		_t.start()
 	}
 }

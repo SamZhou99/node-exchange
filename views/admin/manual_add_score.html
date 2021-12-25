@@ -3,9 +3,6 @@
 
 <head>
     {{include './_header.html'}}
-    <!-- BEGIN PAGE LEVEL STYLES -->
-    <link href="/admin-assets/plugins/sweetalert/sweetalert.css" rel="stylesheet" />
-    <!-- END PAGE LEVEL STYLES -->
 </head>
 
 <body class="sticky-header">
@@ -124,13 +121,6 @@
     {{include './_footer.html'}}
 
 
-    <!-- BEGIN PAGE LEVEL SCRIPTS -->
-    <script src="/admin-assets/plugins/sweetalert/sweet-alert.js"></script>
-    <script src="/admin-assets/pages/jquery.sweet-alert.custom.js"></script>
-    <!-- BEGIN PAGE LEVEL SCRIPTS -->
-
-
-
     <script>
         let appVue = new Vue({
             delimiters: ["{[", "]}"],
@@ -235,7 +225,6 @@
                     })
                 },
 
-                // 初始化
                 init() {
                     this.get('/admin/api/user-list', {}, (data) => {
                         let a = data.data.list

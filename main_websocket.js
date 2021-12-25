@@ -1,6 +1,6 @@
-const utils99 = require('node-utils99')
 const config = require('./config/web.js')
 const service = require('./app/service/ws.js')
+// const utils99 = require('node-utils99')
 // const { update } = require('node-utils99/mysql-sync-cache')
 // const WebSocketClient = require('websocket').client
 const WebSocketServer = require('websocket').server
@@ -12,9 +12,14 @@ binance.callback = async function (data) {
 }
 binance.init()
 
+
 // 火币
 const huobi = require('./app/service/ws.huobi.js')
+huobi.callback = async function (data) {
+	await service.set(data.key, JSON.stringify(data.value))
+}
 huobi.init()
+
 
 // coincap
 const coincap = require('./app/service/ws.coincap.js')
@@ -22,6 +27,15 @@ coincap.callback = async function (data) {
 	await service.set(data.key, JSON.stringify(data.value))
 }
 coincap.init()
+
+
+// tokenview
+const tokenview = require('./app/service/ws.tokenview.js')
+tokenview.callback = async function (data) {
+	await service.set(data.key, JSON.stringify(data.value))
+}
+tokenview.init()
+
 
 // 平台币
 const platform_currency = require('./app/service/ws.platform_currency.js')
@@ -32,6 +46,21 @@ platform_currency.callback = async function (data) {
 	broadcastPathSendText('/coin/price/platform', platform_currency_data)
 }
 platform_currency.init()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 let connectionObj = {

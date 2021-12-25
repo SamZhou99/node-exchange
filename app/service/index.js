@@ -9,6 +9,7 @@ const common = require('../../config/common.js')
 const tools = require('../lib/tools.js')
 const kline = require('./kline.js')
 const ws = require('./ws.js')
+const withdraw = require('./withdraw.js')
 
 let service = {
     // 邀请码功能
@@ -83,7 +84,8 @@ let service = {
          * @param {*} value 
          */
         async updateOneField(id, field, value) {
-            let res = await db.Query(`UPDATE user SET ${field}=? WHERE id=?`, [value, parseInt(id)])
+            const time = utils99.Time()
+            let res = await db.Query(`UPDATE user SET ${field}=?, update_datetime=? WHERE id=?`, [value, time, parseInt(id)])
         },
         /**
          * 检查 帐号，邮箱，电话 是否存在
@@ -227,6 +229,8 @@ let service = {
                 let buyItem = r[i]
                 user.platform_currency_buy_total += buyItem.target_amount
             }
+            r = await service.user.userAuthenticationInfo(user.id)
+            user.auth = r.auth
             return r
         },
         /**
@@ -298,12 +302,7 @@ let service = {
             }
             // 文件移动
             fs.renameSync(file.path, path.join(__dirname, `../../public/Upload/idcard/`, filename))
-            let res = await db.Query('SELECT * FROM user_authentication WHERE user_id=? LIMIT 1', [user_id])
-            if (res.length > 0) {
-                await db.Query('UPDATE user_authentication SET id_photos=?, update_datetime=? WHERE user_id=?', [`${res[0].id_photos},${filename}`, utils99.Time(), user_id])
-            } else {
-                await db.Query('INSERT INTO user_authentication(user_id, id_photos, create_datetime, update_datetime) VALUES(?, ?, ?, ?)', [user_id, filename, utils99.Time(), utils99.Time()])
-            }
+            await db.Query('INSERT INTO user_authentication_photo(user_id, id_photo, create_datetime, update_datetime) VALUES(?, ?, ?, ?)', [user_id, filename, utils99.Time(), utils99.Time()])
             return filename
         },
         /**
@@ -315,13 +314,13 @@ let service = {
          * @param {*} id_number 
          * @returns 
          */
-        async saveAuthenticationInfo(user_id, status, country, full_name, id_number) {
+        async saveAuthenticationInfo(user_id, status, country, full_name, id_number, failed_reason = "") {
             let res = await service.user.userAuthenticationInfo(user_id)
             let time = utils99.Time()
-            if (!res) {
-                await db.Query('INSERT INTO user_authentication(user_id,status,country,full_name,id_number,create_datetime,update_datetime) VALUES(?,?,?,?,?,?,?)', [user_id, status, country, full_name, id_number, time, time])
+            if (res.auth) {
+                await db.Query('UPDATE user_authentication SET status=?,country=?,full_name=?,id_number=?,failed_reason=?,update_datetime=? WHERE user_id=?', [status, country, full_name, id_number, failed_reason, time, user_id])
             } else {
-                await db.Query('UPDATE user_authentication SET status=?,country=?,full_name=?,id_number=?,update_datetime=? WHERE user_id=?', [status, country, full_name, id_number, time, user_id])
+                await db.Query('INSERT INTO user_authentication(user_id,status,country,full_name,id_number,failed_reason,create_datetime,update_datetime) VALUES(?,?,?,?,?,?,?,?)', [user_id, status, country, full_name, id_number, failed_reason, time, time])
             }
             res = await service.user.userAuthenticationInfo(user_id)
             return res
@@ -329,11 +328,13 @@ let service = {
         /**
          * 用户认证信息
          * @param {*} user_id 
-         * @returns 
+         * @returns { auth, photos }
          */
         async userAuthenticationInfo(user_id) {
-            let res = await db.Query('SELECT * FROM user_authentication WHERE user_id=? LIMIT 1', [user_id])
-            return res.length > 0 ? res[0] : null
+            let auth = await db.Query('SELECT * FROM user_authentication WHERE user_id=? LIMIT 1', [user_id])
+            auth = auth.length > 0 ? auth[0] : null
+            let photos = await db.Query('SELECT id,id_photo FROM user_authentication_photo WHERE user_id=? ORDER BY id DESC', [user_id])
+            return { auth, photos }
         }
     },
     wallet: {
@@ -465,11 +466,17 @@ let service = {
          * @returns 
          */
         async walletAddressCount() {
-            let res = await db.Query('SELECT COUNT(*) AS count FROM system_wallet')
-            let total = res[0].count
-            res = await db.Query('SELECT COUNT(0) AS count FROM system_wallet WHERE bind_user_id<>0')
-            let used = res[0].count
-            return { total, used }
+            let res = {}
+            let o = common.coin.type
+            for (let key in o) {
+                let total = await db.Query('SELECT COUNT(*) AS count FROM system_wallet WHERE wallet_type=?', [o[key]])
+                res[key] = {}
+                res[key]['total'] = total[0].count
+
+                let used = await db.Query('SELECT COUNT(0) AS count FROM system_wallet WHERE wallet_type=? AND bind_user_id<>0', [o[key]])
+                res[key]['used'] = used[0].count
+            }
+            return res
         },
         /**
          * 导入csv数据
@@ -677,7 +684,9 @@ let service = {
 
     // K线图
     kline: kline,
-    pricesAssets: ws
+    pricesAssets: ws,
+    // 提现操作
+    withdraw: withdraw
 }
 
 

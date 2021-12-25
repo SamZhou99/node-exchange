@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {{include './_header.html'}}
+</head>
+
+<body class="sticky-header">
+    {{include './_menu.html'}}
+
+
+    <!-- main content start-->
+    <div class="main-content">
+
+
+        {{include './_header_profile.html'}}
+
+
+        <!--body wrapper start-->
+        <div id="app" class="wrapper">
+
+            <!--Start Page Title-->
+            <div class="page-title-box">
+                <h4 class="page-title">提币列表</h4>
+                <ol class="breadcrumb">
+                    <li>
+                        <a href="/admin">网站首页</a>
+                    </li>
+                    <li class="active">
+                        提币列表
+                    </li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <!--End Page Title-->
+
+
+            <!--Start row-->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="white-box">
+                        <h2 class="header-title">填写表单</h2>
+
+
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>帐号</th>
+                                    <th>提币类型</th>
+                                    <th>提币地址</th>
+                                    <th>提币数量</th>
+                                    <th>手续费</th>
+                                    <th>到帐数量</th>
+                                    <th>状态</th>
+                                    <th>驳回原因</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item,index in this.list">
+                                    <td>{[item.id]}</td>
+                                    <td>
+                                        {[item.user.account]}<br>
+                                        {[item.user.email]}<br>
+                                        {[item.user.mobile]}
+                                    </td>
+                                    <td>{[item.type]}</td>
+                                    <td>{[item.address]}</td>
+                                    <td>{[item.apply_amount]}</td>
+                                    <td>{[item.charges]}</td>
+                                    <td>{[item.real_amount]}</td>
+
+                                    <td>
+                                        <div v-if="item.status">
+                                            <a v-if="item.status==1" class="text-danger"><b>申请提币</b></a>
+                                            <a v-if="item.status==2" class="text-danger">驳回</a>
+                                            <a v-if="item.status==3" class="text-primary">通过</a>
+                                            <a v-if="item.status==4" class="text-primary">提现成功</a>
+                                        </div>
+                                        <div v-else>
+                                            <span>无状态</span>
+                                        </div>
+                                    </td>
+                                    <td>{[item.failed_reason]}</td>
+                                    <td>
+                                        <button v-if="item.status==1" @click="onClickEdit(index)" type="button" class="btn btn-info"><i class="fa fa-edit"></i> 编辑</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+                    </div>
+                </div>
+            </div>
+            <!--End row-->
+
+            <!-- Modal -->
+            <div class="modal fade" id="participate" tabindex="-1" role="dialog" aria-labelledby="participateTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="color: black">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <div class="form-row">
+                                <h5 id="participateTitle" class="col-md-2 modal-title">提币审核表单</h5>
+                                <div class="col-md-10">
+                                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-body">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">提币账号</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" :value="form.user.account+', '+form.user.email+', '+form.user.mobile" type="text" readonly="readonly">
+                                        <input v-model="form.id" class="form-control" value="" type="hidden" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">提币类型</label>
+                                    <div class="col-md-10">
+                                        <input v-model="form.type" class="form-control" value="" type="text" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">提币地址</label>
+                                    <div class="col-md-10">
+                                        <input v-model="form.address" class="form-control" value="" type="text" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">申请数量</label>
+                                    <div class="col-md-10">
+                                        <input v-model="form.apply_amount" class="form-control" value="" type="text" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">提币手续费</label>
+                                    <div class="col-md-10">
+                                        <input v-model="form.charges" class="form-control" value="" type="text" readonly="readonly">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">实际到账</label>
+                                    <div class="col-md-10">
+                                        <input v-model="form.real_amount" class="form-control" value="" type="text" readonly="readonly">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" style="color:red;">选择操作</label>
+                                    <div class="col-sm-10">
+                                        <select v-model="form.status" class="form-control">
+                                            <option value="" disabled="disabled">请选择</option>
+                                            <!-- <option disabled="disabled" value="1">申请提币</option> -->
+                                            <option value="2">驳回</option>
+                                            <option value="3">通过</option>
+                                            <!-- <option value="4">提币成功</option> -->
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div v-if="form.status==2" class="form-group">
+                                    <label class="col-md-2 control-label">驳回原因</label>
+                                    <div class="col-md-10">
+                                        <textarea v-model="form.failed_reason" class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </form>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="modal-footer text-center">
+                            <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                            <button @click="onClickSubmit()" :disabled="this.loading" type="button" class="btn btn-primary">确认修改</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <!-- End Wrapper-->
+
+
+        <!--Start  Footer -->
+        <footer class="footer-main">{{include './_copyright.html'}}</footer>
+        <!--End footer -->
+
+    </div>
+    <!--End main content -->
+
+
+    {{include './_footer.html'}}
+
+    <script>
+        let appVue = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                list: [],
+                form: {
+                    id: '',
+                    type: '',
+                    address: '',
+                    apply_amount: '',
+                    charges: '',
+                    real_amount: '',
+                    status: '',// 0无状态，1申请提币，2驳回，3通过，4提现成功
+                    failed_reason: '',
+                    user: {
+                        account: '',
+                        email: '',
+                        mobile: '',
+                    }
+                }
+            },
+            methods: {
+                onClickEdit(id) {
+                    let o = JSON.parse(JSON.stringify(this.list[id]))
+                    o.status = ""
+                    this.form = o
+                    $('#participate').modal("show");
+                },
+                onClickSubmit() {
+                    if (this.form.status == "") {
+                        alert('请选择操作。')
+                        return
+                    }
+                    if (this.form.status == 2 && (this.form.failed_reason == '' || this.form.failed_reason == null)) {
+                        alert('请填写驳回原因。')
+                        return
+                    }
+                    if (confirm('确定要提交修改吗？\n提交后，不能修改！')) {
+                        console.log('提交数据', this.form)
+                    }
+
+                    this.post('/admin/api/withdraw-update', this.form, (data) => {
+                        if (data.flag != 'ok') {
+                            alert(data.flag)
+                            return
+                        }
+                        window.location.reload()
+                    })
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                init() {
+                    this.get('/api/withdraw-log', {}, (data) => {
+                        if (data.flag != 'ok') {
+                            tip(data.flag)
+                            return
+                        }
+                        this.list = data.data
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+</body>
+
+</html>

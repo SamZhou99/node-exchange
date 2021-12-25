@@ -183,6 +183,13 @@ let __this = {
                 },
             },
 
+            // 我的基本信息
+            async meJson(ctx) {
+                const user_id = ctx.session.user.id
+                const res = await service.user.oneById(user_id)
+                ctx.body = { flag: 'ok', data: res }
+            },
+
             //我的钱包
             async walletJson(ctx) {
                 let user_id = ctx.session['user'].id
@@ -273,9 +280,78 @@ let __this = {
                 ctx.body = { flag: 'ok', data: { user_id, filename } }
             },
             async authenticationJson(ctx) {
-                const user_id = ctx.session.user.id
+                let user_id = ctx.session.user.id
+                if (ctx.request.query.user_id) {
+                    user_id = ctx.request.query.user_id
+                }
                 let res = await service.user.userAuthenticationInfo(user_id)
                 ctx.body = { flag: 'ok', data: res }
+            },
+
+            // 提币操作
+            withdraw: {
+                // 提币记录
+                async logJson(ctx) {
+                    const user_id = ctx.session.user.id
+                    const res = await service.withdraw.list(user_id)
+                    for (let i = 0; i < res.length; i++) {
+                        res[i]['user'] = await service.user.oneById(res[i].user_id)
+                    }
+                    ctx.body = { flag: 'ok', data: res }
+                },
+                // 提币申请
+                async applyForJson(ctx) {
+                    const form = ctx.request.body
+                    const status = 1 // 提币状态：0无状态，1申请提币，2驳回，3通过，4提现成功
+                    const user_id = form.user_id
+                    const apply_amount = Math.abs(form.apply_amount) // 取绝对值
+                    const real_amount = Math.abs(form.real_amount)
+                    const charges = Math.abs(form.charges)
+                    const type = form.type
+                    const address = form.address
+
+                    const user = await service.user.oneById(user_id)
+                    if (!user) {
+                        ctx.body = { flag: 'code:1001. User parameters are abnormal.' }
+                        return
+                    }
+                    if (user[type] == null || user[type] == undefined) {
+                        ctx.body = { flag: 'code:1010. User parameters are abnormal.' }
+                        return
+                    }
+                    if (user[type] < apply_amount) {
+                        ctx.body = { flag: 'Insufficient user balance.' }
+                        return
+                    }
+
+                    let balance = user[type] - apply_amount
+                    await service.user.updateOneField(user_id, type, balance)
+                    await service.withdraw.applyFor(user_id, status, apply_amount, real_amount, charges, type, address)
+                    ctx.body = { flag: 'ok' }
+                },
+                // 提币 状态更新
+                async updateJson(ctx) {
+                    const form = ctx.request.body
+                    const id = form.id
+                    const user_id = form.user_id
+                    const status = form.status
+                    const type = form.type
+                    const apply_amount = Math.abs(form.apply_amount)
+                    const failed_reason = form.failed_reason || ''
+
+                    const withdraw = await service.withdraw.oneById(id)
+                    // 从【提交申请】状态，更改为【驳回】状态时，退回币数量
+                    console.log('从【提交申请】状态，更改为【驳回】状态时，退回币数量')
+                    console.log(withdraw.status, status)
+                    if (withdraw.status == 1 && status == 2) {
+                        const user = await service.user.oneById(user_id)
+                        let balance = user[type] + apply_amount
+                        await service.user.updateOneField(user_id, type, balance)
+                    }
+                    // 更新 状态和原因
+                    const res = await service.withdraw.updateStatus(id, status, failed_reason)
+                    ctx.body = { flag: 'ok' }
+                }
             }
         },
 
@@ -338,6 +414,12 @@ let __this = {
             async userAdd(ctx) {
                 await ctx.render('admin/user_add', ctx.data)
             },
+            // 用户认证
+            async userAuth(ctx) {
+                const authInfo = await service.user.userAuthenticationInfo(ctx.params.user_id)
+                ctx.data.authInfo = authInfo
+                await ctx.render('admin/user_auth', ctx.data)
+            },
             // 系统钱包
             async systemWallet(ctx) {
                 await ctx.render('admin/system_wallet', ctx.data)
@@ -369,6 +451,10 @@ let __this = {
             // 人工上分
             async manualAddScore(ctx) {
                 await ctx.render('admin/manual_add_score', ctx.data)
+            },
+            // 提币
+            async withdraw(ctx) {
+                await ctx.render('admin/withdraw', ctx.data)
             },
 
             // 
@@ -429,6 +515,15 @@ let __this = {
                         }
                         await service.kline.saveKlineData(symbol, data)
                         ctx.body = { flag: 'ok' }
+                    },
+                    async updateAuthentication(ctx) {
+                        const form = ctx.request.body
+                        if (!form.country || !form.full_name || !form.id_number || !form.user_id || !form.status) {
+                            ctx.body = { flag: 'Please fill out the form completely!' }
+                            return
+                        }
+                        const res = await service.user.saveAuthenticationInfo(form.user_id, form.status, form.country, form.full_name, form.id_number, form.failed_reason)
+                        ctx.body = { flag: 'ok', data: res }
                     },
                 },
                 async init(ctx) {
