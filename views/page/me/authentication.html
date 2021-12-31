@@ -48,12 +48,12 @@
                 <div class="col-md-9 col-sm-12">
 
                     <div v-if="status==1">
-                        <h1>等待审核</h1>
+                        <h1>{{lang.list[defLang].page.auth_wait_for_review}}</h1>
                     </div>
 
 
                     <div v-if="status==3">
-                        <h1>通过认证</h1>
+                        <h1>{{lang.list[defLang].page.auth_pass_certification}}</h1>
                     </div>
 
 
@@ -61,24 +61,24 @@
 
                         <div v-if="status==2" class="form-group">
                             <div class="alert alert-danger" role="alert">
-                                <p class="mb-0">未通过：{[failed_reason]}.</p>
+                                <p class="mb-0">{{lang.list[defLang].page.auth_not_pass}}：{[failed_reason]}.</p>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group col-md-6">
-                                <label for="country">Country</label>
+                                <label for="country">{{lang.list[defLang].page.auth_country}}</label>
                                 <input v-model="form.country" type="text" class="form-control" id="country" required>
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="full_name">Full name / Id card name</label>
+                                <label for="full_name">{{lang.list[defLang].page.auth_full_id_name}}</label>
                                 <input v-model="form.full_name" type="text" class="form-control" id="full_name" required>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group col-md-12">
-                                <label for="id_number">Id number</label>
+                                <label for="id_number">{{lang.list[defLang].page.auth_id_number}}</label>
                                 <input v-model="form.id_number" type="text" class="form-control" id="id_number" required>
                             </div>
                         </div>
@@ -86,10 +86,10 @@
 
                         <div class="form-row">
                             <div class="form-group col-md-12">
-                                <label for="dropzone">Front and back of the Id photo</label>
+                                <label for="dropzone">{{lang.list[defLang].page.auth_front_back_photo}}</label>
                                 <form action="/api/upload-file" class="dropzone dz-clickable" id="dropzone">
                                     <div class="dz-default dz-message">
-                                        <span>Drag and drop the photo here and upload it</span>
+                                        <span>{{lang.list[defLang].page.auth_drag_photo_upload}}</span>
                                     </div>
                                 </form>
                             </div>
@@ -101,7 +101,7 @@
 
                         <div class="form-row">
                             <div class="form-group col-md-12">
-                                <button @click="onClickSubmit()" class="btn btn-primary btn-block">Submit information</button>
+                                <button @click="onClickSubmit()" class="btn btn-primary btn-block">{{lang.list[defLang].page.submit}}</button>
                             </div>
                         </div>
 
@@ -154,7 +154,7 @@
                         return
                     }
 
-                    // 提交前检查有没有照片
+                    // check id photo
                     this.get('/api/authentication', {}, (data) => {
                         if (data.flag != 'ok') {
                             tip(data.falg)

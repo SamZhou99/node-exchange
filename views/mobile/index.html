@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{lang.list[defLang].title}}</title>
+    {{include './_style.html'}}
+</head>
+
+<body>
+
+    <div class="placeholder-t"></div>
+
+    <div id="app">
+        <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slideshow="autoplay: true">
+
+            <ul class="uk-slideshow-items">
+                <li>
+                    <img src="/images/banner/slide1.png" alt="" uk-cover>
+                </li>
+                <li>
+                    <img src="/images/banner/slide2.png" alt="" uk-cover>
+                </li>
+                <li>
+                    <img src="/images/banner/slide3.png" alt="" uk-cover>
+                </li>
+            </ul>
+
+            <a class="uk-slidenav-large uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slideshow-item="previous"></a>
+            <a class="uk-slidenav-large uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slideshow-item="next"></a>
+
+        </div>
+
+        <table class="uk-table uk-table-hover uk-table-divider">
+            <thead>
+                <tr>
+                    <th>Currency</th>
+                    <th>Last Price</th>
+                    <th>Change(24Hr)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in this.list" :id="item.node.id">
+                    <td>
+                        <div uk-grid>
+                            <div><img :src="item.node.logo" :alt="item.node.name" width="36px"></div>
+                            <div>
+                                <div class="overflow-text">{[item.node.name]}</div>
+                                <div>{[item.node.symbol]}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>{[item.node.priceUsd]}</td>
+                    <td>
+                        <div v-if="item.node.changePercent24Hr>0" class="chang24hr-bg zhang">
+                            {[item.node.changePercent24Hr]}% ↑</div>
+                        <div v-if="item.node.changePercent24Hr==0" class="chang24hr-bg ping">
+                            {[item.node.changePercent24Hr]}%</div>
+                        <div v-if="item.node.changePercent24Hr<0" class="chang24hr-bg die">
+                            {[item.node.changePercent24Hr]}% ↓</div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="placeholder-b"></div>
+
+        {{include './_menu.html'}}
+    </div>
+
+
+
+
+    <div>
+        <script>
+            let app = new Vue({
+                delimiters: ["{[", "]}"],
+                el: '#app',
+                data: {
+                    loading: false,
+                    list: [],
+                    statup: {}
+                },
+                methods: {
+                    round(num, intLen = 2, dotLaterLen = 6) {
+                        let z = '000000000000000000000000000000'
+                        let zn = Number(1 + z.substr(0, dotLaterLen))
+                        num = Math.round(num * zn) / zn
+                        let s = String(num)
+
+                        if (s.indexOf('.') !== -1) {
+                            let a = s.split('.')
+                            let n1 = a[0], n2 = a[1], zn
+
+                            if (a[0].length < intLen) {
+                                n1 = z.substr(0, intLen - a[0].length) + a[0]
+                            }
+
+                            if (a[1].length < dotLaterLen) {
+                                zn = z.substr(0, dotLaterLen - a[1].length)
+                                n2 = String(a[1]) + zn
+                            }
+
+                            let res = `${n1}.${n2}`
+                            return res
+                        }
+
+                        let zl = z.substr(0, dotLaterLen)
+                        return `${s}.${zl}`
+                    },
+                    lessen(num, min, len) {
+                        let n = num / min
+                        return this.round(n, len)
+                    },
+                    moneyFormat(num) {
+                        return num.toLocaleString('en', {
+                            style: 'currency',
+                            currency: 'USD',
+                            minimumFractionDigits: 0
+                        })
+                    },
+                    get(url, params, callback) {
+                        this.loading = true;
+                        $.ajax({
+                            'url': url,
+                            'type': 'GET',
+                            'dataType': 'json',
+                            'data': params,
+                            'success': res => {
+                                this.loading = false;
+                                callback(res);
+                            },
+                            'error': err => {
+                                this.loading = false;
+                                console.log(err);
+                                alert(err.statusText);
+                            }
+                        })
+                    },
+                    coinList(data) {
+                        let _t = this
+                        let a = data
+                        a.forEach(function (item) {
+                            item.node = {}
+                            item.node.id = item.name.toLocaleLowerCase()
+                            item.node.name = item.name
+                            item.node.symbol = item.symbol
+                            item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
+                            item.node.priceUsd = _t.round(item.priceUsd, 2)
+                            item.node.marketCapUsd = _t.round(item.marketCapUsd, 12, 2)
+                            item.node.supply = _t.round(item.supply, 6, 2)
+                            item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
+                            item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 2, 2)
+                        })
+
+                        let ptb = {
+                            node: {
+                                id: _t.statup.name.toLocaleLowerCase(),
+                                name: _t.statup.name,
+                                symbol: _t.statup.symbol,
+                                logo: _t.statup.icon,
+                                priceUsd: _t.round(0, 2),
+                                marketCapUsd: _t.round(78623827.73 - Math.random() * 10000, 12, 2),
+                                supply: _t.round(3148153.73 - Math.random() * 1000, 6, 2),
+                                volumeUsd24Hr: _t.lessen(1143447.01 - Math.random() * 1000, 9, 2),
+                                changePercent24Hr: _t.round(0, 2, 2),
+                                rank: this.statup.sort,
+                            }
+                        }
+                        if (this.statup.sort == 0 || this.statup.sort > a.length) {
+                            a.push(ptb)
+                        } else {
+                            a.splice(this.statup.sort - 1, 0, ptb)
+                        }
+                        this.list = a
+                    },
+                    initWS() {
+                        let ws = new WebSocket('ws://{{lang.domain}}:3031/coin/price')
+                        ws.onopen = () => {
+                            console.log('websocket init ...')
+                        };
+                        ws.onclose = () => {
+                            console.log('websocket close ...')
+
+                            setTimeout(() => {
+                                this.initWS()
+                            }, 60000)
+                        }
+                        ws.onmessage = (event) => {
+                            const time = 1000
+                            let _t = this
+                            let res = JSON.parse(event.data)
+                            this.list.forEach(function (item) {
+                                let key = item.node.id
+                                if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
+                                    let v = res.platform.price
+                                    let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                    item.node.priceUsd = _t.round(v, 2, 6)
+                                    item.node.changePercent24Hr = _t.round(res.platform.price_percent, 2, 2)
+                                    $('#' + key).addClass(className)
+                                    setTimeout(() => {
+                                        $('#' + key).removeClass(className)
+                                    }, time)
+                                }
+                                let v = res.cache[key]
+                                if (v) {
+                                    let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                    item.node.priceUsd = _t.round(v, 2, 6)
+                                    $('#' + key).addClass(className)
+                                    setTimeout(() => {
+                                        $('#' + key).removeClass(className)
+                                    }, time)
+                                }
+                            })
+                        }
+                    },
+                    getList() {
+                        this.get('/api/coincap-coin-list/caches', {}, (data) => {
+                            this.coinList(data.data.value)
+                            this.initWS()
+                        })
+                    },
+                    init() {
+                        this.get('/api/startup', {}, (data) => {
+                            this.statup = data.data.currency
+                            this.getList()
+                        })
+                    }
+                },
+                mounted() {
+                    this.init();
+                }
+            });
+        </script>
+    </div>
+
+</body>
+
+</html>

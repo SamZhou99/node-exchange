@@ -40,10 +40,10 @@
                     {{include './_menu.html'}}
                 </div>
                 <div class="col-md-9 col-sm-12">
-                    
+
                     <div class="bd-example">
                         <div class="form-row align-items-center">
-                            <div class="col-12"><label for="invite_txt">邀请码</label></div>
+                            <div class="col-12"><label for="invite_txt">{{lang.list[defLang].page.invitation_code}}</label></div>
                             <div class="col-sm-9 my-1">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="invite_txt" :value="invite_code"
@@ -51,14 +51,14 @@
                                 </div>
                             </div>
                             <div class="col-auto my-1">
-                                <button @click="onClickCopyText('invite_txt')" type="buton" class="btn btn-primary">复制</button>
+                                <button @click="onClickCopyText('invite_txt')" type="buton" class="btn btn-primary">{{lang.list[defLang].page.copy}}</button>
                             </div>
                         </div>
                     </div>
-        
+
                     <div class="bd-example">
                         <div class="form-row align-items-center">
-                            <div class="col-12"><label for="invite_url">邀请网址</label></div>
+                            <div class="col-12"><label for="invite_url">{{lang.list[defLang].page.invitation_link}}</label></div>
                             <div class="col-sm-9 my-1">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="invite_url"
@@ -66,14 +66,14 @@
                                 </div>
                             </div>
                             <div class="col-auto my-1">
-                                <button @click="onClickCopyText('invite_url')" type="buton" class="btn btn-primary">复制</button>
+                                <button @click="onClickCopyText('invite_url')" type="buton" class="btn btn-primary">{{lang.list[defLang].page.copy}}</button>
                             </div>
                         </div>
                     </div>
-        
+
                     <div class="bd-example">
                         <div class="form-row align-items-center">
-                            <div class="col-12">邀请网址二维码</div>
+                            <div class="col-12">{{lang.list[defLang].page.qr_code}}</div>
                             <div class="col-sm-9 my-1">
                                 <div id="qrcode"></div>
                             </div>
@@ -87,7 +87,7 @@
                         <li class="col">{[item.amount/1000000]} usdt</li>
                         <li class="col">{[item.create_datetime]}</li>
                     </ul>
-                    
+
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@
     </div>
 
 
-    
+
     {{include '../_footer.html'}}
 
 
@@ -118,7 +118,7 @@
                     $('#' + e).val()
                     $('#' + e).select()
                     document.execCommand("copy")
-                    alert('复制成功：\n' + $('#' + e).val())
+                    alert('{{lang.list[defLang].page.copy_successful}} ：\n' + $('#' + e).val())
                 },
                 get(url, params, callback) {
                     this.loading = true;
@@ -149,7 +149,7 @@
                     this.get(`/api/invite-trade-list/${this.id}`, {}, (data) => {
                         console.log(data)
                         data.data.forEach(data => {
-                            data.status = data.status == 1 ? '激活' : '未激活'
+                            data.status = data.status == 1 ? '{{lang.list[defLang].page.activated}}' : '{{lang.list[defLang].page.unactivated}}'
                             data.create_datetime = moment(data.create_datetime).format('YYYY/MM/DD h:mm:ss')
                             data.amount = this.amount(data.trade)
                         })
@@ -166,7 +166,7 @@
             }
         });
     </script>
-    
+
 </body>
 
 </html>

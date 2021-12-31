@@ -12,12 +12,14 @@ const { page: controllers } = require('../app/controllers/index.js')
 // 首页
 router.get('/', middleware.commmonData, controllers.index)
 // 设置显示语言
+router.get('/language/:lang.json', middleware.commmonData, controllers.languageJson)
 router.get('/language/:lang', middleware.commmonData, controllers.language)
 // 注册
 router.get('/reg', middleware.commmonData, controllers.reg.page)
 router.post('/reg', middleware.commmonData, controllers.reg.post)
 // 登录
 router.get('/login', middleware.commmonData, controllers.login.page)
+router.get('/login/test', middleware.commmonData, controllers.login.test)
 router.post('/login', middleware.commmonData, controllers.login.post)
 // 登出
 router.get('/logout', middleware.commmonData, controllers.logout.page)
@@ -45,15 +47,15 @@ router.get('/clause', middleware.commmonData, controllers.index)
 
 
 // 我的资产
-router.get('/me', middleware.checkLogin, controllers.me.page)
+router.get('/me', middleware.commmonData, middleware.checkLogin, controllers.me.page)
 // 我的邀请码
-router.get('/me/invite-friends', middleware.checkLogin, controllers.me.inviteFriends)
+router.get('/me/invite-friends', middleware.commmonData, middleware.checkLogin, controllers.me.inviteFriends)
 // 登录日志
-router.get('/me/login-log', middleware.checkLogin, controllers.me.loginLog)
+router.get('/me/login-log', middleware.commmonData, middleware.checkLogin, controllers.me.loginLog)
 // 资产转出
-router.get('/me/withdraw', middleware.checkLogin, controllers.me.withdraw)
+router.get('/me/withdraw', middleware.commmonData, middleware.checkLogin, controllers.me.withdraw)
 // 身份认证
-router.get('/me/authentication', middleware.checkLogin, controllers.me.authentication)
+router.get('/me/authentication', middleware.commmonData, middleware.checkLogin, controllers.me.authentication)
 
 // router.get('/me/finance', middleware.checkLogin, controllers.index)
 // // 资产转入

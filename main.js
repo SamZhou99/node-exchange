@@ -20,7 +20,8 @@ app.use(session({
     /** (number || 'session') maxAge in ms (default is 1 days) */
     /** 'session' will result in a cookie that expires when session/browser is closed */
     /** Warning: If a session cookie is stolen, this cookie will never expire */
-    maxAge: 86400000,
+    // maxAge: 86400000,
+    maxAge: 0,
     overwrite: true,
     httpOnly: true,
     signed: false, /** (boolean) signed or not (default true) */
@@ -50,10 +51,24 @@ app.use(cors({
     // 任何地址都可以访问
     // origin: "*",
     // 指定地址才可以访问
-    origin: 'http://localhost:8080',
+    origin: 'http://127.0.0.1:8080',
+    // origin: function (ctx) {
+    //     const whiteList = ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://temp02.go9488.cn']
+    //     for (let i = 0; i < whiteList.length; i++) {
+    //         let item = whiteList[i];
+    //         const referer = ctx.header.referer
+    //         if (referer && referer.indexOf(item) != -1) {
+    //             return item
+    //         }
+    //     }
+    //     return false;
+    // },
     maxAge: 2592000,
-    // 必要配置
-    credentials: true
+    // 是否允许发送 cookie
+    credentials: true,
+    // exposeHeaders: ['WWW-Authenticate', 'Server-Authorization'],
+    // allowMethods: ['GET', 'POST', 'DELETE'],
+    // allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
 }));
 
 // // 自定义 404

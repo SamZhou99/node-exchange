@@ -1,0 +1,286 @@
+<link rel="stylesheet" href="/uikit-3.9.4/css/uikit.min.css" />
+<script src="/uikit-3.9.4/js/uikit.min.js"></script>
+<script src="/uikit-3.9.4/js/uikit-icons.min.js"></script>
+<!-- jquery -->
+<script src="/jquery/3.2.1/jquery.min.js"></script>
+<!-- vue -->
+<script src="/default/js/vue.js"></script>
+<!-- moment -->
+<script src="/default/js/moment.js"></script>
+<!-- md5 -->
+<script src="/default/js/md5.js"></script>
+<!-- qrcode -->
+<script src="http://cdn.staticfile.org/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+<style>
+    @font-face {
+        font-family: 'iconfont';
+        /* Project id 3037332 */
+        src: url('//at.alicdn.com/t/font_3037332_b61mxogwsv8.woff2?t=1640054391881') format('woff2'),
+            url('//at.alicdn.com/t/font_3037332_b61mxogwsv8.woff?t=1640054391881') format('woff'),
+            url('//at.alicdn.com/t/font_3037332_b61mxogwsv8.ttf?t=1640054391881') format('truetype');
+    }
+
+    .iconfont {
+        font-family: "iconfont" !important;
+        font-size: 16px;
+        font-style: normal;
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-stroke-width: 0.2px;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    html,
+    body {
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+        padding: 0px;
+        color: #fff;
+        background-color: #16192b;
+    }
+
+    ::-webkit-scrollbar {
+        width: .5rem;
+        height: .5rem;
+        background: hsla(0, 100%, 50%, 0);
+    }
+
+    ::-webkit-scrollbar-track {
+        border-radius: 0;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        border-radius: 0;
+        background-color: rgba(66, 66, 66, 0.5);
+        transition: all .2s;
+        border-radius: .5rem;
+    }
+
+    .uk-flex-t {
+        position: fixed;
+        top: 0px;
+        background-color: #21293b;
+        width: 100%;
+        height: 30px;
+        /* overflow: hidden; */
+    }
+
+    .uk-flex-t>div>a {
+        font-size: 12px;
+    }
+
+    .uk-flex-t>div>a>img {
+        height: 30px;
+    }
+
+    .uk-flex-t>div {
+        padding: 0px;
+    }
+
+    .uk-flex-b {
+        position: fixed;
+        bottom: 0px;
+        background-color: #21293b;
+        width: 100%;
+        height: 60px;
+    }
+
+    .uk-card-default {
+        color: #fff;
+        background-color: #21293b;
+    }
+
+    .uk-card-body {
+        display: flow-root;
+        padding: 18px 18px;
+        text-align: center;
+    }
+
+    .uk-card-body>a>div,
+    td {
+        font-size: 10px;
+    }
+
+    table {
+        background-color: #fff;
+    }
+
+    table>thead {
+        background-color: #333c42;
+    }
+
+    table>tbody {
+        color: #666;
+    }
+
+    .overflow-text {
+        width: 50px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .chang24hr-bg {
+        border-radius: 5px;
+        padding: 5px;
+        text-align: center;
+    }
+
+    .zhang {
+        background: #d4f6f0;
+        color: #0d8551;
+    }
+
+    .die {
+        color: #ef4034;
+        background: #ffe4e4;
+    }
+
+    .ping {
+        color: #6b6b6b;
+        background: #ffffff;
+    }
+
+    @keyframes donghua-red {
+
+        0%,
+        100% {
+            background: #ffffff00;
+        }
+
+        40%,
+        60% {
+            background: #d4f6f0;
+        }
+    }
+
+    @-webkit-keyframes donghua-red {
+
+        0%,
+        100% {
+            background: #ffffff00;
+        }
+
+        40%,
+        60% {
+            background: #d4f6f0;
+        }
+    }
+
+    @keyframes donghua-green {
+
+        0%,
+        100% {
+            background: #ffffff00;
+        }
+
+        40%,
+        60% {
+            background: #ffe4e4;
+        }
+    }
+
+    @-webkit-keyframes donghua-green {
+
+        0%,
+        100% {
+            background: #ffffff00;
+        }
+
+        40%,
+        60% {
+            background: #ffe4e4;
+        }
+    }
+
+    .donghuaRed {
+        animation: donghua-red 1s;
+        -moz-animation: donghua-red 1s;
+        -webkit-animation: donghua-red 1s;
+        -o-animation: donghua-red 1s;
+    }
+
+    .donghuaGreen {
+        animation: donghua-green 1s;
+        -moz-animation: donghua-green 1s;
+        -webkit-animation: donghua-green 1s;
+        -o-animation: donghua-green 1s;
+    }
+
+    @keyframes donghua-red {
+
+        0%,
+        100% {
+            background: #ffffff00;
+        }
+
+        40%,
+        60% {
+            background: #d4f6f0;
+        }
+    }
+
+    @-webkit-keyframes donghua-red {
+
+        0%,
+        100% {
+            background: #ffffff00;
+        }
+
+        40%,
+        60% {
+            background: #d4f6f0;
+        }
+    }
+
+    @keyframes donghua-green {
+
+        0%,
+        100% {
+            background: #ffffff00;
+        }
+
+        40%,
+        60% {
+            background: #ffe4e4;
+        }
+    }
+
+    @-webkit-keyframes donghua-green {
+
+        0%,
+        100% {
+            background: #ffffff00;
+        }
+
+        40%,
+        60% {
+            background: #ffe4e4;
+        }
+    }
+
+    .donghuaRed {
+        animation: donghua-red 1s;
+        -moz-animation: donghua-red 1s;
+        -webkit-animation: donghua-red 1s;
+        -o-animation: donghua-red 1s;
+    }
+
+    .donghuaGreen {
+        animation: donghua-green 1s;
+        -moz-animation: donghua-green 1s;
+        -webkit-animation: donghua-green 1s;
+        -o-animation: donghua-green 1s;
+    }
+
+    .placeholder-t {
+        height: 35px;
+        clear: both;
+    }
+
+    .placeholder-b {
+        height: 60px;
+        clear: both;
+    }
+</style>

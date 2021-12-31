@@ -110,6 +110,72 @@
         .shishichengjiao_sell {
             color: #28a745;
         }
+
+        @keyframes donghua-red {
+
+            0%,
+            100% {
+                background: #ffffff00;
+            }
+
+            40%,
+            60% {
+                background: #ff000060;
+            }
+        }
+
+        @-webkit-keyframes donghua-red {
+
+            0%,
+            100% {
+                background: #ffffff00;
+            }
+
+            40%,
+            60% {
+                background: #ff000060;
+            }
+        }
+
+        @keyframes donghua-green {
+
+            0%,
+            100% {
+                background: #ffffff00;
+            }
+
+            40%,
+            60% {
+                background: #00ff0060;
+            }
+        }
+
+        @-webkit-keyframes donghua-green {
+
+            0%,
+            100% {
+                background: #ffffff00;
+            }
+
+            40%,
+            60% {
+                background: #00ff0060;
+            }
+        }
+
+        .donghuaRed {
+            animation: donghua-red 1s;
+            -moz-animation: donghua-red 1s;
+            -webkit-animation: donghua-red 1s;
+            -o-animation: donghua-red 1s;
+        }
+
+        .donghuaGreen {
+            animation: donghua-green 1s;
+            -moz-animation: donghua-green 1s;
+            -webkit-animation: donghua-green 1s;
+            -o-animation: donghua-green 1s;
+        }
     </style>
 </head>
 
@@ -142,7 +208,7 @@
                             </tr>
                         </thead>
                         <tbody class="font-small" style="overflow:scroll;">
-                            <tr v-for="item in this.list" @click="onClickGo(item.node.symbol)" style="height:40px;cursor: pointer;">
+                            <tr :id="item.node.id" v-for="item in this.list" @click="onClickGo(item.node.symbol)" style="height:40px;cursor: pointer;">
                                 <td class="col-4 text-left">{[item.node.symbol]}</td>
                                 <td class="col-4 text-right">{[item.node.priceUsd]}</td>
                                 <td class="col-4 text-right">
@@ -162,27 +228,27 @@
 
             <div class="flex-grow-1 height100">
                 <div id="paint_chart" style="width:100%;height:100%;overflow:hidden;margin: 0 auto;">
-                    <iframe style="border-style: none;" border="0" width="100%" height="100%" id="market_chart" src="/KLineChart/index.html?symbol={{query.symbol}}"></iframe>
+                    <iframe style="border-style: none;" border="0" width="100%" height="100%" id="market_chart" :src="iframeUrl"></iframe>
                 </div>
             </div>
 
             <div class="p-2 bg-box right-width height100" style="color: white;">
 
-                <div>最新价 {[newPrice]} {{query.symbol.toLocaleUpperCase()}}</div>
+                <div>{{lang.list[defLang].page.lastest}} {[newPrice]} {[symbol1]}/USDT</div>
                 <hr>
                 <div>
 
                     <table class="font-small page-table table-hover">
                         <thead>
                             <tr>
-                                <th scope="col">方向</th>
-                                <th scope="col">价格</th>
-                                <th scope="col">数量</th>
+                                <th scope="col">　</th>
+                                <th scope="col">{{lang.list[defLang].page.price}}</th>
+                                <th scope="col">{{lang.list[defLang].page.amount}}</th>
                             </tr>
                         </thead>
                         <tbody class="font-small" style="overflow:scroll;">
                             <tr v-for="item,index in market.sell">
-                                <td class="text-danger">卖{[9-index]}</td>
+                                <td class="text-danger">{{lang.list[defLang].page.sell}}{[9-index]}</td>
                                 <td>{[item.price]}</td>
                                 <td>{[item.amount]}</td>
                             </tr>
@@ -193,7 +259,7 @@
                         <hr>
                         <tbody class="font-small" style="overflow:scroll;">
                             <tr v-for="item,index in market.buy">
-                                <td class="text-success">买{[index+1]}</td>
+                                <td class="text-success">{{lang.list[defLang].page.buy}}{[index+1]}</td>
                                 <td>{[item.price]}</td>
                                 <td>{[item.amount]}</td>
                             </tr>
@@ -211,19 +277,19 @@
                 <ul class="bg-box nav nav-pills mb-3" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a class="nav-link active" id="shishichengjiao-tab" data-toggle="pill" href="#shishichengjiao"
-                            role="tab" aria-controls="shishichengjiao" aria-selected="true">实时成交</a>
+                            role="tab" aria-controls="shishichengjiao" aria-selected="true">{{lang.list[defLang].page.real_time_trade}}</a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="dangqianweituo-tab" data-toggle="pill" href="#dangqianweituo" role="tab"
-                            aria-controls="dangqianweituo" aria-selected="false">当前委托</a>
+                            aria-controls="dangqianweituo" aria-selected="false">{{lang.list[defLang].page.deleaget}}</a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="lishiweituo-tab" data-toggle="pill" href="#lishiweituo" role="tab"
-                            aria-controls="lishiweituo" aria-selected="false">历史委托</a>
+                            aria-controls="lishiweituo" aria-selected="false">{{lang.list[defLang].page.history_deleaget}}</a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="chengjiaojilu-tab" data-toggle="pill" href="#chengjiaojilu" role="tab"
-                            aria-controls="chengjiaojilu" aria-selected="false">成交记录</a>
+                            aria-controls="chengjiaojilu" aria-selected="false">{{lang.list[defLang].page.trade_record}}</a>
                     </li>
                 </ul>
 
@@ -234,9 +300,9 @@
                         <table class="font-small page-table table-hover">
                             <thead>
                                 <tr>
-                                    <th scope="col">时间</th>
-                                    <th scope="col">价格(USDT)</th>
-                                    <th scope="col">数量(BTC)</th>
+                                    <th scope="col">{{lang.list[defLang].page.time}}</th>
+                                    <th scope="col">{{lang.list[defLang].page.price}}(USDT)</th>
+                                    <th scope="col">{{lang.list[defLang].page.amount}}({[symbol1]})</th>
                                 </tr>
                             </thead>
                             <tbody class="font-small" style="overflow:scroll;">
@@ -248,12 +314,9 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="tab-pane fade" id="dangqianweituo" role="tabpanel" aria-labelledby="dangqianweituo-tab">
-                        无当前委托</div>
-                    <div class="tab-pane fade" id="lishiweituo" role="tabpanel" aria-labelledby="lishiweituo-tab">
-                        无历史委托</div>
-                    <div class="tab-pane fade" id="chengjiaojilu" role="tabpanel" aria-labelledby="chengjiaojilu-tab">
-                        无成交记录</div>
+                    <div class="tab-pane fade" id="dangqianweituo" role="tabpanel" aria-labelledby="dangqianweituo-tab">{{lang.list[defLang].page.nothing}} {{lang.list[defLang].page.deleaget}}</div>
+                    <div class="tab-pane fade" id="lishiweituo" role="tabpanel" aria-labelledby="lishiweituo-tab">{{lang.list[defLang].page.nothing}} {{lang.list[defLang].page.history_deleaget}}</div>
+                    <div class="tab-pane fade" id="chengjiaojilu" role="tabpanel" aria-labelledby="chengjiaojilu-tab">{{lang.list[defLang].page.nothing}} {{lang.list[defLang].page.trade_record}}</div>
                 </div>
             </div>
 
@@ -261,7 +324,7 @@
                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home2" role="tab"
-                            aria-controls="pills-home" aria-selected="true">市价交易</a>
+                            aria-controls="pills-home" aria-selected="true">{{lang.list[defLang].page.market_deal}}</a>
                     </li>
                 </ul>
                 <div class="tab-content" id="pills-tabContent">
@@ -271,49 +334,49 @@
 
                         <div class="d-flex flex-row">
                             <div class="col-sm-6">
-                                <div>可用：0.000000 USDT</div>
+                                <div>{{lang.list[defLang].page.available}}：0.000000 USDT</div>
                                 <hr>
                                 <div>
                                     <div class="form-group row">
                                         <label for="mairuJia" class="col-sm-3 col-form-label"
-                                            style="font-size:14px;">买入价</label>
+                                            style="font-size:0.2rem;">{{lang.list[defLang].page.buy_price}}</label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" id="mairuJia">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="mairuJia" class="col-sm-3 col-form-label"
-                                            style="font-size:14px;">交易额</label>
+                                            style="font-size:0.2rem;">{{lang.list[defLang].page.buy_amount}}</label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" id="mairuJia">
                                         </div>
                                     </div>
                                 </div>
                                 <div>
-                                    <button class="btn btn-success btn-block">买入 {[statup.symbol]}</button>
+                                    <button class="btn btn-success btn-block">{{lang.list[defLang].page.buy}} {[symbol1]}</button>
                                 </div>
                             </div>
                             <div class="col-sm-6">
-                                <div>可用：0.000000 XYZ</div>
+                                <div>{{lang.list[defLang].page.available}}：0.000000 {[symbol1]}</div>
                                 <hr>
                                 <div>
                                     <div class="form-group row">
                                         <label for="mairuJia" class="col-sm-3 col-form-label"
-                                            style="font-size:14px;">卖出价</label>
+                                            style="font-size:0.2rem;">{{lang.list[defLang].page.sell_price}}</label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" id="mairuJia">
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label for="mairuJia" class="col-sm-3 col-form-label"
-                                            style="font-size:14px;">卖出量</label>
+                                            style="font-size:0.2rem;">{{lang.list[defLang].page.sell_amount}}</label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" id="mairuJia">
                                         </div>
                                     </div>
                                 </div>
                                 <div>
-                                    <button class="btn btn-danger btn-block">卖出 {[statup.symbol]}</button>
+                                    <button class="btn btn-danger btn-block">{{lang.list[defLang].page.sell}} {[symbol1]}</button>
                                 </div>
                             </div>
                         </div>
@@ -335,6 +398,9 @@
             el: '#app',
             data: {
                 loading: false,
+                iframeUrl: '',
+                symbol: '',
+                symbol1: '',
                 statup: {
                     symbol: ''
                 },
@@ -376,13 +442,16 @@
                         }
                     })
                 },
-
-                // 保留几位小数
-                // round(num, len) {
-                //     let mult = Number("100000000000000000000000000000".substr(0, len + 1))
-                //     return Math.round(num * mult) / mult
-                // },
-                round(num, intLen = 2, dotLaterLen = 8) {
+                getQueryVariable(variable) {
+                    var query = window.location.search.substring(1);
+                    var vars = query.split("&");
+                    for (var i = 0; i < vars.length; i++) {
+                        var pair = vars[i].split("=");
+                        if (pair[0] == variable) { return pair[1]; }
+                    }
+                    return (false);
+                },
+                round(num, intLen = 2, dotLaterLen = 6) {
                     let z = '000000000000000000000000000000'
                     let zn = Number(1 + z.substr(0, dotLaterLen))
                     num = Math.round(num * zn) / zn
@@ -408,7 +477,6 @@
                     let zl = z.substr(0, dotLaterLen)
                     return `${s}.${zl}`
                 },
-                // 小数点向前移，min,保留几位小数
                 lessen(num, min, len) {
                     let n = num / min
                     return this.round(n, len)
@@ -418,66 +486,107 @@
                     let a = data
                     a.forEach(function (item) {
                         item.node = {}
-                        item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
-                        item.node.priceUsd = _t.round(item.priceUsd, 2, 4)
-                        item.node.marketCapUsd = _t.lessen(item.marketCapUsd, 12, 2, 4)
-                        item.node.vwapUsd24Hr = _t.round(item.vwapUsd24Hr, 2, 4)
-                        item.node.supply = _t.lessen(item.supply, 6, 2)
-                        item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2, 4)
-                        item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 2, 4)
+                        item.node.id = item.name.toLocaleLowerCase()
                         item.node.name = item.name
                         item.node.symbol = item.symbol
-                        item.node.id = item.name.toLocaleLowerCase()
+                        item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
+                        item.node.priceUsd = _t.round(item.priceUsd, 2)
+                        item.node.marketCapUsd = _t.round(item.marketCapUsd, 12, 2)
+                        item.node.supply = _t.round(item.supply, 6, 2)
+                        item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
+                        item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 2, 2)
                     })
-                    a.splice(4, 0, {
-                        node:
-                        {
-                            changePercent24Hr: - 2.39,
-                            logo: _t.statup.icon,
-                            marketCapUsd: _t.lessen(88811108158.73, 12, 2, 4),
+                    let ptb = {
+                        node: {
+                            id: _t.statup.name.toLocaleLowerCase(),
                             name: _t.statup.name,
-                            priceUsd: _t.round(0.08, 2, 4),
-                            rank: 1,
-                            supply: _t.lessen(3148153, 6, 2),
                             symbol: _t.statup.symbol,
-                            volumeUsd24Hr: _t.lessen(4456985117.36, 9, 2, 4),
-                            vwapUsd24Hr: _t.round(57459.97, 2, 4),
+                            logo: _t.statup.icon,
+                            priceUsd: _t.round(0, 2),
+                            marketCapUsd: _t.round(78623827.73 - Math.random() * 10000, 12, 2),
+                            supply: _t.round(3148153.73 - Math.random() * 1000, 6, 2),
+                            volumeUsd24Hr: _t.lessen(1143447.01 - Math.random() * 1000, 9, 2),
+                            changePercent24Hr: _t.round(0, 2, 2),
+                            rank: this.statup.sort,
                         }
-                    })
+                    }
+                    if (this.statup.sort == 0 || this.statup.sort > a.length) {
+                        a.push(ptb)
+                    } else {
+                        a.splice(this.statup.sort - 1, 0, ptb)
+                    }
                     this.list = a
                 },
-                coinListUpdate(data) {
-                    let _t = this
-                    for (let coin_name in data) {
-                        let coin_value = data[coin_name]
+                initWS() {
+                    let ws = new WebSocket('ws://{{lang.domain}}:3031/coin/price')
+                    ws.onopen = () => {
+                        console.log('websocket init ...')
+                    };
+                    ws.onclose = () => {
+                        console.log('websocket close ...')
+
+                        setTimeout(() => {
+                            this.initWS()
+                        }, 60000)
+                    }
+                    ws.onmessage = (event) => {
+                        const time = 1000
+                        let _t = this
+                        let res = JSON.parse(event.data)
                         this.list.forEach(function (item) {
-                            if (coin_name == item.id) {
-                                // item.node.volumeUsd24Hr = _t.lessen(coin_value, 9, 2)
-                                item.node.volumeUsd24Hr = coin_value
+                            let key = item.node.id
+                            if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
+                                let v = res.platform.price
+                                let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                item.node.priceUsd = _t.round(v, 2, 4)
+                                item.node.changePercent24Hr = _t.round(res.platform.price_percent, 2, 2)
+                                $('#' + key).addClass(className)
+                                setTimeout(() => {
+                                    $('#' + key).removeClass(className)
+                                }, time)
+
+                                if (_t.symbol == _t.statup.name.toLocaleLowerCase() + 'usdt') {
+                                    window.postMessage({ data: _t.buySell(v) }, '/');
+                                }
+                            }
+                            let v = res.cache[key]
+                            if (v) {
+                                let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                item.node.priceUsd = _t.round(v, 2, 4)
+                                $('#' + key).addClass(className)
+                                setTimeout(() => {
+                                    $('#' + key).removeClass(className)
+                                }, time)
                             }
                         })
                     }
                 },
-                // initWS() {
-                //     let ws = new WebSocket('ws://{{lang.domain}}:3031/coin-list')
-                //     ws.onopen = () => {
-                //         console.log('websocket init ...')
-                //     };
-                //     ws.onclose = () => {
-                //         console.log('websocket close ...')
-                //     }
-                //     ws.onmessage = (event) => {
-                //         let res = JSON.parse(event.data)
-                //         if (res.key == 'coincap-coin-list') {
-                //             this.coinList(JSON.parse(res.value))
-                //         } else {
-                //             this.coinListUpdate(res)
-                //         }
-                //     }
-                // },
+                buySell(price) {
+                    let len = 1 + Math.floor(Math.random() * 4)
+                    let a = []
+                    for (let i = 0; i < len; i++) {
+                        let ts = new Date().getTime()
+                        let item = {
+                            id: ts,
+                            amount: Math.random() * 99999,
+                            price: price + price / 100 * Math.random(),
+                            direction: Math.random() * 5 > 1 ? 'buy' : 'sell',
+                            tradeId: ts,
+                            ts: ts,
+                        }
+                        a.push(item)
+                    }
+                    return {
+                        ts: '',
+                        ch: "market.ethusdt.trade.detail",
+                        tick: { data: a },
+                    }
+
+                },
                 getList() {
                     this.get('/api/coincap-coin-list/caches', {}, (data) => {
                         this.coinList(data.data.value)
+                        this.initWS()
                     })
                 },
                 init() {
@@ -486,6 +595,10 @@
                         this.statup = data.data.currency
                         this.getList()
                     })
+
+                    this.symbol = this.getQueryVariable('symbol')
+                    this.symbol1 = this.symbol.substring(0, this.symbol.length - 4).toUpperCase()
+                    this.iframeUrl = '/KLineChart/index.html?symbol=' + this.symbol
 
                     window.addEventListener('message', (e) => {
                         var data = e.data;
@@ -500,7 +613,6 @@
                         }
 
                         let a = data.data.tick.data
-
                         a.forEach(function (item) {
                             item.ts = moment(item.ts).format('YYYY-MM-D HH:mm:ss')
                             item.price = _t.round(item.price, 2, 4)
@@ -534,11 +646,6 @@
             },
             mounted() {
                 this.init()
-                // console.log(this.round(0.05345676, 2))
-                // console.log(this.round(0.000330135274947417, 2))
-                // console.log(this.round(0.001757473542425864, 2))
-                // console.log(this.round(0.000609, 2))
-                // console.log(this.round(0.000197, 2))
             }
         });
 

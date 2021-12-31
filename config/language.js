@@ -11,6 +11,7 @@ module.exports = {
             icon: 'UnitedStates.png',
             title: 'Panda Coin trading platform',
             menu: {
+                home: 'Home',
                 login: 'Login',
                 signup: 'Sign Up',
                 markets: 'Markets',
@@ -105,7 +106,94 @@ module.exports = {
                         reg_success: 'Registration is successful. Please use your email address and password to login and verify.',
                         check_form_whole: 'Please check that the form is completely filled out ?'
                     }
-                }
+                },
+
+
+                first_publish_project: 'First Publish The Project',
+                end_distance: 'End Distance',
+                subscribe_buy_end: 'Subscribe Buy To End',
+                participation: 'Participation',
+                target: 'Target',
+                start_time: 'Start Time',
+                end_time: 'End Time',
+                target_coin_type: 'Coin Type',
+                exchange_ratio: 'Exchange Ratio',
+                project_introduction: 'Project Introduction',
+                day: 'Day',
+                hour: 'Hour',
+                minute: 'Minute',
+                second: 'Second',
+                available_balance: 'Available Balance',
+                enter_participation: 'Enter Participation',
+                participation_successful: 'Participation Successful',
+
+                lastest: 'Lastest',
+                price: 'Price',
+                amount: 'Amount',
+                buy: 'Buy',
+                sell: 'Sell',
+                market_deal: 'Market Deal',
+                available: 'Available',
+                buy_price: 'Buy Price',
+                buy_amount: 'Buy Amount',
+                sell_price: 'Sell Price',
+                sell_amount: 'Sell Amount',
+                time: 'Time',
+                delegate: 'Delegate',
+                history_deleaget: 'History Delegate',
+                trade_record: 'Trade Record',
+                real_time_trade: 'Real Time Trade',
+                nothing: 'Nothing',
+
+                my_assets: 'My Assets',
+                inviting_awards: 'Inviting Awards',
+                withdraw_out: 'Withdraw',
+                verified: 'Verified',
+                login_logs: 'Login Logs',
+
+                total_assets: 'Total Assets',
+                recharge: 'Recharge',
+                copy: 'Copy',
+                copy_successful: 'Copy Successful',
+                address: 'Address',
+
+                invitation_code: 'Invitation Code',
+                invitation_link: 'Invitation Link',
+                qr_code: 'QR Code',
+                activated: 'Activated',
+                unactivated: 'Unactivated',
+
+                withdraw: 'Withdraw',
+                select_withdraw_type: 'Select Withdraw Type',
+                withdraw_address: 'Withdraw Address',
+                all_in: 'All in',
+                charges: 'Charges',
+                real_withdraw_amount: 'Real Withdraw Amount',
+                submit: 'Submit',
+
+                coin_type: 'Coin Type',
+                apply_for_amount: 'Apply For Amount',
+                real_withdraw_amount: 'Withdraw Amount',
+                withdraw_status: 'Status',
+                withdraw_time: 'Time',
+                reject_the_reason: 'Reject The Reason',
+
+                withdraw_apply_for: 'Apply For Withdraw',
+                withdraw_reject: 'Reject',
+                withdraw_pass: 'Pass',
+                withdraw_succeed: 'Succeed',
+                withdraw_please_verify: 'Please verify your identity and come back to submit your withdraw application!',
+
+                auth_country: 'Country',
+                auth_full_id_name: 'Full Name / Id Name',
+                auth_id_number: 'Id Number',
+                auth_front_back_photo: 'Front and back of the Id photo',
+                auth_drag_photo_upload: 'Drag and drop the photo here and upload it',
+                auth_wait_for_review: 'Wait For Review',
+                auth_pass_certification: 'Pass Certification',
+                auth_not_pass: 'Not Pass',
+
+                login_log: 'Login Log',
             }
         },
         cn: {
@@ -114,13 +202,14 @@ module.exports = {
             icon: 'China.png',
             title: '熊猫币交易平台',
             menu: {
+                home: '首页',
                 login: '登录',
                 signup: '注册',
-                markets: '市场行情',
+                markets: '行情',
                 exchange: '币币交易',
                 startup: '首发项目',
                 help: '帮助中心',
-                assets: '我的资产',
+                assets: '我的',
                 logout: '退出'
             },
             banner: {
@@ -209,15 +298,93 @@ module.exports = {
                         check_form_whole: '检查表单是否填写完整？'
                     }
                 },
-                auth: {
-                    note: `to do
-                    important note ：
-                    1. 请上传清晰的证件照片
-                    2. 图片支持JPG/PNG/JPEG格式，大小不超过1M
-                    3. 手持证件照通过标准，护照信息清晰，需包括“LETH”字样和当天日期
-                    4. 遇到问题联系客服 admin@go9488.cn`
-                }
-            }
+
+                first_publish_project: '首发项目',
+                end_distance: '距离结束',
+                subscribe_buy_end: '认购结束',
+                participation: '参与',
+                target: '目标',
+                start_time: '开始时间',
+                end_time: '结束时间',
+                target_coin_type: '目标币种',
+                exchange_ratio: '兑换比例',
+                project_introduction: '项目介绍',
+                day: '天',
+                hour: '时',
+                minute: '分',
+                second: '秒',
+                available_balance: '可用余额',
+                enter_participation: '确认参与',
+                participation_successful: '参与成功',
+
+                lastest: '最新价',
+                price: '价格',
+                amount: '数量',
+                buy: '买',
+                sell: '卖',
+                market_deal: '市场交易',
+                available: '可用',
+                buy_price: '买入价',
+                buy_amount: '买入量',
+                sell_price: '卖出价',
+                sell_amount: '卖出量',
+                time: '时间',
+                delegate: '当前委托',
+                history_deleaget: '历史委托',
+                trade_record: '成交记录',
+                real_time_trade: '实时成交',
+                nothing: '没有',
+
+                my_assets: '我的资产',
+                inviting_awards: '邀请奖励',
+                withdraw_out: '资金转出',
+                verified: '身份认证',
+                login_logs: '登录日志',
+
+                total_assets: '总资产',
+                recharge: '充值',
+                copy: '复制',
+                copy_successful: '复制成功',
+                address: '地址',
+
+                invitation_code: '邀请码',
+                invitation_link: '邀请链接',
+                qr_code: '二维码',
+                activated: '已激活',
+                unactivated: '未激活',
+
+                withdraw: '提现',
+                select_withdraw_type: '选择提现种类',
+                withdraw_address: '提币地址',
+                all_in: '全部',
+                charges: '手续费',
+                real_withdraw_amount: '真实提现数量',
+                submit: '提交',
+
+                coin_type: '币种',
+                apply_for_amount: '申请数量',
+                real_withdraw_amount: '到帐数量',
+                withdraw_status: '申请状态',
+                withdraw_time: '申请时间',
+                reject_the_reason: '驳回原因',
+
+                withdraw_apply_for: '申请提币',
+                withdraw_reject: '驳回',
+                withdraw_pass: '通过',
+                withdraw_succeed: '提现成功',
+                withdraw_please_verify: '请您身份认证，通过后，再回来提交，提现申请！',
+
+                auth_country: '国家',
+                auth_full_id_name: '全名 / 身份证名称',
+                auth_id_number: '身份证号码',
+                auth_front_back_photo: '身份证照片正反面',
+                auth_drag_photo_upload: '将照片拖放到此处并上传',
+                auth_wait_for_review: '等待审核',
+                auth_pass_certification: '通过认证',
+                auth_not_pass: '未通过',
+
+                login_log: '登录日志',
+            },
         },
     }
 }

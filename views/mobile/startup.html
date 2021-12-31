@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{lang.list[defLang].title}}</title>
+    {{include './_style.html'}}
+    <style>
+        .coinType {
+            /* text-align: left; */
+            width: 200px;
+            margin: auto;
+        }
+
+        .textColor1 {
+            color: #333333;
+        }
+
+        .titleStyle {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .convertibleProportionStyle {
+            font-size: 0.9rem;
+            color: #c5c5c5;
+        }
+
+        .bg1 {
+            margin-top: -20px;
+            margin-bottom: 30px;
+            padding: 10px;
+        }
+
+        .bg2 {
+            margin-top: 20px;
+            margin-bottom: 100px;
+            padding: 20px;
+        }
+
+        .jsnr {
+            margin-left: 0px;
+            margin-right: 0px;
+            border-radius: 5px;
+            background-color: #262c47;
+        }
+
+        .main {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 20px;
+            width: 300px;
+            height: 350px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .hr-style {
+            border: 0;
+            height: 2px;
+            background-color: #22243a;
+        }
+
+        .time-style {
+            text-align: center;
+        }
+
+        .time-style>h4 {
+            color: #fff;
+        }
+
+        .asdf {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="app">
+        <div class="placeholder-t"></div>
+
+        <div class="uk-flex uk-column-1-1">
+            <div class="uk-card uk-card-default uk-card-body" style="font-size: 10px; text-align: left;">
+                <img class="uk-align-left uk-margin-remove-adjacent" src="/default/img/publish-01.jpg" width="180" alt="coin image" style="margin-right: 5px;margin-bottom: 5px;">
+                <h4 style="color: white;">Leth</h4>
+                <p>Leth is the Ethereum token of the Leth network project. It is a new generation of decentralized video streaming platform based on native blockchain technology. The platform distributes Leth token rewards to content viewers who share bandwidth and provides high-definition video content. , To reduce the cost of video distribution. Leth Network aims to develop more effective methods to distribute any type of content and data globally through a paid peer-to-peer network.</p>
+                <p>{{lang.list[defLang].page.target}}: {[this.platform_currency.value]}</p>
+
+                <hr class="hr-style">
+
+                <div class="time-style">
+                    <h4 class="">
+                        <div v-if="this.disable">
+                            {{lang.list[defLang].page.end_distance}}： <span id="entTime" class="text-primary-light">{[endTime]}</span>
+
+
+                            <!-- <div class="uk-grid-small uk-child-width-auto" uk-grid uk-countdown="date: 2022-01-06T02:05:01+00:00">
+                                <div>
+                                    <div class="uk-countdown-number uk-countdown-days"></div>
+                                    <div class="uk-countdown-label uk-margin-small uk-text-center uk-visible@s">Days</div>
+                                </div>
+                                <div class="uk-countdown-separator">:</div>
+                                <div>
+                                    <div class="uk-countdown-number uk-countdown-hours"></div>
+                                    <div class="uk-countdown-label uk-margin-small uk-text-center uk-visible@s">Hours</div>
+                                </div>
+                                <div class="uk-countdown-separator">:</div>
+                                <div>
+                                    <div class="uk-countdown-number uk-countdown-minutes"></div>
+                                    <div class="uk-countdown-label uk-margin-small uk-text-center uk-visible@s">Minutes</div>
+                                </div>
+                                <div class="uk-countdown-separator">:</div>
+                                <div>
+                                    <div class="uk-countdown-number uk-countdown-seconds"></div>
+                                    <div class="uk-countdown-label uk-margin-small uk-text-center uk-visible@s">Seconds</div>
+                                </div>
+                            </div> -->
+
+
+                        </div>
+                        <div v-else="">
+                            {{lang.list[defLang].page.subscribe_buy_end}}
+                        </div>
+                    </h4>
+                    <p class="">
+                        {{lang.list[defLang].page.start_time}}：{[this.platform_currency.start_time]}
+                    </p>
+                    <p class="">
+                        {{lang.list[defLang].page.end_time}}：{[this.platform_currency.end_time]}
+                    </p>
+                </div>
+
+
+                <div class="uk-box-shadow-large uk-padding asdf time-style uk-card uk-card-default uk-card-body">
+                    <div class="coinType">
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：USDT</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}：1 : {[this.platform_currency.usdt_exchange]}</p>
+                        <p><button @click="onClickParticipation('USDT')" :disabled="!this.disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
+                    </div>
+                </div>
+
+                <div class="uk-box-shadow-large uk-padding asdf time-style uk-card uk-card-default uk-card-body">
+                    <div class="coinType">
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：ETH</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}：1 : {[this.platform_currency.eth_exchange]}</p>
+                        <p><button @click="onClickParticipation('ETH')" :disabled="!this.disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
+                    </div>
+                </div>
+
+                <div class="uk-box-shadow-large uk-padding asdf time-style uk-card uk-card-default uk-card-body">
+                    <div class="coinType">
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：BTC</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}：1 : {[this.platform_currency.btc_exchange]}</p>
+                        <p><button @click="onClickParticipation('BTC')" :disabled="!this.disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+                <div>
+
+                    <div class="col-12">
+                        <br>
+                        <br>
+                        <br>
+                        <p>{{lang.list[defLang].page.project_introduction}}</p>
+
+                        <div class="convertibleProportionStyle">
+                            <p>AbAbout THETA-B:</p>
+
+                            <p>The Theta Network and protocol solves various challenges the video streaming industry faces
+                                today. First, tokens on the Theta blockchain are used as an incentive to encourage
+                                individual
+                                users to share their redundant computing and bandwidth resources as caching or relay nodes
+                                for
+                                video streams. This improves the quality of stream delivery and solves the “last-mile”
+                                delivery
+                                problem, the main bottleneck for traditional content delivery pipelines, especially for high
+                                resolution high bitrate 4k, 8k and next generation streams. Second, with sufficient network
+                                density the majority of viewers will pull streams from peering caching nodes, allowing video
+                                platforms to significantly reduce content delivery network (CDN) costs. More importantly, by
+                                introducing tokens as an end-user incentive mechanism the Theta Network allows video
+                                platforms
+                                to deepen viewer engagement, drive incremental revenues, and differentiate their content and
+                                viewing experience from their competitors.
+                            </p>
+
+                            <p>
+                                The Theta blockchain introduces three main novel concepts:
+                            </p>
+
+                            <p>
+                                ● Multi-Level BFT: A modified BFT consensus mechanism which allows thousands of nodes to
+                                participate in the consensus process, while still supporting very high transaction
+                                throughput
+                                (1,000+ TPS). The core idea is to have a small set of nodes, which form the validator
+                                committee,
+                                produce a chain of blocks as fast as possible using a PBFT-like process. Then, the thousands
+                                of
+                                consensus participants, called guardians, finalize the chain generated by the validator
+                                committee at regular checkpoint blocks. The name multi-level BFT consensus mechanism
+                                reflects
+                                the fact that the validator/guardian division provides multiple levels of security
+                                guarantee.
+                                The validator committee provides the first level of consensus — with 10 to 20 validators,
+                                the
+                                committee can come to consensus quickly. The guardian pool forms the second line of defense.
+                                With thousands of nodes, it is substantially more difficult for attackers to compromise the
+                                integrity of the network, and thus provides a much higher level of security. We believe this
+                                mechanism achieves a good balance among transaction throughput, consistency, and level of
+                                decentralization, the three pillars of the so-called “impossible triangle”.
+                            </p>
+
+                            <p>● Aggregated Signature Gossip Scheme: A basic all-to-all broadcasting of the checkpoint block
+                                hash could work between guardian nodes, but it yields quadratic communication overhead, and
+                                therefore cannot scale to 1,000+ nodes. Instead, we propose an Aggregated Signature Gossip
+                                Scheme which significantly reduces messaging complexity. Each guardian node keeps combining
+                                the
+                                partially aggregated signatures from all its neighbors, and then gossips out the aggregated
+                                signature. This way the signature share of each node can reach other nodes at an exponential
+                                rate, 2 leveraging the gossip protocol. In addition, the signature aggregation keeps the
+                                size of
+                                the node-to-node messages small, and thus further reduces the communication overhead.
+                            </p>
+
+                            <p></p>
+
+                            <p>● Resource Oriented Micropayment Pool: An off-chain “Resource Oriented Micropayment Pool”
+                                that is
+                                purpose-built for video streaming. It allows a user to create an off-chain micropayment pool
+                                that any other user can withdraw from using off-chain transactions, and is double-spend
+                                resistant. It is much more flexible compared to off-chain payment channels.
+                            </p>
+
+                            <p>Ticker: {[this.platform_currency.name]}</p>
+
+                            <p>Total Supply: {[this.platform_currency.value]} {[this.platform_currency.name]}</p>
+
+                            <p>
+                                Protocol: TRC-20</p>
+
+                            <p>Official Website: www.theta-b.com</p>
+
+                            <p>white paper：https:// www.theta-b.com/bps.pdf</p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+
+            </div>
+
+
+
+
+
+
+            <div id="modal-example" class="uk-flex-top" uk-modal>
+                <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+                    <h3 class="uk-modal-title">{{lang.list[defLang].page.enter_participation}}</h3>
+                    <div style="color:#414141;">
+                        <div class="uk-flex-row">
+                            <div class="col-md-8" style="margin-top: 8px;">{{lang.list[defLang].page.available_balance}}：<span
+                                    style="color:#cc3333;">{[this.balance.curr_balance]} {[coinType]}</span>
+                            </div>
+                            <div class="col-md-auto ml-auto text-right">
+                                <a @click="onClickAllIn()" class="uk-link-muted" href="javascript:void();">{{lang.list[defLang].page.all_in}}</a>
+                            </div>
+                        </div>
+                        <form>
+                            <div class="form-group">
+                                <!-- <form> -->
+                                <div class="form-row">
+                                    <div class="col-md-5 mb-5 text-right">
+                                        <label for="coin_txt" class="col-form-label text-right">{[coinType]}</label>
+                                        <input id="coin_txt" v-model="form.coin_amount" type="number" class="uk-input" min="0" maxlength="99">
+                                    </div>
+                                    <div class="col-md-1 mb-1 text-center">
+                                        <label class="col-form-label">≈ {[(this.exchange/1)*this.form.coin_amount]} {[platform_currency.symbol]}</label>
+                                    </div>
+                                    <div class="col" style="display: none">
+                                        <label class="col-form-label" for="target_coin">{[platform_currency.symbol]}</label>
+                                        <input id="target_coin" :value="(this.exchange/1)*this.form.coin_amount" type="text" class="uk-input" readonly="readonly">
+                                    </div>
+                                </div>
+                                <input type="hidden" class="uk-input" :value="this.form.coin_type">
+                                <!-- </form> -->
+                            </div>
+                        </form>
+                    </div>
+                    <p class="uk-text-right">
+                        <!-- <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button> -->
+                        <button @click="onClickEnter()" :disabled="this.loading" class="uk-button uk-button-primary" type="button">{{lang.list[defLang].page.participation}}</button>
+                    </p>
+                </div>
+            </div>
+
+
+
+        </div>
+
+        <div class="placeholder-b"></div>
+
+        {{include './_menu.html'}}
+    </div>
+
+
+
+
+    <div>
+        <script>
+            let app = new Vue({
+                delimiters: ["{[", "]}"],
+                el: '#app',
+                data: {
+                    is_login: '{{isLogin}}',
+                    loading: false,
+                    temp_setInterval: null,
+                    alertObj: JSON.parse('{{lang.list[defLang].page.login.alert}}'.replace(/&#34;/g, '"')),
+                    coinType: 'usdt',
+                    exchange: 0,
+                    endTime: '0{{lang.list[defLang].page.day}} 0{{lang.list[defLang].page.hour}} 0{{lang.list[defLang].page.minute}} 0{{lang.list[defLang].page.second}}',
+                    disable: true,
+                    platform_currency: {
+                        name: '',
+                        value: 0,
+                        usdt: 0,
+                        withdraw_charges: 0,
+                        usdt_exchange: 0,
+                        eth_exchange: 0,
+                        btc_exchange: 0,
+                        start_time: 0,
+                        end_time: 0,
+                        curr_time: 0,
+                    },
+                    balance: {
+                        USDT: 0,
+                        ETH: 0,
+                        BTC: 0,
+                        curr_balance: 0
+                    },
+                    form: {
+                        target_amount: 0,
+                        coin_price: 0,
+                        coin_amount: 0,
+                        coin_type: 'usdt',
+                    }
+                },
+                methods: {
+                    onClickParticipation(type) {
+                        if (this.is_login == 'false') {
+                            document.location.href = '/login'
+                            return
+                        }
+
+                        this.coinType = type
+                        this.exchange = this.platform_currency[type.toLocaleLowerCase() + '_exchange']
+                        this.balance.curr_balance = this.balance[this.coinType]
+
+                        this.form.coin_type = type
+                        this.form.coin_amount = 0
+                        this.form.coin_price = 0
+                        this.form.target_amount = 0
+
+                        UIkit.modal('#modal-example').show();
+                    },
+                    onClickEnter() {
+                        this.form.coin_price = this.exchange
+                        this.form.target_amount = $('#target_coin').val()
+                        this.form.coin_type = this.form.coin_type.toLocaleLowerCase()
+                        if (this.form.coin_type == "usdt") {
+                            this.form.coin_type = 'usdt_trc20'
+                        }
+
+                        if (this.form.target_amount <= 0) {
+                            return
+                        }
+
+                        this.loading = true
+                        this.post('/api/startup', this.form, (data) => {
+                            this.loading = false
+                            if (data.flag != 'ok') {
+                                // UIkit.notification('My message', { status: 'success' });
+                                tip(data.flag)
+                            } else {
+                                tip('{{lang.list[defLang].page.participation_successful}}', () => {
+                                    document.location.reload()
+                                })
+                            }
+                        })
+                    },
+                    onClickAllIn() {
+                        this.form.coin_type = this.coinType
+                        this.form.coin_amount = this.balance.curr_balance
+                    },
+                    zero(n) {
+                        return n < 10 ? '0' + n : n
+                    },
+                    round(num, intLen = 2, dotLaterLen = 6) {
+                        let z = '000000000000000000000000000000'
+                        let zn = Number(1 + z.substr(0, dotLaterLen))
+                        num = Math.round(num * zn) / zn
+                        let s = String(num)
+
+                        if (s.indexOf('.') !== -1) {
+                            let a = s.split('.')
+                            let n1 = a[0], n2 = a[1], zn
+
+                            if (a[0].length < intLen) {
+                                n1 = z.substr(0, intLen - a[0].length) + a[0]
+                            }
+
+                            if (a[1].length < dotLaterLen) {
+                                zn = z.substr(0, dotLaterLen - a[1].length)
+                                n2 = String(a[1]) + zn
+                            }
+
+                            let res = `${n1}.${n2}`
+                            return res
+                        }
+
+                        let zl = z.substr(0, dotLaterLen)
+                        return `${s}.${zl}`
+                    },
+                    lessen(num, min, len) {
+                        let n = num / min
+                        return this.round(n, len)
+                    },
+                    formatTime(t) {
+                        let d = Math.floor(t / (60 * 60 * 24))
+                        let h = this.zero(Math.floor((t / (60 * 60)) % 24))
+                        let m = this.zero(Math.floor(t / (60) % 60))
+                        let s = this.zero(Math.floor(t % 60))
+                        return `${d}{{lang.list[defLang].page.day}} ${h}{{lang.list[defLang].page.hour}} ${m}{{lang.list[defLang].page.minute}} ${s}{{lang.list[defLang].page.second}}`
+                    },
+                    updateTime() {
+                        this.temp_setInterval = setInterval(() => {
+                            let currTime = new Date().getTime() / 1000
+                            let endTime = new Date(this.platform_currency.end_time).getTime() / 1000
+                            let defTime = endTime - currTime
+                            $('#entTime').html(this.formatTime(defTime))
+                            if (defTime >= 0) {
+                                this.disable = true
+                            } else {
+                                this.disable = false
+                                clearInterval(this.temp_setInterval)
+                            }
+                        }, 100)
+                    },
+
+                    initWS() {
+                        let ws = new WebSocket('ws://{{lang.domain}}:3031/coin/price')
+                        ws.onopen = () => {
+                            console.log('websocket init ...')
+                        };
+                        ws.onclose = () => {
+                            console.log('websocket close ...')
+
+                            setTimeout(() => {
+                                this.initWS()
+                            }, 60000)
+                        }
+                        ws.onmessage = (event) => {
+                            const time = 1000
+                            let _t = this
+                            let res = JSON.parse(event.data)
+                            this.platform_currency.usdt_exchange = this.round(1 / res.platform.price, 1, 6)
+                            ws.close()
+                        }
+                    },
+
+                    getPrice() {
+                        this.get('/api/coincap-prices-assets/caches', {}, (data) => {
+                            let p = data.data.value
+                            this.platform_currency.eth_exchange = this.round(this.platform_currency.usdt_exchange * p.ethereum, 1, 6)
+                            this.platform_currency.btc_exchange = this.round(this.platform_currency.usdt_exchange * p.bitcoin, 1, 6)
+                        })
+                    },
+
+
+                    post(url, params, callback) {
+                        this.loading = true;
+                        $.post(url, params, res => {
+                            this.loading = false;
+                            callback(res);
+                        })
+                    },
+                    get(url, params, callback) {
+                        this.loading = true;
+                        $.ajax({
+                            'url': url,
+                            'type': 'GET',
+                            'dataType': 'json',
+                            'data': params,
+                            'success': res => {
+                                this.loading = false;
+                                callback(res);
+                            },
+                            'error': err => {
+                                this.loading = false;
+                                console.log(err);
+                                tip(err.statusText);
+                            }
+                        })
+                    },
+                    init() {
+                        this.get('/api/startup', {}, (data) => {
+                            if (this.is_login == 'true') {
+                                this.balance.USDT = data.data.user['usdt_trc20']
+                                this.balance.ETH = data.data.user['eth']
+                                this.balance.BTC = data.data.user['btc']
+                            }
+
+                            this.platform_currency = data.data.currency
+
+                            this.platform_currency.usdt_exchange = data.data.currency.usdt_exchange
+                            this.platform_currency.eth_exchange = 0
+                            this.platform_currency.btc_exchange = 0
+
+                            this.platform_currency.start_time = moment(this.platform_currency.start_time).format('YYYY-MM-DD HH:mm:ss')
+                            this.platform_currency.end_time = moment(this.platform_currency.end_time).format('YYYY-MM-DD HH:mm:ss')
+                            this.updateTime()
+
+
+                            this.getPrice()
+                            setInterval(() => {
+                                this.getPrice()
+                            }, 1000 * 60)
+
+
+                            this.initWS()
+
+                        })
+
+                    }
+                },
+                mounted() {
+                    this.init();
+                }
+            });
+        </script>
+    </div>
+    {{include './_tip.html'}}
+</body>
+
+</html>

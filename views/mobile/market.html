@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{lang.list[defLang].title}}</title>
+    {{include './_style.html'}}
+</head>
+
+<body>
+
+    <div class="placeholder-t"></div>
+
+    <div id="app">
+        <div class="uk-flex">
+            <div class="uk-flex-left uk-flex-2 overflow-text">111111111111111</div>
+            <div class="uk-flex-center overflow-text">222222222222222</div>
+            <div class="uk-flex-right overflow-text">333333333333333</div>
+        </div>
+        <div class="uk-flex uk-flex-column">
+            <div class="uk-flex-left overflow-text">111111111111111</div>
+            <div class="uk-flex-center overflow-text">222222222222222</div>
+            <div class="uk-flex-right overflow-text">333333333333333</div>
+        </div>
+    </div>
+
+    <div class="placeholder-b"></div>
+
+    {{include './_menu.html'}}
+
+
+
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                iframeUrl: '',
+                symbol: '',
+                symbol1: '',
+                statup: {
+                    symbol: ''
+                },
+                list: [],
+                shishichengjiao: [],
+                newPrice: 0,
+                market: {
+                    buy: [],
+                    sell: [],
+                }
+            },
+            methods: {
+                onClickGo(symbol) {
+                    let url = '/market/?symbol=' + symbol.toLocaleLowerCase() + 'usdt'
+                    document.location = url
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                getQueryVariable(variable) {
+                    var query = window.location.search.substring(1);
+                    var vars = query.split("&");
+                    for (var i = 0; i < vars.length; i++) {
+                        var pair = vars[i].split("=");
+                        if (pair[0] == variable) { return pair[1]; }
+                    }
+                    return (false);
+                },
+                round(num, intLen = 2, dotLaterLen = 6) {
+                    let z = '000000000000000000000000000000'
+                    let zn = Number(1 + z.substr(0, dotLaterLen))
+                    num = Math.round(num * zn) / zn
+                    let s = String(num)
+
+                    if (s.indexOf('.') !== -1) {
+                        let a = s.split('.')
+                        let n1 = a[0], n2 = a[1], zn
+
+                        if (a[0].length < intLen) {
+                            n1 = z.substr(0, intLen - a[0].length) + a[0]
+                        }
+
+                        if (a[1].length < dotLaterLen) {
+                            zn = z.substr(0, dotLaterLen - a[1].length)
+                            n2 = String(a[1]) + zn
+                        }
+
+                        let res = `${n1}.${n2}`
+                        return res
+                    }
+
+                    let zl = z.substr(0, dotLaterLen)
+                    return `${s}.${zl}`
+                },
+                lessen(num, min, len) {
+                    let n = num / min
+                    return this.round(n, len)
+                },
+                coinList(data) {
+                    let _t = this
+                    let a = data
+                    a.forEach(function (item) {
+                        item.node = {}
+                        item.node.id = item.name.toLocaleLowerCase()
+                        item.node.name = item.name
+                        item.node.symbol = item.symbol
+                        item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
+                        item.node.priceUsd = _t.round(item.priceUsd, 2)
+                        item.node.marketCapUsd = _t.round(item.marketCapUsd, 12, 2)
+                        item.node.supply = _t.round(item.supply, 6, 2)
+                        item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
+                        item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 2, 2)
+                    })
+                    let ptb = {
+                        node: {
+                            id: _t.statup.name.toLocaleLowerCase(),
+                            name: _t.statup.name,
+                            symbol: _t.statup.symbol,
+                            logo: _t.statup.icon,
+                            priceUsd: _t.round(0, 2),
+                            marketCapUsd: _t.round(78623827.73 - Math.random() * 10000, 12, 2),
+                            supply: _t.round(3148153.73 - Math.random() * 1000, 6, 2),
+                            volumeUsd24Hr: _t.lessen(1143447.01 - Math.random() * 1000, 9, 2),
+                            changePercent24Hr: _t.round(0, 2, 2),
+                            rank: this.statup.sort,
+                        }
+                    }
+                    if (this.statup.sort == 0 || this.statup.sort > a.length) {
+                        a.push(ptb)
+                    } else {
+                        a.splice(this.statup.sort - 1, 0, ptb)
+                    }
+                    this.list = a
+                },
+                initWS() {
+                    let ws = new WebSocket('ws://{{lang.domain}}:3031/coin/price')
+                    ws.onopen = () => {
+                        console.log('websocket init ...')
+                    };
+                    ws.onclose = () => {
+                        console.log('websocket close ...')
+
+                        setTimeout(() => {
+                            this.initWS()
+                        }, 60000)
+                    }
+                    ws.onmessage = (event) => {
+                        const time = 1000
+                        let _t = this
+                        let res = JSON.parse(event.data)
+                        this.list.forEach(function (item) {
+                            let key = item.node.id
+                            if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
+                                let v = res.platform.price
+                                let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                item.node.priceUsd = _t.round(v, 2, 4)
+                                item.node.changePercent24Hr = _t.round(res.platform.price_percent, 2, 2)
+                                $('#' + key).addClass(className)
+                                setTimeout(() => {
+                                    $('#' + key).removeClass(className)
+                                }, time)
+
+                                if (_t.symbol == _t.statup.name.toLocaleLowerCase() + 'usdt') {
+                                    window.postMessage({ data: _t.buySell(v) }, '/');
+                                }
+                            }
+                            let v = res.cache[key]
+                            if (v) {
+                                let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
+                                item.node.priceUsd = _t.round(v, 2, 4)
+                                $('#' + key).addClass(className)
+                                setTimeout(() => {
+                                    $('#' + key).removeClass(className)
+                                }, time)
+                            }
+                        })
+                    }
+                },
+                buySell(price) {
+                    let len = 1 + Math.floor(Math.random() * 4)
+                    let a = []
+                    for (let i = 0; i < len; i++) {
+                        let ts = new Date().getTime()
+                        let item = {
+                            id: ts,
+                            amount: Math.random() * 99999,
+                            price: price + price / 100 * Math.random(),
+                            direction: Math.random() * 5 > 1 ? 'buy' : 'sell',
+                            tradeId: ts,
+                            ts: ts,
+                        }
+                        a.push(item)
+                    }
+                    return {
+                        ts: '',
+                        ch: "market.ethusdt.trade.detail",
+                        tick: { data: a },
+                    }
+
+                },
+                getList() {
+                    this.get('/api/coincap-coin-list/caches', {}, (data) => {
+                        this.coinList(data.data.value)
+                        this.initWS()
+                    })
+                },
+                init() {
+                    let _t = this
+                    this.get('/api/startup', {}, (data) => {
+                        this.statup = data.data.currency
+                        this.getList()
+                    })
+
+                    this.symbol = this.getQueryVariable('symbol')
+                    this.symbol1 = this.symbol.substring(0, this.symbol.length - 4).toUpperCase()
+                    this.iframeUrl = '/KLineChart/index.html?symbol=' + this.symbol
+
+                    window.addEventListener('message', (e) => {
+                        var data = e.data;
+                        if (data.d) {
+                            this.newPrice = data.d.close
+                            return
+                        }
+
+                        if (!data.data) {
+                            console.log(data)
+                            return
+                        }
+
+                        let a = data.data.tick.data
+                        a.forEach(function (item) {
+                            item.ts = moment(item.ts).format('YYYY-MM-D HH:mm:ss')
+                            item.price = _t.round(item.price, 2, 4)
+                            item.amount = _t.round(item.amount, 2)
+                        })
+                        for (let i = 0; i < a.length; i++) {
+                            let item = a[i]
+                            if (this.shishichengjiao.length > 10) {
+                                this.shishichengjiao.unshift(item)
+                                this.shishichengjiao.pop()
+                            } else {
+                                this.shishichengjiao.push(item)
+                            }
+
+                            if (item.direction == 'sell') {
+                                this.market.sell.unshift(item)
+                                if (this.market.sell.length >= 10) {
+                                    this.market.sell.pop()
+                                }
+                                this.market.sell.sort()
+                            } else {
+                                this.market.buy.unshift(item)
+                                if (this.market.buy.length > 10) {
+                                    this.market.buy.pop()
+                                }
+                                this.market.buy.sort()
+                            }
+                        }
+                    }, false);
+                }
+            },
+            mounted() {
+                // this.init()
+            }
+        });
+
+
+    </script>
+
+
+</body>
+
+</html>

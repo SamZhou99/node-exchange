@@ -125,7 +125,7 @@ let _t = {
         clearInterval(_t.tempInterval)
         _t.tempInterval = setInterval(async () => {
             const value = await _t.getData()
-            if (_t.callback) {
+            if (value && _t.callback) {
                 _t.callback({ key: _t.coincap_api.http.assets.key, value: value })
             }
         }, _t.intervalTime)

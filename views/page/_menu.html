@@ -35,12 +35,12 @@
 
         {{if isLogin}}
         <li><a class="nav-link" href="/me"><i class="bi bi-person"></i> {{session.user.email}}</a></li>
-        <li><a class="nav-link" href="/logout"><i class="bi bi-power"></i> {{lang.list[defLang].menu.logout}}</a></li>
+        <li><a class="nav-link" href="javascript:$.get('/logout',{},data=>{window.location.href='/login'})"><i class="bi bi-power"></i> {{lang.list[defLang].menu.logout}}</a></li>
         {{else}}
         <li><a class="nav-link" href="/login"><i class="bi bi-person"></i> {{lang.list[defLang].menu.login}}</a></li>
         <li><a class="nav-link" href="/reg"><i class="bi bi-pencil-square"></i> {{lang.list[defLang].menu.signup}}</a>
-        {{/if}}
-        
+            {{/if}}
+
         </li>
     </ul>
 

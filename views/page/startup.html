@@ -67,7 +67,7 @@
 
         <div class="container">
             <div class="row jsnr bg1">
-                <h5>首发项目</h5>
+                <h5>{{lang.list[defLang].page.first_publish_project}}</h5>
             </div>
         </div>
 
@@ -101,7 +101,7 @@
                                     methods
                                     to distribute any type of content and data globally through a paid peer-to-peer
                                     network.</p>
-                                <p>目标: {[this.platform_currency.value]}</p>
+                                <p>{{lang.list[defLang].page.target}}: {[this.platform_currency.value]}</p>
                             </div>
                         </div>
                     </div>
@@ -128,21 +128,21 @@
                                 <!-- Heading -->
                                 <h1 class="h4 text-white mb-0">
                                     <div v-if="this.disable">
-                                        距离结束： <span id="entTime" class="text-primary-light">{[endTime]}</span>
+                                        {{lang.list[defLang].page.end_distance}}： <span id="entTime" class="text-primary-light">{[endTime]}</span>
                                     </div>
                                     <div v-else="">
-                                        结束认购
+                                        {{lang.list[defLang].page.subscribe_buy_end}}
                                     </div>
                                 </h1>
                                 <br>
                                 <!-- Text -->
                                 <p class="text-white-60 mb-4 mb-md-0">
-                                    开始时间：{[this.platform_currency.start_time]}
+                                    {{lang.list[defLang].page.start_time}}：{[this.platform_currency.start_time]}
                                 </p>
                                 <br>
 
                                 <p class="text-white-60 mb-4 mb-md-0">
-                                    结束时间：{[this.platform_currency.end_time]}
+                                    {{lang.list[defLang].page.end_time}}：{[this.platform_currency.end_time]}
                                 </p>
                             </div>
 
@@ -161,26 +161,23 @@
 
                 <div class="col-sm-12 col-md-4 text-center">
                     <div class="coinType">
-                        <p class="titleStyle">目标币种：USDT</p>
-                        <p class="convertibleProportionStyle">兑换比例：1:{[this.platform_currency.usdt_exchange]}</p>
-                        <p><button @click="onClickParticipation('USDT')" :disabled="!this.disable" type="button"
-                                class="btn btn-danger btn-block">参与</button></p>
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：USDT</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}：1 : {[this.platform_currency.usdt_exchange]}</p>
+                        <p><button @click="onClickParticipation('USDT')" :disabled="!this.disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 text-center">
                     <div class="coinType">
-                        <p class="titleStyle">目标币种：ETH</p>
-                        <p class="convertibleProportionStyle">兑换比例：1:{[this.platform_currency.eth_exchange]}</p>
-                        <p><button @click="onClickParticipation('ETH')" :disabled="!this.disable" type="button"
-                                class="btn btn-danger btn-block">参与</button></p>
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：ETH</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}：1 : {[this.platform_currency.eth_exchange]}</p>
+                        <p><button @click="onClickParticipation('ETH')" :disabled="!this.disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
                     </div>
                 </div>
                 <div class="col-sm-12 col-md-4 text-center">
                     <div class="coinType">
-                        <p class="titleStyle">目标币种：BTC</p>
-                        <p class="convertibleProportionStyle">兑换比例：1:{[this.platform_currency.btc_exchange]}</p>
-                        <p><button @click="onClickParticipation('BTC')" :disabled="!this.disable" type="button"
-                                class="btn btn-danger btn-block">参与</button></p>
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：BTC</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}：1 : {[this.platform_currency.btc_exchange]}</p>
+                        <p><button @click="onClickParticipation('BTC')" :disabled="!this.disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
                     </div>
                 </div>
 
@@ -191,7 +188,7 @@
                     <br>
                     <br>
                     <br>
-                    <p>项目介绍</p>
+                    <p>{{lang.list[defLang].page.project_introduction}}</p>
 
                     <div class="convertibleProportionStyle">
                         <p>AbAbout THETA-B:</p>
@@ -280,23 +277,22 @@
 
 
         <!-- Modal -->
-        <div class="modal fade" id="participate" tabindex="-1" role="dialog" aria-labelledby="participateTitle"
-            aria-hidden="true">
+        <div class="modal fade" id="participate" tabindex="-1" role="dialog" aria-labelledby="participateTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document" style="color: black">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="participateTitle">确认参与</h5>
+                        <h5 class="modal-title" id="participateTitle">{{lang.list[defLang].page.enter_participation}}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="form-row">
-                            <div class="col-md-8" style="margin-top: 8px;">可用余额：<span
+                            <div class="col-md-8" style="margin-top: 8px;">{{lang.list[defLang].page.available_balance}}：<span
                                     style="color:#cc3333;">{[this.balance.curr_balance]} {[coinType]}</span>
                             </div>
                             <div class="col-md-auto ml-auto text-right">
-                                <div @click="onClickAllIn()" class="btn btn-link">全部</div>
+                                <div @click="onClickAllIn()" class="btn btn-link">{{lang.list[defLang].page.all_in}}</div>
                             </div>
                         </div>
                         <form>
@@ -323,7 +319,7 @@
                     </div>
                     <div class="modal-footer text-center">
                         <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-                        <button @click="onClickEnter()" :disabled="this.loading" type="button" class="btn btn-primary btn-block">参与</button>
+                        <button @click="onClickEnter()" :disabled="this.loading" type="button" class="btn btn-primary btn-block">{{lang.list[defLang].page.participation}}</button>
                     </div>
                 </div>
             </div>
@@ -349,7 +345,7 @@
                 alertObj: JSON.parse('{{lang.list[defLang].page.login.alert}}'.replace(/&#34;/g, '"')),
                 coinType: 'usdt',
                 exchange: 0,
-                endTime: '0天 0时 0分 0秒',
+                endTime: '0{{lang.list[defLang].page.day}} 0{{lang.list[defLang].page.hour}} 0{{lang.list[defLang].page.minute}} 0{{lang.list[defLang].page.second}}',
                 disable: true,
                 platform_currency: {
                     name: '',
@@ -402,9 +398,6 @@
                         this.form.coin_type = 'usdt_trc20'
                     }
 
-                    console.log('提交后台...')
-                    console.log(this.form)
-
                     if (this.form.target_amount <= 0) {
                         return
                     }
@@ -413,10 +406,9 @@
                     this.post('/api/startup', this.form, (data) => {
                         this.loading = false
                         if (data.flag != 'ok') {
-                            // alert(data.flag)
                             tip(data.flag)
                         } else {
-                            tip('参与成功', () => {
+                            tip('{{lang.list[defLang].page.participation_successful}}', () => {
                                 document.location.reload()
                             })
                         }
@@ -429,20 +421,48 @@
                 zero(n) {
                     return n < 10 ? '0' + n : n
                 },
+                round(num, intLen = 2, dotLaterLen = 6) {
+                    let z = '000000000000000000000000000000'
+                    let zn = Number(1 + z.substr(0, dotLaterLen))
+                    num = Math.round(num * zn) / zn
+                    let s = String(num)
+
+                    if (s.indexOf('.') !== -1) {
+                        let a = s.split('.')
+                        let n1 = a[0], n2 = a[1], zn
+
+                        if (a[0].length < intLen) {
+                            n1 = z.substr(0, intLen - a[0].length) + a[0]
+                        }
+
+                        if (a[1].length < dotLaterLen) {
+                            zn = z.substr(0, dotLaterLen - a[1].length)
+                            n2 = String(a[1]) + zn
+                        }
+
+                        let res = `${n1}.${n2}`
+                        return res
+                    }
+
+                    let zl = z.substr(0, dotLaterLen)
+                    return `${s}.${zl}`
+                },
+                lessen(num, min, len) {
+                    let n = num / min
+                    return this.round(n, len)
+                },
                 formatTime(t) {
                     let d = Math.floor(t / (60 * 60 * 24))
                     let h = this.zero(Math.floor((t / (60 * 60)) % 24))
                     let m = this.zero(Math.floor(t / (60) % 60))
                     let s = this.zero(Math.floor(t % 60))
-                    return `${d}天 ${h}时 ${m}分 ${s}秒`
+                    return `${d}{{lang.list[defLang].page.day}} ${h}{{lang.list[defLang].page.hour}} ${m}{{lang.list[defLang].page.minute}} ${s}{{lang.list[defLang].page.second}}`
                 },
                 updateTime() {
                     this.temp_setInterval = setInterval(() => {
-                        // let currTime = new Date(this.platform_currency.curr_time).getTime()
                         let currTime = new Date().getTime() / 1000
                         let endTime = new Date(this.platform_currency.end_time).getTime() / 1000
                         let defTime = endTime - currTime
-                        // this.endTime = this.formatTime(defTime)
                         $('#entTime').html(this.formatTime(defTime))
                         if (defTime >= 0) {
                             this.disable = true
@@ -452,6 +472,37 @@
                         }
                     }, 100)
                 },
+
+                initWS() {
+                    let ws = new WebSocket('ws://{{lang.domain}}:3031/coin/price')
+                    ws.onopen = () => {
+                        console.log('websocket init ...')
+                    };
+                    ws.onclose = () => {
+                        console.log('websocket close ...')
+
+                        setTimeout(() => {
+                            this.initWS()
+                        }, 60000)
+                    }
+                    ws.onmessage = (event) => {
+                        const time = 1000
+                        let _t = this
+                        let res = JSON.parse(event.data)
+                        this.platform_currency.usdt_exchange = this.round(1 / res.platform.price, 1, 6)
+                        ws.close()
+                    }
+                },
+
+                getPrice() {
+                    this.get('/api/coincap-prices-assets/caches', {}, (data) => {
+                        let p = data.data.value
+                        this.platform_currency.eth_exchange = this.round(this.platform_currency.usdt_exchange * p.ethereum, 1, 6)
+                        this.platform_currency.btc_exchange = this.round(this.platform_currency.usdt_exchange * p.bitcoin, 1, 6)
+                    })
+                },
+
+
                 post(url, params, callback) {
                     this.loading = true;
                     $.post(url, params, res => {
@@ -477,17 +528,6 @@
                         }
                     })
                 },
-
-                getPrice() {
-                    this.get('/api/coincap-prices-assets/caches', {}, (data) => {
-                        let p = data.data.value
-                        // console.log('pppppppppppppppppppppppppppppppppppppppppppp')
-                        // console.log(p)
-                        this.platform_currency.eth_exchange = this.platform_currency.usdt_exchange * p.ethereum
-                        this.platform_currency.btc_exchange = this.platform_currency.usdt_exchange * p.bitcoin
-                    })
-                },
-
                 init() {
                     this.get('/api/startup', {}, (data) => {
                         if (this.is_login == 'true') {
@@ -511,6 +551,9 @@
                         setInterval(() => {
                             this.getPrice()
                         }, 1000 * 60)
+
+
+                        this.initWS()
 
                     })
 

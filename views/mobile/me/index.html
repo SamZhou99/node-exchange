@@ -1,12 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="{{lang.list[defLang].lang}}">
 
 <head>
-    {{include '../_header.html'}}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{lang.list[defLang].title}}</title>
+    {{include '../_style.html'}}
     <style>
         .bg01 {
-            margin-top: 50px;
-            margin-bottom: 50px;
+            margin-top: 10px;
+            margin-bottom: 10px;
             padding: 20px;
             background-color: #202b3f;
         }
@@ -30,6 +33,10 @@
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
+        }
+
+        .profilePictureBg {
+            color: #fff;
         }
 
         .profilePicture {
@@ -71,163 +78,197 @@
         .ml-10 {
             margin-left: 20px;
         }
+
+
+
+
+
+        /* ---------------------------------------------------------------- */
+        .profilePictureBg {
+            background-color: #252e4b;
+            padding: 20px;
+            font-size: large;
+            color: #fff;
+        }
+
+        .totalBg {
+            text-align: center;
+            padding: 20px;
+        }
+
+
+        .card-item {
+            background-color: #090b1498;
+            padding: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .card-title {
+            color: fff;
+            font-size: large;
+            font-weight: bold;
+        }
+
+        .card-content {
+            float: left;
+        }
+
+        .card-content-left {
+            width: 70%;
+        }
+
+        .card-content-right {
+            width: 30%;
+            line-height: 30px;
+            text-align: right;
+        }
     </style>
 </head>
 
 <body>
-    {{include '../_menu.html'}}
 
-    <div id="app" class="container-fluid main-content p0">
-        {{include './_user_info.html'}}
+    <div class="placeholder-t"></div>
 
+    <div id="app" class="uk-container uk-text-lighter">
 
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3 col-sm-12">
-                    {{include './_menu.html'}}
-                </div>
-                <div class="col-md-9 col-sm-12">
-
-                    <div class="row">
-                        <div class="mb-3">
-                            <h3>{{lang.list[defLang].page.total_assets}}：{[round(usd.total,2,8)]} USD</h3>
-                        </div>
-                    </div>
-
-                    <div class="card mb-3 bg-dark2">
-                        <div class="row no-gutters">
-                            <div class="col-md-6">
-                                <div class="card-body">
-                                    <h3 class="card-title">BTC</h3>
-                                    <p class="card-text"><span class="gray1">{[user.btc]} BTC</span><span class="gray"> ≈ {[usd.btc]} USD</span></p>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card-body text-right cztx">
-                                    <button @click="onClickShowWallet('btc')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
-                                    <button @click="onClickGo('/me/withdraw')" class="btn btn-primary ml-10">{{lang.list[defLang].page.withdraw}}</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-if="is_show.btc" class="row no-gutters">
-                            <div class="col-md-12">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
-                                    <div class="input-group">
-                                        <input id="wallet_address_txt" type="text" readonly="readonly" class="form-control" :value="wallet_address">
-                                        <div @click="onClickCopyText('wallet_address_txt')" class="col-auto my-1"> <button type="buton" class="btn btn-primary">{{lang.list[defLang].page.copy}}</button> </div>
-                                    </div>
-                                    <p class="card-text">
-                                    <div id="qrcode"></div>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="card mb-3 bg-dark2">
-                        <div class="row no-gutters">
-                            <div class="col-md-6">
-                                <div class="card-body">
-                                    <h3 class="card-title">ETH</h3>
-                                    <p class="card-text"><span class="gray1">{[user.eth]} ETH</span><span class="gray"> ≈ {[usd.eth]} USD</span></p>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card-body text-right cztx">
-                                    <button @click="onClickShowWallet('eth')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
-                                    <button @click="onClickGo('/me/withdraw')" class="btn btn-primary ml-10">{{lang.list[defLang].page.withdraw}}</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-if="is_show.eth" class="row no-gutters">
-                            <div class="col-md-12">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
-                                    <div class="input-group">
-                                        <input id="wallet_address_txt" type="text" readonly="readonly" class="form-control" :value="wallet_address">
-                                        <div @click="onClickCopyText('wallet_address_txt')" class="col-auto my-1"> <button type="buton" class="btn btn-primary">{{lang.list[defLang].page.copy}}</button> </div>
-                                    </div>
-                                    <p class="card-text">
-                                    <div id="qrcode"></div>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="card mb-3 bg-dark2">
-                        <div class="row no-gutters">
-                            <div class="col-md-6">
-                                <div class="card-body">
-                                    <h3 class="card-title">USDT</h3>
-                                    <p class="card-text"><span class="gray1">{[user.usdt_trc20]} USDT</span><span class="gray"> ≈ {[usd.usdt_trc20]} USD</span></p>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card-body text-right cztx">
-                                    <button @click="onClickShowWallet('usdt-trc20')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
-                                    <button @click="onClickGo('/me/withdraw')" class="btn btn-primary ml-10">{{lang.list[defLang].page.withdraw}}</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-if="is_show['usdt-trc20']" class="row no-gutters">
-                            <div class="col-md-12">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
-                                    <div class="input-group">
-                                        <input id="wallet_address_txt" type="text" readonly="readonly" class="form-control" :value="wallet_address">
-                                        <div @click="onClickCopyText('wallet_address_txt')" class="col-auto my-1"> <button type="buton" class="btn btn-primary">{{lang.list[defLang].page.copy}}</button> </div>
-                                    </div>
-                                    <p class="card-text">
-                                    <div id="qrcode"></div>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="card mb-3 bg-dark2">
-                        <div class="row no-gutters">
-                            <div class="col-md-6">
-                                <div class="card-body">
-                                    <h3 class="card-title">{[currency.symbol]}</h3>
-                                    <p class="card-text"><span class="gray1">{[user.platform_currency_buy_total]} {[currency.symbol]}</span>
-                                        <span v-if="usd.platform_currency_is_up=='+'" class="green"> ≈ {[round(usd.platform_currency,2,8)]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
-                                        <span v-if="usd.platform_currency_is_up=='-'" class="red"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
-                                        <span v-if="usd.platform_currency_is_up==''" class="gray"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
-                                    </p>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card-body text-right cztx">
-                                    <button @click="onClickGo('/startup')" class="btn btn-primary">{{lang.list[defLang].page.buy}}</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
+        <div class="profilePictureBg">
+            <img class="profilePicture" src="/images/profile01.png" alt="{{session.user.email}}">
+            <span>{{session.user.email}}</span>
+            <button class="btn btn-primary offset-1">Logout</button>
         </div>
 
+
+
+        <div class="uk-container">
+
+            <div class="totalBg">
+                {{lang.list[defLang].page.total_assets}}：{[round(usd.total,2,8)]} USD
+            </div>
+
+            <div class="card-item uk-box-shadow-medium">
+                <div>
+                    <div class="card-title">BTC</div>
+                    <div class="card-content card-content-left">
+                        <p class="card-text"><span class="gray1">{[user.btc]} BTC</span><span class="gray"> ≈ {[usd.btc]} USD</span></p>
+                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    </div>
+                    <div class="card-content card-content-right">
+                        <button @click="onClickShowWallet('btc')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
+                        <button @click="onClickGo('/me/withdraw')" class="btn btn-primary">{{lang.list[defLang].page.withdraw}}</button>
+                    </div>
+                </div>
+
+                <div v-if="is_show.btc">
+                    <div class="card-content">
+                        <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
+                        <div class="card-content card-content-left">
+                            <input id="wallet_address_txt" type="text" readonly="readonly" class="uk-input" :value="wallet_address">
+                        </div>
+                        <div class="card-content card-content-right">
+                            <button @click="onClickCopyText('wallet_address_txt')" class="uk-button uk-button-primary">{{lang.list[defLang].page.copy}}</button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div id="qrcode"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-item uk-box-shadow-medium">
+                <div>
+                    <div class="card-title">ETH</div>
+                    <div class="card-content card-content-left">
+                        <p class="card-text"><span class="gray1">{[user.eth]} ETH</span><span class="gray"> ≈ {[usd.eth]} USD</span></p>
+                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    </div>
+                    <div class="card-content card-content-right">
+                        <button @click="onClickShowWallet('eth')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
+                        <button @click="onClickGo('/me/withdraw')" class="btn btn-primary">{{lang.list[defLang].page.withdraw}}</button>
+                    </div>
+                </div>
+
+                <div v-if="is_show.eth">
+                    <div class="card-content">
+                        <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
+                        <div class="card-content card-content-left">
+                            <input id="wallet_address_txt" type="text" readonly="readonly" class="uk-input" :value="wallet_address">
+                        </div>
+                        <div class="card-content card-content-right">
+                            <button @click="onClickCopyText('wallet_address_txt')" class="uk-button uk-button-primary">{{lang.list[defLang].page.copy}}</button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div id="qrcode"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-item uk-box-shadow-medium">
+                <div>
+                    <div class="card-title">USDT</div>
+                    <div class="card-content card-content-left">
+                        <p class="card-text"><span class="gray1">{[user.usdt_trc20]} USDT</span><span class="gray"> ≈ {[usd.usdt_trc20]} USD</span></p>
+                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    </div>
+                    <div class="card-content card-content-right">
+                        <button @click="onClickShowWallet('usdt-trc20')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
+                        <button @click="onClickGo('/me/withdraw')" class="btn btn-primary">{{lang.list[defLang].page.withdraw}}</button>
+                    </div>
+                </div>
+
+                <div v-if="is_show['usdt-trc20']">
+                    <div class="card-content">
+                        <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
+                        <div class="card-content card-content-left">
+                            <input id="wallet_address_txt" type="text" readonly="readonly" class="uk-input" :value="wallet_address">
+                        </div>
+                        <div class="card-content card-content-right">
+                            <button @click="onClickCopyText('wallet_address_txt')" class="uk-button uk-button-primary">{{lang.list[defLang].page.copy}}</button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div id="qrcode"></div>
+                    </div>
+                </div>
+
+            </div>
+
+
+
+            <div class="card-item uk-box-shadow-medium">
+                <div>
+                    <div class="card-title">{[currency.symbol]}</div>
+                    <div class="card-content">
+                        <p class="card-text"><span class="gray1">{[user.platform_currency_buy_total]} {[currency.symbol]}</span>
+                            <span v-if="usd.platform_currency_is_up=='+'" class="green"> ≈ {[round(usd.platform_currency,2,8)]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
+                            <span v-if="usd.platform_currency_is_up=='-'" class="red"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
+                            <span v-if="usd.platform_currency_is_up==''" class="gray"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
+                        </p>
+
+                        <button @click="onClickGo('/startup')" class="btn btn-primary" style="float: right">{{lang.list[defLang].page.buy}}</button>
+
+                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+
+
+
     </div>
+
+    <div class="placeholder-b"></div>
+
+    {{include '../_menu.html'}}
 
     <script>
         let app = new Vue({
@@ -424,7 +465,6 @@
         });
     </script>
 
-    {{include '../_footer.html'}}
 </body>
 
 </html>

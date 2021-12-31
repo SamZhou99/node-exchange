@@ -8,7 +8,7 @@ const service = require('../service/index.js')
 
 
 async function userAdd(ctx, inviteCode, account, password, type, mail, mobile, status, create_datetime, update_datetime) {
-    let defLang = ctx.cookies.get('lang')
+    let defLang = getDefaultLanguage(ctx)
     if (!account && !mail && !mobile) {
         ctx.body = { flag: lang.list[defLang].page.reg.alert.check_form_whole }
         return
@@ -30,28 +30,36 @@ async function userAdd(ctx, inviteCode, account, password, type, mail, mobile, s
 }
 
 
+function getDefaultLanguage(ctx) {
+    let defLang = ctx.cookies.get('lang')
+    return defLang || lang.default
+}
+
+
+function deviceTemplatePath(ctx) {
+    return ctx.data.isMobile ? 'mobile' : 'page'
+}
 
 
 let __this = {
     page: {
         // 首页
         async index(ctx) {
-            await ctx.render('page/index', ctx.data)
+            await ctx.render(deviceTemplatePath(ctx) + '/index', ctx.data)
         },
         // 交易
         async exchange(ctx) {
-            await ctx.render('page/exchange', ctx.data)
+            await ctx.render(deviceTemplatePath(ctx) + '/exchange', ctx.data)
         },
         // 首发项目
         async startup(ctx) {
-            await ctx.render('page/startup', ctx.data)
+            await ctx.render(deviceTemplatePath(ctx) + '/startup', ctx.data)
         },
         // 市场
         async market(ctx) {
             let query = ctx.request.query
-            console.log('货币标签 如 btc_usdt    : ', query)
             ctx.data.query = query
-            await ctx.render('page/market', ctx.data)
+            await ctx.render(deviceTemplatePath(ctx) + '/market', ctx.data)
         },
         // 语言
         async language(ctx) {
@@ -72,10 +80,28 @@ let __this = {
             }
             ctx.redirect(`${ctx.request.headers.referer}`);
         },
+        // 语言
+        async languageJson(ctx) {
+            let defLang = ctx.params.lang
+            if (lang.list[defLang] == undefined) {
+                defLang = lang.default
+            }
+            console.log('lang.list[defLang]', lang.list[defLang] == undefined, defLang)
+            let language = JSON.parse(JSON.stringify(lang))
+            language.list = {}
+            language.list[defLang] = lang.list[defLang]
+            ctx.cookies.set('lang', defLang, {
+                // 有效时长999天
+                maxAge: 1000 * 60 * 60 * 24 * 999,
+                httpOnly: true,
+                overwrite: false
+            });
+            ctx.body = { flag: 'ok', language }
+        },
         // 注册
         reg: {
             async page(ctx) {
-                await ctx.render('page/reg', ctx.data)
+                await ctx.render(deviceTemplatePath(ctx) + '/reg', ctx.data)
             },
             async post(ctx) {
                 let body = ctx.request.body
@@ -84,26 +110,44 @@ let __this = {
         },
         // 登录
         login: {
+            async test(ctx) {
+                // const buff = Buffer.from(ctx.request.query.hash, 'utf-8');
+                // const base64 = buff.toString('base64');
+                if (!ctx.request.query.hash) {
+                    ctx.body = { flag: 'error' }
+                    return
+                }
+                const buff = Buffer.from(ctx.request.query.hash, 'base64');
+                const form = JSON.parse(buff.toString('utf-8'));
+                // let user = await service.user.login(form.main, form.password)
+                // ctx.session['isLogin'] = true
+                // ctx.session['user'] = user
+                // ctx.body = { flag: 'ok' }
+                await __this.page.login.actLogin(ctx, form)
+            },
             async page(ctx) {
-                await ctx.render('page/login', ctx.data)
+                await ctx.render(deviceTemplatePath(ctx) + '/login', ctx.data)
             },
             async post(ctx) {
                 let body = ctx.request.body
+                await __this.page.login.actLogin(ctx, body)
+            },
+            async actLogin(ctx, body) {
                 let user = await service.user.login(body.mail, body.password)
                 if (!user) {
                     // 登录失败
-                    let defLang = ctx.cookies.get('lang')
+                    let defLang = getDefaultLanguage(ctx)
                     ctx.body = { flag: lang.list[defLang].page.login.alert.err }
                     return
                 }
                 if (user.status === 0) {
                     // 禁用状态
-                    let defLang = ctx.cookies.get('lang')
+                    let defLang = getDefaultLanguage(ctx)
                     ctx.body = { flag: lang.list[defLang].page.login.alert.status }
                     return
                 } else if (user.status > 1) {
                     // 大于1的其他状态
-                    let defLang = ctx.cookies.get('lang')
+                    let defLang = getDefaultLanguage(ctx)
                     ctx.body = { flag: lang.list[defLang].page.login.alert.err }
                     return
                 }
@@ -117,21 +161,22 @@ let __this = {
                 // console.log('session login session login session login session login session login session login session login ')
                 // console.log(ctx.session)
                 // 响应
-                let location = user.type <= 4 ? '/admin' : '/me'
-                ctx.body = { flag: 'ok', data: { location } }
+                let location = '/me'
+                ctx.body = { flag: 'ok', data: { location, user } }
             }
         },
         // 登出
         logout: {
             async page(ctx) {
                 ctx.session = null
-                ctx.redirect('/login')
+                ctx.body = { flag: 'ok' }
+                // ctx.redirect('/login')
             }
         },
         // 帮助中心
         help: {
             async userGreement(ctx) {
-                await ctx.render('page/help/user_greement', ctx.data)
+                await ctx.render(deviceTemplatePath(ctx) + '/help/user_greement', ctx.data)
             }
         },
 
@@ -194,7 +239,7 @@ let __this = {
             async walletJson(ctx) {
                 let user_id = ctx.session['user'].id
                 let user = await service.user.oneById(user_id)
-                let userDetailInfo = await service.user.userDetailInfo(user)
+                // let userDetailInfo = await service.user.userDetailInfo(user)
                 ctx.body = { flag: 'ok', data: { user_id, user } }
             },
             // 获取系统绑定的钱包地址
@@ -363,7 +408,7 @@ let __this = {
                 let res = await service.user.walletAddress(ctx.session['user'].id)
                 ctx.data.session = ctx.session
                 ctx.data.wallet_address = res.wallet_address
-                await ctx.render('page/me/index', ctx.data)
+                await ctx.render(deviceTemplatePath(ctx) + '/me/index', ctx.data)
             },
             // 邀请好友
             async inviteFriends(ctx) {
@@ -372,7 +417,7 @@ let __this = {
                 ctx.data.invite_code = res.code
                 ctx.data.config = config
                 ctx.data.session = ctx.session
-                await ctx.render('page/me/invite_friends', ctx.data)
+                await ctx.render(deviceTemplatePath(ctx) + '/me/invite_friends', ctx.data)
             },
             // 登录日志
             async loginLog(ctx) {
@@ -380,17 +425,17 @@ let __this = {
                 let res = await service.user.logoLogList(user_id)
                 ctx.data.loginLog = res
                 ctx.data.session = ctx.session
-                await ctx.render('page/me/login_log', ctx.data)
+                await ctx.render(deviceTemplatePath(ctx) + '/me/login_log', ctx.data)
             },
             // 提现
             async withdraw(ctx) {
                 ctx.data.session = ctx.session
-                await ctx.render('page/me/withdraw', ctx.data)
+                await ctx.render(deviceTemplatePath(ctx) + '/me/withdraw', ctx.data)
             },
             // 用户认证
             async authentication(ctx) {
                 ctx.data.session = ctx.session
-                await ctx.render('page/me/authentication', ctx.data)
+                await ctx.render(deviceTemplatePath(ctx) + '/me/authentication', ctx.data)
             },
         },
 

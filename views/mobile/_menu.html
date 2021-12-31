@@ -1,0 +1,48 @@
+<div class="uk-flex uk-flex-between uk-flex-t">
+    <div class="uk-card uk-card-default uk-card-body"><a href="/"><img src="/images/logo.png" alt="logo" height="30px"></a></div>
+    <div class="uk-card uk-card-default uk-card-body uk-margin-left">
+        <a href="#">{{lang.list[defLang].name}}</a>
+        <div uk-dropdown>
+            <ul class="uk-nav uk-dropdown-nav">
+                {{each lang.list}}
+                <li><a class="dropdown-item" href="/language/{{$index}}" title="{{$value.name}}"><img class="rounded" src="/images/language/{{$value.icon}}" width="32" height="20" /> {{$value.name}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
+        |
+        {{if isLogin}}
+        <a class="nav-link" href="/me"><i class="bi bi-person"></i> {{session.user.email}}</a>
+        <a class="nav-link" href="javascript:$.get('/logout',{},data=>{window.location.href='/login'})"><i class="bi bi-power"></i> {{lang.list[defLang].menu.logout}}</a>
+        {{else}}
+        <a class="nav-link" href="/login"><i class="bi bi-person"></i> {{lang.list[defLang].menu.login}}</a>
+        <a class="nav-link" href="/reg"><i class="bi bi-pencil-square"></i> {{lang.list[defLang].menu.signup}}</a>
+        {{/if}}
+    </div>
+</div>
+
+<div class="uk-flex uk-flex-center uk-flex-b">
+    <div class="uk-card uk-card-default uk-card-body">
+        <a href="/">
+            <i class="iconfont">&#xe7c6;</i>
+            <div> {{lang.list[defLang].menu.home}} </div>
+        </a>
+    </div>
+    <div class="uk-card uk-card-default uk-card-body uk-margin-left">
+        <a href="/market/?symbol=btcusdt">
+            <i class="iconfont">&#xe604;</i>
+            <div>{{lang.list[defLang].menu.markets}}</div>
+        </a>
+    </div>
+    <div class="uk-card uk-card-default uk-card-body uk-margin-left">
+        <a href="/startup">
+            <i class="iconfont">&#xe8d0;</i>
+            <div>{{lang.list[defLang].menu.startup}}</div>
+        </a>
+    </div>
+    <div class="uk-card uk-card-default uk-card-body uk-margin-left">
+        <a href="/me">
+            <i class="iconfont">&#xe6a9;</i>
+            <div>{{lang.list[defLang].menu.assets}}</div>
+        </a>
+    </div>
+</div>

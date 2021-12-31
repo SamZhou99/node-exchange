@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="{{lang.list[defLang].lang}}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{lang.list[defLang].title}}</title>
+    {{include './_style.html'}}
+    <style>
+        .title {
+            color: #fff;
+        }
+
+        .uk-width {
+            width: 60%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="placeholder-t"></div>
+
+    <div id="app">
+        <div class="uk-container">
+            <div class="uk-flex uk-flex-center">
+                <div class="uk-flex-column uk-width">
+                    <h3 class="title">{{lang.list[defLang].page.reg.title}}</h3>
+                    <!-- <form> -->
+                    <div class="uk-margin">
+                        <div class="uk-inline">
+                            <label for="inputEmail">You mailbox</label>
+                            <input type="email" id="inputEmail" class="uk-input" placeholder="{{lang.list[defLang].page.reg.form.mainbox}}" required autofocus maxlength="128" minlength="4" oninvalid="setCustomValidity('Please enter your mailbox!');" oninput="setCustomValidity('');">
+                        </div>
+                    </div>
+
+                    <div class="uk-margin">
+                        <div class="uk-inline">
+                            <label for="inputEmail">Password</label>
+                            <input id="inputPassword" class="uk-input" type="password" placeholder="{{lang.list[defLang].page.reg.form.password}}" required autocomplete="off" maxlength="32" minlength="4" oninvalid="setCustomValidity('Please enter password!');" oninput="setCustomValidity('');">
+                        </div>
+                    </div>
+
+                    <div class="uk-margin">
+                        <div class="uk-inline">
+                            <label for="inputPassword2">Confirm password</label>
+                            <input id="inputPassword2" class="uk-input" type="password" placeholder="{{lang.list[defLang].page.reg.form.password2}}" required autocomplete="off" maxlength="32" minlength="4" oninvalid="setCustomValidity('Please confirm password!');" oninput="setCustomValidity('');">
+                        </div>
+                    </div>
+
+                    <div class="uk-margin">
+                        <div class="uk-inline">
+                            <label for="inviteCode">Invite code</label>
+                            <input id="inviteCode" class="uk-input" type="text" placeholder="{{lang.list[defLang].page.reg.form.invite_code}}" required maxlength="4" minlength="4" oninvalid="setCustomValidity('Please enter invite code!');" oninput="setCustomValidity('');">
+                        </div>
+                    </div>
+
+                    <div class="uk-margin">
+                        <label>
+                            <input id="remember" type="checkbox" value="remember-me" checked> {{lang.list[defLang].page.reg.read}} <a href="/help/user-greement">{{lang.list[defLang].page.reg.user_agreement}}</a>
+                        </label>
+                    </div>
+
+                    <button id="submit_btn" class="uk-button uk-button-primary uk-width-1-1">{{lang.list[defLang].page.login.submit_button}}</button>
+                    <!-- </form> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="placeholder-b"></div>
+
+    {{include './_menu.html'}}
+
+    <script>
+        $(document).ready(function () {
+            function GetRequest() {
+                const url = location.search; //获取url中"?"符后的字串
+                let theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    let str = url.substr(1);
+                    strs = str.split("&");
+                    for (let i = 0; i < strs.length; i++) {
+                        theRequest[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+                    }
+                }
+                return theRequest;
+            }
+
+            if (GetRequest().invite) {
+                $('#inviteCode').val(GetRequest().invite)
+                // $('#inviteCode').attr('disabled', true)
+            }
+
+            let temp
+            let alertObj = JSON.parse('{{lang.list[defLang].page.reg.alert}}'.replace(/&#34;/g, '"'))
+            let f = {
+                alert: (text) => {
+                    // clearTimeout(temp)
+                    // $(".alert").removeClass('show')
+
+                    // $('#error_content').text(text)
+                    // $(".alert").addClass('show')
+
+                    // temp = setTimeout(() => {
+                    //     $(".alert").removeClass('show')
+                    // }, 7000)
+
+                    UIkit.notification(text);
+                }
+            }
+            $('#submit_btn').on('click', function () {
+                $(this).attr('disabled', true)
+                let from = {
+                    mail: $('#inputEmail').val(),
+                    password: $('#inputPassword').val(),
+                    password1: $('#inputPassword2').val(),
+                    inviteCode: $('#inviteCode').val(),
+                    remember: $('#remember').prop("checked"),
+                }
+
+                if (!from.remember) {
+                    f.alert(alertObj.user_agreement)
+                    $(this).attr('disabled', false)
+                    return
+                }
+
+                let reg = /^([a-zA-Z]|[0-9])(\w|\-)+@[a-zA-Z0-9]+\.([a-zA-Z]{2,4})$/
+                if (from.mail.length < 5 || !reg.test(from.mail)) {
+                    f.alert(alertObj.mail)
+                    $(this).attr('disabled', false)
+                    return
+                }
+
+                if (from.password.length < 5 || from.password1.length < 5 || from.password != from.password1) {
+                    f.alert(alertObj.password)
+                    $(this).attr('disabled', false)
+                    return
+                }
+                from.password = md5(from.password)
+                from.password1 = md5(from.password1)
+
+                if (!from.inviteCode || from.inviteCode.length < 4) {
+                    f.alert(alertObj.invite_code)
+                    $(this).attr('disabled', false)
+                    return
+                }
+
+
+                $.post("/reg", from, function (data) {
+                    $('#submit_btn').attr('disabled', false)
+                    if (data.flag != 'ok') {
+                        f.alert(data.flag)
+                        return
+                    }
+                    f.alert(alertObj.reg_success)
+                    setTimeout(() => {
+                        document.location = '/login'
+                    }, 2000)
+                }, 'json')
+
+                clearTimeout(temp)
+                temp = setTimeout(() => {
+                    $('#submit_btn').attr('disabled', false)
+                }, 10000)
+            })
+        })
+    </script>
+
+</body>
+
+</html>

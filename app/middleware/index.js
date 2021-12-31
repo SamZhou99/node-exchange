@@ -34,6 +34,9 @@ function shareSessionData(ctx) {
  * @returns 
  */
 function checkSessionLogin(ctx) {
+    if (!ctx.data) {
+        ctx.data = {}
+    }
     ctx.data.isLogin = !!ctx.session['isLogin']
     return ctx.data.isLogin
 }
@@ -54,6 +57,20 @@ async function pageViewLog(ctx) {
     return true
 }
 
+/**
+ * 检查设备 是否移动端
+ * @param {*} ctx 
+ * @returns 
+ */
+function checkMobile(ctx) {
+    var ua = ctx.request.header['user-agent'].toLowerCase();
+    const isMobile = /mobile|android|iphone|ipad|phone/i.test(ua);
+    const isWechat = /micromessenger/i.test(ua);
+    ctx.data.isMobile = isMobile
+    ctx.data.isWechat = isWechat
+    return true
+}
+
 
 let middleware = {
     async commmonData(ctx, next) {
@@ -61,6 +78,7 @@ let middleware = {
         shareLanguageData(ctx)
         checkSessionLogin(ctx)
         shareSessionData(ctx)
+        checkMobile(ctx)
         await pageViewLog(ctx)
         await next()
     },
@@ -72,6 +90,7 @@ let middleware = {
             return
         }
         shareSessionData(ctx)
+        checkMobile(ctx)
         await pageViewLog(ctx)
         await next()
     },

@@ -61,12 +61,11 @@
                 placeholder="{{lang.list[defLang].page.reg.form.password}}" required autocomplete="off">
             <div class="checkbox">
                 <label>
-                    <input id="remember" type="checkbox" value="remember-me">
+                    <input id="remember" type="checkbox" value="remember-me" checked>
                     {{lang.list[defLang].page.login.remember_me}}
                 </label>
             </div>
-            <button @click="onClick" id="submit_btn" class="btn btn-lg btn-primary btn-block"
-                type="button">{{lang.list[defLang].page.login.submit_button}}</button>
+            <button @click="onClick" id="submit_btn" class="btn btn-lg btn-primary btn-block" type="button">{{lang.list[defLang].page.login.submit_button}}</button>
         </form>
 
         <div class="container">
@@ -77,6 +76,7 @@
                 </button> -->
             </div>
         </div>
+
     </div>
 
 

@@ -1,151 +1,146 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="{{lang.list[defLang].lang}}">
 
 <head>
-    {{include '../_header.html'}}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{{lang.list[defLang].title}}</title>
+    {{include '../_style.html'}}
     <style>
-        .bg01 {
-            margin-top: 50px;
-            margin-bottom: 50px;
-            padding: 20px;
-            background-color: #202b3f;
-        }
-
-        .p0 {
-            padding: 0px;
-        }
-
-        .profilePicture {
-            width: 60px;
-            border-radius: 50%;
+        .uk-margin>* {
+            color: #fff;
         }
     </style>
 </head>
 
 <body>
-    {{include '../_menu.html'}}
 
-    <div id="app" class="container-fluid main-content p0">
-        {{include './_user_info.html'}}
+    <div class="placeholder-t"></div>
+
+    <div id="app">
 
 
 
-        <div class="container">
-            <div class="row">
-                <div class="col-md-3 col-sm-12">
-                    {{include './_menu.html'}}
-                </div>
-                <div class="col-md-9 col-sm-12">
 
-                    <div v-if="status==3">
-                        <div class="h4">{{lang.list[defLang].page.withdraw}}</div>
-                        <hr>
-                        <div class="form-group col-md-12">
-                            <label for="cointype">{{lang.list[defLang].page.select_withdraw_type}}</label>
-                            <select v-model="form.coin_type" @change="onChangeSelect" class="form-control" id="cointype">
+        <div v-if="status==3">
+            <div class="uk-container">
+                <div class="h4">{{lang.list[defLang].page.withdraw}}</div>
+                <hr>
+
+                <div class="uk-form-stacked">
+
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="cointype">{{lang.list[defLang].page.select_withdraw_type}}</label>
+                        <div class="uk-form-controls">
+                            <select v-model="form.coin_type" @change="onChangeSelect" class="uk-select" id="cointype">
                                 <option v-for="item in this.coin_type" :value="item">{[item.label]}</option>
                             </select>
                         </div>
-
-                        <div class="form-group col-md-12">
-                            <label for="address">{{lang.list[defLang].page.withdraw_address}}</label>
-                            <input v-model="form.address" type="text" class="form-control" id="address" aria-describedby="">
-                        </div>
-
-                        <div class="form-group col-md-12">
-                            <label for="wallet_address">{{lang.list[defLang].page.withdraw}} {{lang.list[defLang].page.amount}}</label>
-                            <input v-model="form.apply_amount" @keyup="onChangeInput" type="number" class="form-control" id="wallet_address" aria-describedby="" min="0.00000001">
-                            <div class="form-row m-1">
-                                <div class="col-sm-6 "><small id="" class="form-text text-muted">{{lang.list[defLang].page.available}}：{[user[form.coin_type.key]]} {[form.coin_type.label]}</small></div>
-                                <div class="col-sm-6 text-right"><button @click="onClickAllIn()" class="btn btn-outline-primary btn-sm">{{lang.list[defLang].page.all_in}}</button></div>
-                            </div>
-
-                        </div>
-
-                        <div class="form-group col-md-12">
-                            <label for="wallet_address">{{lang.list[defLang].page.charges}}</label>
-                            <input :value="form.coin_type.charges" type="text" class="form-control" id="wallet_address" aria-describedby="" readOnly="readOnly">
-                        </div>
-
-                        <div class="form-group row col-md-12">
-                            <div class="col-sm-6 form-text text-muted">{{lang.list[defLang].page.real_withdraw_amount}}：</div>
-                            <div class="col-sm-6 text-right">{[form.real_amount]} {[form.coin_type.label]}</div>
-                        </div>
-
-                        <div class="form-group col-md-12">
-                            <button @click="onClickSubmit()" class="btn btn-primary btn-block">{{lang.list[defLang].page.submit}}</button>
-                        </div>
-
-                        <hr>
-                        <div class="form-group col-md-12" style="font-size:12px">
-                            <table class="table table-dark">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">{{lang.list[defLang].page.coin_type}}</th>
-                                        <th scope="col">{{lang.list[defLang].page.apply_for_amount}}</th>
-                                        <th scope="col">{{lang.list[defLang].page.real_withdraw_amount}}</th>
-                                        <th scope="col">{{lang.list[defLang].page.withdraw_address}}</th>
-                                        <th scope="col">{{lang.list[defLang].page.withdraw_status}}</th>
-                                        <th scope="col">{{lang.list[defLang].page.withdraw_time}}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="item in this.withdraw_list">
-                                        <th scope="row">{[item.id]}</th>
-                                        <td>{[item.type]}</td>
-                                        <td>{[item.apply_amount]}</td>
-                                        <td>{[item.real_amount]}</td>
-                                        <td>{[item.address]}</td>
-                                        <td>
-                                            <a @click="onClickShowReason(item.failed_reason)" v-if="item.status==2" href="javascript:void(0);">{[item.statusText]}</a>
-                                            <div v-else="">{[item.statusText]}</div>
-                                        </td>
-                                        <td>{[item.create_datetime]}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
                     </div>
 
-                    <div v-else="">
-                        <a href="/me/authentication">{{lang.list[defLang].page.withdraw_please_verify}}</a>
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="address">{{lang.list[defLang].page.withdraw_address}}</label>
+                        <div class="uk-form-controls">
+                            <input v-model="form.address" class="uk-input" id="address" type="text">
+                        </div>
                     </div>
 
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="wallet_address">{{lang.list[defLang].page.withdraw}} {{lang.list[defLang].page.amount}}</label>
+                        <div class="uk-form-controls">
+                            <input v-model="form.apply_amount" @keyup="onChangeInput" class="uk-input" id="wallet_address" type="text" id="wallet_address" min="0.00000001">
+                            <div class="col-sm-6 "><small id="" class="form-text text-muted">{{lang.list[defLang].page.available}}：{[user[form.coin_type.key]]} {[form.coin_type.label]}</small></div>
+                            <div class="col-sm-6 text-right"><button @click="onClickAllIn()" class="btn btn-outline-primary btn-sm">{{lang.list[defLang].page.all_in}}</button></div>
+                        </div>
+                    </div>
 
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="charges">{{lang.list[defLang].page.charges}}</label>
+                        <div class="uk-form-controls">
+                            <input :value="form.coin_type.charges" class="uk-input" id="charges" type="number" readOnly="readOnly">
+                        </div>
+                    </div>
+
+                    <div class="uk-margin">
+                        <label class="uk-form-label" for="address">{{lang.list[defLang].page.real_withdraw_amount}}：{[form.real_amount]} {[form.coin_type.label]}</label>
+                    </div>
+
+                    <div class="form-group col-md-12">
+                        <button @click="onClickSubmit()" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">{{lang.list[defLang].page.submit}}</button>
+                    </div>
 
                 </div>
+
+
             </div>
+            <div class="form-group col-md-12" style="font-size:12px">
+
+                <table class="uk-table uk-table-hover uk-table-divider">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="font-size:12px;">{{lang.list[defLang].page.coin_type}}</th>
+                            <th scope="col" style="font-size:12px;">{{lang.list[defLang].page.real_withdraw_amount}}</th>
+                            <th scope="col" style="font-size:12px;">{{lang.list[defLang].page.withdraw_status}}</th>
+                            <th scope="col" style="font-size:12px;">{{lang.list[defLang].page.withdraw_time}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in this.withdraw_list">
+                            <td>{[item.type]}</td>
+                            <td>{[item.real_amount]}</td>
+                            <td>
+                                <a @click="onClickShowReason(item.failed_reason)" v-if="item.status==2" href="javascript:void(0);">{[item.statusText]}</a>
+                                <div v-else="">{[item.statusText]}</div>
+                            </td>
+                            <td>{[item.create_datetime]}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+
         </div>
+
+        <div v-else="">
+
+            <div class="uk-container">
+                <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
+                    <h3 class="uk-card-title" style="color: #fff;">Please Verify</h3>
+                    <p><a href="/me/authentication">{{lang.list[defLang].page.withdraw_please_verify}}</a></p>
+                </div>
+            </div>
+
+        </div>
+
+
 
         <!-- Modal -->
-        <div class="modal fade" id="participate" tabindex="-1" role="dialog" aria-labelledby="participateTitle"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document" style="color: black">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="participateTitle">{{lang.list[defLang].page.reject_the_reason}}</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
+        <div id="modal-example" class="uk-flex-top" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
+                <h3 class="uk-modal-title">{{lang.list[defLang].page.reject_the_reason}}</h3>
+                <div style="color:#414141;">
+                    <form>
+                        <div class="form-group">
 
-                        {[failed_reason]}
+                            {[failed_reason]}
 
-                    </div>
-                    <div class="modal-footer text-center">
-                        <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-                        <!-- <button @click="onClickEnter()" :disabled="this.loading" type="button" class="btn btn-primary btn-block">保存</button> -->
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+
+
+
 
     </div>
 
-    {{include '../_footer.html'}}
+    <div class="placeholder-b"></div>
+
+    {{include '../_menu.html'}}
+
+    {{include '../_tip.html'}}
+
 
 
     <script>
@@ -181,7 +176,8 @@
             methods: {
                 onClickShowReason(failed_reason) {
                     this.failed_reason = failed_reason
-                    $('#participate').modal("show");
+                    // $('#participate').modal("show");
+                    UIkit.modal('#modal-example').show();
                 },
                 onClickSubmit() {
                     if (this.loading) {
@@ -337,7 +333,6 @@
             }
         });
     </script>
-
 
 </body>
 

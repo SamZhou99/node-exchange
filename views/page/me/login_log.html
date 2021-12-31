@@ -36,29 +36,31 @@
                     {{include './_menu.html'}}
                 </div>
                 <div class="col-md-9 col-sm-12">
-                    <h4>登录日志</h4>
+                    <h4>{{lang.list[defLang].page.login_log}}</h4>
 
-                        <div class="table-responsive">
-                            <table class="table shadow p-3 mb-5 bg-white rounded">
-                                <thead class="thead-dark">
-                                    <tr>
-                                        <th scope="col-4 textOver">ID</th>
-                                        <th scope="col-4 textOver">IP</th>
-                                        <th scope="col-4 textOver">Date</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {{each loginLog}}
-                                    <tr style="color: #333;">
-                                        <td class="col-4 textOver">{{$value.id}}</td>
-                                        <td class="col-4 textOver">{{$value.ip}}</td>
-                                        <td class="col-4 textOver"><script>document.write(moment('{{@ $value.time}}').format('lll'))</script></td>
-                                    </tr>
-                                    {{/each}}
-                                </tbody>
-                            </table>
-                        </div>
-        
+                    <div class="table-responsive">
+                        <table class="table shadow p-3 mb-5 bg-white rounded">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col-4 textOver">ID</th>
+                                    <th scope="col-4 textOver">IP</th>
+                                    <th scope="col-4 textOver">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{each loginLog}}
+                                <tr style="color: #333;">
+                                    <td class="col-4 textOver">{{$value.id}}</td>
+                                    <td class="col-4 textOver">{{$value.ip}}</td>
+                                    <td class="col-4 textOver">
+                                        <script>document.write(moment('{{@ $value.time}}').format('lll'))</script>
+                                    </td>
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div>
+
                 </div>
             </div>
         </div>

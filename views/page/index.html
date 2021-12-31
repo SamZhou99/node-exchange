@@ -301,57 +301,69 @@
 		}
 
 		@keyframes donghua-red {
-			from {
-				background: #ffffff;
+
+			0%,
+			100% {
+				background: #ffffff00;
 			}
 
-			to {
-				background: #ffe4e4;
+			40%,
+			60% {
+				background: #d4f6f0;
 			}
 		}
 
 		@-webkit-keyframes donghua-red {
-			from {
-				background: #ffffff;
+
+			0%,
+			100% {
+				background: #ffffff00;
 			}
 
-			to {
-				background: #ffe4e4;
+			40%,
+			60% {
+				background: #d4f6f0;
 			}
 		}
 
 		@keyframes donghua-green {
-			from {
-				background: #ffffff;
+
+			0%,
+			100% {
+				background: #ffffff00;
 			}
 
-			to {
-				background: #d4f6f0;
+			40%,
+			60% {
+				background: #ffe4e4;
 			}
 		}
 
 		@-webkit-keyframes donghua-green {
-			from {
-				background: #ffffff;
+
+			0%,
+			100% {
+				background: #ffffff00;
 			}
 
-			to {
-				background: #d4f6f0;
+			40%,
+			60% {
+				background: #ffe4e4;
 			}
 		}
 
 		.donghuaRed {
-			animation: donghua-red 0.3s;
-			-moz-animation: donghua-red 0.3s;
-			-webkit-animation: donghua-red 0.3s;
-			-o-animation: donghua-red 0.3s;
+			animation: donghua-red 1s;
+			-moz-animation: donghua-red 1s;
+			-webkit-animation: donghua-red 1s;
+			-o-animation: donghua-red 1s;
 		}
 
 		.donghuaGreen {
-			animation: donghua-green 0.3s;
-			-moz-animation: donghua-green 0.3s;
-			-webkit-animation: donghua-green 0.3s;
-			-o-animation: donghua-green 0.3s;
+			animation: donghua-green 1s;
+			-moz-animation: donghua-green 1s;
+			-webkit-animation: donghua-green 1s;
+			-o-animation: donghua-green 1s;
 		}
 	</style>
 </head>
@@ -405,9 +417,9 @@
 								</div>
 							</td>
 							<td>{[item.node.priceUsd]}</td>
-							<td>{[item.node.marketCapUsd]}t</td>
-							<td>{[item.node.supply]}m</td>
-							<td>{[item.node.volumeUsd24Hr]}b</td>
+							<td>{[item.node.marketCapUsd]}</td>
+							<td>{[item.node.supply]}</td>
+							<td>{[item.node.volumeUsd24Hr]}</td>
 							<td>
 								<div v-if="item.node.changePercent24Hr>0" class="chang24hr-bg zhang">
 									{[item.node.changePercent24Hr]}% ↑</div>
@@ -509,13 +521,32 @@
 				statup: {}
 			},
 			methods: {
-				// 保留几位小数
-				round(num, len) {
-					let mult = Number("100000000000000000000000000000".substr(0, len + 1))
-					return Math.round(num * mult) / mult
+				round(num, intLen = 2, dotLaterLen = 6) {
+					let z = '000000000000000000000000000000'
+					let zn = Number(1 + z.substr(0, dotLaterLen))
+					num = Math.round(num * zn) / zn
+					let s = String(num)
 
+					if (s.indexOf('.') !== -1) {
+						let a = s.split('.')
+						let n1 = a[0], n2 = a[1], zn
+
+						if (a[0].length < intLen) {
+							n1 = z.substr(0, intLen - a[0].length) + a[0]
+						}
+
+						if (a[1].length < dotLaterLen) {
+							zn = z.substr(0, dotLaterLen - a[1].length)
+							n2 = String(a[1]) + zn
+						}
+
+						let res = `${n1}.${n2}`
+						return res
+					}
+
+					let zl = z.substr(0, dotLaterLen)
+					return `${s}.${zl}`
 				},
-				// 小数点向前移，min,保留几位小数
 				lessen(num, min, len) {
 					let n = num / min
 					return this.round(n, len)
@@ -550,87 +581,76 @@
 					let a = data
 					a.forEach(function (item) {
 						item.node = {}
-						item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
-						item.node.priceUsd = _t.round(item.priceUsd, 2)
-						item.node.marketCapUsd = _t.lessen(item.marketCapUsd, 12, 2)
-						item.node.vwapUsd24Hr = _t.round(item.vwapUsd24Hr, 2)
-						item.node.supply = _t.lessen(item.supply, 6, 2)
-						item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
-						item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 2)
+						item.node.id = item.name.toLocaleLowerCase()
 						item.node.name = item.name
 						item.node.symbol = item.symbol
-						item.node.id = item.name.toLocaleLowerCase()
+						item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
+						item.node.priceUsd = _t.round(item.priceUsd, 2)
+						item.node.marketCapUsd = _t.round(item.marketCapUsd, 12, 2)
+						item.node.supply = _t.round(item.supply, 6, 2)
+						item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
+						item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 2, 2)
 					})
-					a.splice(this.statup.sort, 0, {
-						node:
-						{
+
+					let ptb = {
+						node: {
 							id: _t.statup.name.toLocaleLowerCase(),
-							changePercent24Hr: 0,
-							logo: _t.statup.icon,
-							marketCapUsd: 88811108158.73,
 							name: _t.statup.name,
-							priceUsd: 56421.09,
-							rank: 1,
-							supply: 3148153,
 							symbol: _t.statup.symbol,
-							volumeUsd24Hr: 4456985117.36,
-							vwapUsd24Hr: 57459.97,
+							logo: _t.statup.icon,
+							priceUsd: _t.round(0, 2),
+							marketCapUsd: _t.round(78623827.73 - Math.random() * 10000, 12, 2),
+							supply: _t.round(3148153.73 - Math.random() * 1000, 6, 2),
+							volumeUsd24Hr: _t.lessen(1143447.01 - Math.random() * 1000, 9, 2),
+							changePercent24Hr: _t.round(0, 2, 2),
+							rank: this.statup.sort,
 						}
-					})
+					}
+					if (this.statup.sort == 0 || this.statup.sort > a.length) {
+						a.push(ptb)
+					} else {
+						a.splice(this.statup.sort - 1, 0, ptb)
+					}
 					this.list = a
 				},
-				coinListUpdate(data) {
-					let _t = this
-					for (let coin_name in data) {
-						let coin_value = data[coin_name]
-						this.list.forEach(function (item) {
-							if (coin_name == item.id) {
-								item.node.volumeUsd24Hr = coin_value
-							}
-						})
-					}
-				},
 				initWS() {
-					// let ws = new WebSocket('ws://{{lang.domain}}:3031/coin-list')
 					let ws = new WebSocket('ws://{{lang.domain}}:3031/coin/price')
 					ws.onopen = () => {
 						console.log('websocket init ...')
 					};
 					ws.onclose = () => {
 						console.log('websocket close ...')
+
+						setTimeout(() => {
+							this.initWS()
+						}, 60000)
 					}
 					ws.onmessage = (event) => {
+						const time = 1000
 						let _t = this
 						let res = JSON.parse(event.data)
-						console.log(res)
-						// if (res.key == 'coincap-coin-list') {
-						// 	this.coinList(JSON.parse(res.value))
-						// } else {
-						// 	this.coinListUpdate(res)
-						// }
 						this.list.forEach(function (item) {
 							let key = item.node.id
 							if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
 								let v = res.platform.price
 								let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
-								item.node.priceUsd = _t.round(v, 6)
-								item.node.changePercent24Hr = _t.round(res.platform.price_percent, 2)
+								item.node.priceUsd = _t.round(v, 2, 6)
+								item.node.changePercent24Hr = _t.round(res.platform.price_percent, 2, 2)
 								$('#' + key).addClass(className)
 								setTimeout(() => {
 									$('#' + key).removeClass(className)
-								}, 300)
+								}, time)
 							}
 							let v = res.cache[key]
 							if (v) {
 								let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
-								item.node.priceUsd = v
+								item.node.priceUsd = _t.round(v, 2, 6)
 								$('#' + key).addClass(className)
 								setTimeout(() => {
 									$('#' + key).removeClass(className)
-								}, 300)
+								}, time)
 							}
 						})
-
 					}
 				},
 				getList() {
