@@ -6,6 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{{lang.list[defLang].title}}</title>
     {{include '../_style.html'}}
+    <link href="/default/js/dropzone/dropzone.css" rel="stylesheet" type="text/css" />
+    <style>
+        .bg01 {
+            margin-top: 50px;
+            margin-bottom: 50px;
+            padding: 20px;
+            background-color: #202b3f;
+        }
+
+        .p0 {
+            padding: 0px;
+        }
+
+        .profilePicture {
+            width: 60px;
+            border-radius: 50%;
+        }
+
+        .dropzone {
+            border-radius: 5px;
+            border: 1px solid #000;
+        }
+
+        .dz-message {
+            color: #000;
+        }
+    </style>
 </head>
 
 <body>
@@ -13,13 +40,210 @@
     <div class="placeholder-t"></div>
 
     <div id="app">
-        <h1>-</h1>
+
+        <div v-if="status==1">
+            <div class="uk-flex uk-flex-center">
+                <h1 style="color: #fff;">{{lang.list[defLang].page.auth_wait_for_review}}</h1>
+            </div>
+        </div>
+
+
+        <div v-if="status==3">
+            <div class="uk-flex uk-flex-center">
+                <h1 style="color: #fff;">{{lang.list[defLang].page.auth_pass_certification}}</h1>
+            </div>
+        </div>
+
+
+        <div v-if="status==0 || status==2">
+
+            <div v-if="status==2" class="form-group">
+                <div class="uk-alert-danger" uk-alert>
+                    <a class="uk-alert-close" uk-close></a>
+                    <p>{{lang.list[defLang].page.auth_not_pass}}：{[failed_reason]}.</p>
+                </div>
+            </div>
+
+
+            <div class="uk-container">
+                <div class="uk-flex uk-flex-center">
+                    <div class="uk-flex-column uk-width">
+
+                        <h3 class="title" style="color: #fff;">{{lang.list[defLang].page.auth_title}}</h3>
+
+                        <div class="uk-margin">
+                            <div class="uk-inline">
+                                <label for="country">{{lang.list[defLang].page.auth_country}}</label>
+                                <input v-model="form.country" type="text" class="uk-input" id="country" required>
+                            </div>
+                        </div>
+
+                        <div class="uk-margin">
+                            <div class="uk-inline">
+                                <label for="full_name">{{lang.list[defLang].page.auth_full_id_name}}</label>
+                                <input v-model="form.full_name" type="text" class="uk-input" id="full_name" required>
+                            </div>
+                        </div>
+
+                        <div class="uk-margin">
+                            <div class="uk-inline">
+                                <label for="id_number">{{lang.list[defLang].page.auth_id_number}}</label>
+                                <input v-model="form.id_number" type="text" class="uk-input" id="id_number" required>
+                            </div>
+                        </div>
+
+                        <div class="uk-margin">
+                            <div class="uk-inline">
+                                <label for="dropzone">{{lang.list[defLang].page.auth_front_back_photo}}</label>
+                                <form action="/api/upload-file" class="dropzone dz-clickable" id="dropzone">
+                                    <div class="dz-default dz-message">
+                                        <span>{{lang.list[defLang].page.auth_drag_photo_upload}}</span>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <button @click="onClickSubmit()" class="uk-button uk-button-primary uk-width-1-1">{{lang.list[defLang].page.submit}}</button>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+
+
+
     </div>
 
     <div class="placeholder-b"></div>
 
     {{include '../_menu.html'}}
+    {{include '../_tip.html'}}
+
+    <script src="/default/js/dropzone/dropzone.js"></script>
+
     </div>
+
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                status: '',
+                failed_reason: '',
+                form: {
+                    country: '',
+                    full_name: '',
+                    id_number: '',
+                },
+                photos: [],
+            },
+            methods: {
+                onClickSubmit() {
+                    console.log(this.form)
+                    if (!this.form.country || !this.form.full_name || !this.form.id_number) {
+                        tip('Please fill out the form completely!')
+                        return
+                    }
+
+                    // check id photo
+                    this.get('/api/authentication', {}, (data) => {
+                        if (data.flag != 'ok') {
+                            tip(data.falg)
+                            return
+                        }
+
+                        if (data.data.photos.length <= 0) {
+                            tip('Please upload id photo!')
+                            return
+                        }
+
+                        this.post('/api/update-authentication', this.form, (data) => {
+                            if (data.flag != 'ok') {
+                                tip(data.flag)
+                                return
+                            }
+                            if (data.data.auth.status == 1) {
+                                tip('Complete, Please Wait!', () => {
+                                    window.location.reload()
+                                })
+                            }
+                        })
+
+                    })
+
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+                init() {
+
+                    $('body').bind('dz-success-event', (files, responseText, e) => {
+                        if (e) {
+                            alert(e)
+                            return
+                        }
+                        let flag = responseText.responseText.flag
+                        if (flag != 'ok') {
+                            alert(flag)
+                            return
+                        }
+                        this.results = responseText.responseText.data
+                    })
+
+
+
+                    this.get('/api/authentication', {}, (data) => {
+                        if (data.flag != 'ok') {
+                            console.log(data.falg)
+                            return
+                        }
+
+                        if (data.data.auth) {
+                            this.status = data.data.auth.status
+                            this.failed_reason = data.data.auth.failed_reason
+
+                            this.form.country = data.data.auth.country
+                            this.form.full_name = data.data.auth.full_name
+                            this.form.id_number = data.data.auth.id_number
+
+                            this.photos = data.data.photos
+                        }
+                    })
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+
 
 </body>
 

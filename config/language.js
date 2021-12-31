@@ -184,6 +184,7 @@ module.exports = {
                 withdraw_succeed: 'Succeed',
                 withdraw_please_verify: 'Please verify your identity and come back to submit your withdraw application!',
 
+                auth_title: 'Please fill in the authentication information',
                 auth_country: 'Country',
                 auth_full_id_name: 'Full Name / Id Name',
                 auth_id_number: 'Id Number',
@@ -374,6 +375,8 @@ module.exports = {
                 withdraw_succeed: '提现成功',
                 withdraw_please_verify: '请您身份认证，通过后，再回来提交，提现申请！',
 
+
+                auth_title: '请填写认证信息',
                 auth_country: '国家',
                 auth_full_id_name: '全名 / 身份证名称',
                 auth_id_number: '身份证号码',
