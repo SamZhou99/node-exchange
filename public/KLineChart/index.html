@@ -634,7 +634,7 @@
                     let res = JSON.parse(event.data)
                     let lastData = chartDataList[chartDataList.length - 1]
                     lastData.close = res.price
-                    console.log(res,lastData)
+                    console.log(res, lastData)
                     chart.updateData(lastData)
                 }
                 return
@@ -656,7 +656,7 @@
                 }, 1000 * 60)
             }
             ws.onmessage = (event) => {
-                console.log('connection message...' + this.index)
+                // console.log('connection message...')
 
                 const fr = new FileReader();
                 fr.onload = function () {
