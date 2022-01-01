@@ -4,6 +4,13 @@ const service = require('./app/service/ws.js')
 // const { update } = require('node-utils99/mysql-sync-cache')
 // const WebSocketClient = require('websocket').client
 const WebSocketServer = require('websocket').server
+const http = require('http')
+
+
+
+
+
+
 
 // 币安
 const binance = require('./app/service/ws.binance.js')
@@ -50,40 +57,11 @@ const platform_currency = require('./app/service/ws.platform_currency.js')
 let platform_currency_data = ''
 platform_currency.callback = async function (data) {
 	platform_currency_data = JSON.stringify(data)
-	console.log('平台币价格波动：', typeof platform_currency_data, platform_currency_data)
+	// console.log('平台币价格波动：', typeof platform_currency_data, platform_currency_data)
 	broadcastPathSendText('/coin/price/platform', platform_currency_data)
 }
 platform_currency.init()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-let connectionObj = {
-	data: {},
-	add(conn) {
-		connectionObj.data[conn.id] = conn
-	},
-	remove(id) {
-		connectionObj.data[id] = null
-		delete connectionObj.data[id]
-	},
-	find(id) {
-		return connectionObj.data[id]
-	},
-}
 
 // 广播
 function broadcastSendText(text) {
@@ -105,19 +83,33 @@ function broadcastPathSendText(path, text) {
 
 
 
-var http = require('http');
 
-var server = http.createServer(function (request, response) {
+
+let connectionObj = {
+	data: {},
+	add(conn) {
+		connectionObj.data[conn.id] = conn
+	},
+	remove(id) {
+		connectionObj.data[id] = null
+		delete connectionObj.data[id]
+	},
+	find(id) {
+		return connectionObj.data[id]
+	},
+}
+
+const server = http.createServer(function (request, response) {
 	console.log((new Date()) + ' Received request for ' + request.url);
 	response.writeHead(404);
 	response.end();
 });
 
 server.listen(config.websocket.port, function () {
-	console.log((new Date()) + ' Server is listening on port ' + config.websocket.port);
+	console.log('WebSocket端口', new Date(), config.websocket.port)
 });
 
-let wsServer = new WebSocketServer({
+const wsServer = new WebSocketServer({
 	httpServer: server,
 	// You should not use autoAcceptConnections for production
 	// applications, as it defeats all standard cross-origin protection
@@ -152,7 +144,7 @@ wsServer.on('request', async function (request) {
 		connectionObj.remove(conn.id)
 	})
 
-	if (conn.path === '/coin/price') {
+	if (conn.path === '/coin/price' && platform_currency_data) {
 		let data = {
 			platform: JSON.parse(platform_currency_data),
 			cache: coincap.data.cache
@@ -160,10 +152,11 @@ wsServer.on('request', async function (request) {
 		conn.sendUTF(JSON.stringify(data))
 	}
 
-	if (conn.path === '/coin/price/platform') {
+	if (conn.path === '/coin/price/platform' && platform_currency_data) {
 		conn.sendUTF(platform_currency_data)
 	}
 
 });
 
-console.log('web socket port ', config.websocket.port)
+console.log('\n开始================================================================')
+

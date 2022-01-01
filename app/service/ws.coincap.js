@@ -52,7 +52,7 @@ let _t = {
         _t.reConnection()
     },
     onMessage(msg) {
-        console.log(_t.name + '消息数据', msg.utf8Data.length, typeof msg.utf8Data)
+        // console.log(_t.name + '消息数据', msg.utf8Data.length, typeof msg.utf8Data)
         _t.addCache(msg.utf8Data)
         if (_t.callback) {
             _t.callback({ key: _t.coincap_api.ws.prices_assets.key, value: msg.utf8Data })

@@ -133,10 +133,9 @@
 
     <div id="app" class="uk-container uk-text-lighter">
 
-        <div class="profilePictureBg">
+        <div class="profilePictureBg" style="margin-top:20px;">
             <img class="profilePicture" src="/images/profile01.png" alt="{{session.user.email}}">
             <span>{{session.user.email}}</span>
-            <button class="btn btn-primary offset-1">Logout</button>
         </div>
 
 
@@ -239,24 +238,22 @@
 
 
 
-            <div class="card-item uk-box-shadow-medium">
+            <div class="card-item uk-box-shadow-medium uk-width-1-1">
                 <div>
                     <div class="card-title">{[currency.symbol]}</div>
-                    <div class="card-content">
+                    <div class="card-content uk-width-1-1">
                         <p class="card-text"><span class="gray1">{[user.platform_currency_buy_total]} {[currency.symbol]}</span>
                             <span v-if="usd.platform_currency_is_up=='+'" class="green"> ≈ {[round(usd.platform_currency,2,8)]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
                             <span v-if="usd.platform_currency_is_up=='-'" class="red"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
                             <span v-if="usd.platform_currency_is_up==''" class="gray"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
                         </p>
 
-                        <button @click="onClickGo('/startup')" class="btn btn-primary" style="float: right">{{lang.list[defLang].page.buy}}</button>
-
-                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                        <div class="uk-flex uk-width-1-1">
+                            <div class="uk-flex-left uk-width-1-2"><p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p></div>
+                            <div class="uk-flex-right uk-width-1-2" style="text-align: right"><button @click="onClickGo('/startup')">{{lang.list[defLang].page.buy}}</button></div>
+                        </div>
                     </div>
                 </div>
-
-
-
             </div>
 
         </div>
@@ -266,6 +263,7 @@
 
     </div>
 
+    <div class="placeholder-b"></div>
     <div class="placeholder-b"></div>
 
     {{include '../_menu.html'}}

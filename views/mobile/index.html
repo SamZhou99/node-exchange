@@ -41,7 +41,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="item in this.list" :id="item.node.id">
+                <tr @click="onClickGoMarket(item)" v-for="item in this.list" :id="item.node.id">
                     <td>
                         <div uk-grid>
                             <div><img :src="item.node.logo" :alt="item.node.name" width="36px"></div>
@@ -83,6 +83,10 @@
                     statup: {}
                 },
                 methods: {
+                    onClickGoMarket(item) {
+                        let url = '/market/?symbol=' + item.node.symbol.toLocaleLowerCase() + 'usdt'
+                        document.location = url
+                    },
                     round(num, intLen = 2, dotLaterLen = 6) {
                         let z = '000000000000000000000000000000'
                         let zn = Number(1 + z.substr(0, dotLaterLen))

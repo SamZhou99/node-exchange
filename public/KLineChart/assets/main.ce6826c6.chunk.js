@@ -156,7 +156,7 @@
 								className: "top-bar-".concat(e)
 							}, a.a.createElement("div", {
 								className: "top-bar-periods-small"
-							}, ["Line", "1m", "15m", "1H", "4H", "1D", "1W"].map((function(Z) {
+							}, [].map((function(Z) {
 								return a.a.createElement("span", {
 									key: Z,
 									className: "top-bar-item ".concat(Z === n && "top-bar-item-selected"),

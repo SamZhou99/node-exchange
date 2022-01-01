@@ -546,6 +546,7 @@
                                 }, time)
 
                                 if (_t.symbol == _t.statup.name.toLocaleLowerCase() + 'usdt') {
+                                    _t.newPrice = _t.round(v, 2, 4)
                                     window.postMessage({ data: _t.buySell(v) }, '/');
                                 }
                             }

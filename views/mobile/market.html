@@ -6,6 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{{lang.list[defLang].title}}</title>
     {{include './_style.html'}}
+    <style>
+        .overflow-text2 {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .c1 {
+            background-color: #f00;
+        }
+
+        .c2 {
+            background-color: #0f0;
+        }
+
+        .c3 {
+            background-color: #00f;
+        }
+
+        .t1 {
+            font-size: 0.15rem;
+        }
+
+        .t11 {
+            color: #98ffff;
+            font-size: 6px;
+        }
+
+        .hr1 {
+            margin-top: 1px;
+            margin-bottom: 1px;
+            border: 0.5px solid #333;
+        }
+
+        .tb1 {
+            background-color: #ff000000;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,15 +52,88 @@
 
     <div id="app">
         <div class="uk-flex">
-            <div class="uk-flex-left uk-flex-2 overflow-text">111111111111111</div>
-            <div class="uk-flex-center overflow-text">222222222222222</div>
-            <div class="uk-flex-right overflow-text">333333333333333</div>
+            <div class="uk-flex-left uk-flex-2 overflow-text2 uk-width-1-2">
+                <div style="height: 450px; background-color: #1e2126;">
+                    <div class="t1">{{lang.list[defLang].page.lastest}} {[newPrice]} {[symbol1]}/USDT</div>
+                    <div>
+                        <table class="t1 tb1" style="height: 210px; line-height: 1;">
+                            <tbody class="t11" style="vertical-align:bottom;">
+                                <tr v-for="item,index in market.sell">
+                                    <td class="uk-text-danger">{{lang.list[defLang].page.sell}}{[market.len-index]}</td>
+                                    <td>{[item.price]}</td>
+                                    <td>{[item.amount]}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <hr class="hr1">
+                        <table class="t1 tb1" style="height: 210px; line-height: 1;">
+                            <tbody class="t11" style="vertical-align:top;">
+                                <tr v-for="item,index in market.buy">
+                                    <td class="uk-text-success">{{lang.list[defLang].page.buy}}{[index+1]}</td>
+                                    <td>{[item.price]}</td>
+                                    <td>{[item.amount]}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-flex-right overflow-text2 uk-width-1-1">
+                <div id="paint_chart" style="width:100%;height:450px;overflow:hidden;margin: 0 auto;">
+                    <iframe style="border-style: none;" border="0" width="100%" height="100%" id="market_chart" :src="iframeUrl"></iframe>
+                </div>
+            </div>
         </div>
-        <div class="uk-flex uk-flex-column">
-            <div class="uk-flex-left overflow-text">111111111111111</div>
-            <div class="uk-flex-center overflow-text">222222222222222</div>
-            <div class="uk-flex-right overflow-text">333333333333333</div>
+
+        <div class="uk-flex">
+            <div class="uk-flex-left overflow-text2 t1 uk-width-1-2" style="padding: 5px;">
+                <div style="font-size:0.25rem">{{lang.list[defLang].page.available}}：0.000000 USDT</div>
+                <hr class="hr1">
+                <div>
+                    <div class="form-group row">
+                        <label for="mairuJia">{{lang.list[defLang].page.buy_price}}</label>
+                        <div>
+                            <input type="text" class="uk-input" id="mairuJia">
+                        </div>
+
+                        <label for="mairuJia">{{lang.list[defLang].page.buy_amount}}</label>
+                        <div>
+                            <input type="text" class="uk-input" id="mairuJia">
+                        </div>
+
+                        <label>{{lang.list[defLang].page.buy}}</label>
+                        <div>
+                            <button class="uk-button uk-button-primary uk-width-1-1">{{lang.list[defLang].page.buy}} {[symbol1]}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="uk-flex-right overflow-text2 t1  uk-width-1-2" style="padding: 5px;">
+                <div style="font-size:0.25rem">{{lang.list[defLang].page.available}}：0.000000 {[symbol1]}</div>
+                <hr class="hr1">
+                <div>
+                    <div class="form-group row">
+                        <label for="mairuJia">{{lang.list[defLang].page.sell_price}}</label>
+                        <div>
+                            <input type="text" class="uk-input" id="mairuJia">
+                        </div>
+
+                        <label for="mairuJia">{{lang.list[defLang].page.sell_amount}}</label>
+                        <div>
+                            <input type="text" class="uk-input" id="mairuJia">
+                        </div>
+
+                        <label>{{lang.list[defLang].page.sell}}</label>
+                        <div>
+                            <button class="uk-button uk-button-danger uk-width-1-1">{{lang.list[defLang].page.sell}} {[symbol1]}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+
+       
     </div>
 
     <div class="placeholder-b"></div>
@@ -48,6 +159,7 @@
                 shishichengjiao: [],
                 newPrice: 0,
                 market: {
+                    len: 10,
                     buy: [],
                     sell: [],
                 }
@@ -186,6 +298,7 @@
                                 }, time)
 
                                 if (_t.symbol == _t.statup.name.toLocaleLowerCase() + 'usdt') {
+                                    _t.newPrice = _t.round(v, 2, 4)
                                     window.postMessage({ data: _t.buySell(v) }, '/');
                                 }
                             }
@@ -240,6 +353,11 @@
                     this.symbol1 = this.symbol.substring(0, this.symbol.length - 4).toUpperCase()
                     this.iframeUrl = '/KLineChart/index.html?symbol=' + this.symbol
 
+                    for (let i = 0; i < this.market.length; i++) {
+                        this.market.sell[{ price: '', amount: '' }]
+                        this.market.buy[{ price: '', amount: '' }]
+                    }
+
                     window.addEventListener('message', (e) => {
                         var data = e.data;
                         if (data.d) {
@@ -267,15 +385,16 @@
                                 this.shishichengjiao.push(item)
                             }
 
+                            const len = this.market.len
                             if (item.direction == 'sell') {
                                 this.market.sell.unshift(item)
-                                if (this.market.sell.length >= 10) {
+                                if (this.market.sell.length > len) {
                                     this.market.sell.pop()
                                 }
                                 this.market.sell.sort()
                             } else {
                                 this.market.buy.unshift(item)
-                                if (this.market.buy.length > 10) {
+                                if (this.market.buy.length > len) {
                                     this.market.buy.pop()
                                 }
                                 this.market.buy.sort()
@@ -285,7 +404,7 @@
                 }
             },
             mounted() {
-                // this.init()
+                this.init()
             }
         });
 

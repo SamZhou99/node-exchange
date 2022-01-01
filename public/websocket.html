@@ -11,7 +11,11 @@
 <body>
 
     <script>
-        const socket = new WebSocket("ws://127.0.0.1:3031/test");
+        if('WebSocket' in window){
+            console.log('true')
+        }
+        var socket = new WebSocket("ws://127.0.0.1:3031/coin/price");
+        console.log(socket)
         socket.onopen = function () {
             console.log('websocket init ...')
         };
@@ -19,15 +23,7 @@
             console.log('websocket close ...')
         }
         socket.onmessage = function (event) {
-            let data = JSON.parse(event.data)
-            console.log(data.status)
-            if (data.status == 'up') {
-                lastClose += 0.1
-            } else if (data.status == "down") {
-                lastClose -= 0.1
-            } else if (data.status == "random") {
-                // lastClose = getRandomPrice()
-            }
+            console.log(event)
         }
     </script>
 
