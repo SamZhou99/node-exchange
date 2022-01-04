@@ -2,7 +2,7 @@ html {height: 100%;}
 body {display: flex;flex-direction: column;height: 100%;margin: 0px;}
 body {background-color:#151827;}
 header{flex: 0 0 auto;}
- .main-content{flex: 1 0 auto; padding-top: 50px; background-color:#16192b; color:aliceblue; min-height:300px;}
+ .main-content{flex: 1 0 auto; padding-top: 30px; background-color:#16192b; color:aliceblue; min-height:300px;}
  footer{flex: 0 0 auto;}
  html,body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td,p{margin:0;padding:0;}
 input,select,textarea{font-size:12px;line-height:16px;}img{border:0;}ul,li{list-style-type:none;}
