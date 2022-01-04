@@ -57,7 +57,7 @@ let service = {
          * @returns 
          */
         async oneById(id) {
-            let res = await db.Query('SELECT id,parent_id,account,type,email,mobile,status,usdt_trc20,eth,btc,create_datetime,update_datetime FROM `user` WHERE id=? LIMIT 1', [id])
+            let res = await db.Query('SELECT id,parent_id,account,type,email,mobile,status,usdt_trc20,usdt_erc20,eth,btc,create_datetime,update_datetime FROM `user` WHERE id=? LIMIT 1', [id])
             return res.length > 0 ? res[0] : null
         },
         /**
@@ -66,7 +66,7 @@ let service = {
          * @returns 
          */
         async oneByWalletAddress(address) {
-            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,u.email,u.mobile,u.status,u.usdt_trc20,u.eth,u.btc,u.create_datetime,u.update_datetime,sw.upload_user_id,sw.bind_user_id,sw.wallet_address,sw.wallet_type FROM user AS u LEFT JOIN system_wallet AS sw ON sw.bind_user_id = u.id WHERE sw.wallet_address = ? LIMIT 1', [address])
+            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,u.email,u.mobile,u.status,u.usdt_trc20,u.usdt_erc20,u.eth,u.btc,u.create_datetime,u.update_datetime,sw.upload_user_id,sw.bind_user_id,sw.wallet_address,sw.wallet_type FROM user AS u LEFT JOIN system_wallet AS sw ON sw.bind_user_id = u.id WHERE sw.wallet_address = ? LIMIT 1', [address])
             return res.length > 0 ? res[0] : null
         },
         /**
@@ -105,7 +105,7 @@ let service = {
          * @returns 一个用户信息/null
          */
         async login(account, password) {
-            let res = await db.Query("SELECT id,parent_id,account,type,email,mobile,status,usdt_trc20,eth,create_datetime,update_datetime FROM `user` WHERE (account=? OR email=? OR mobile=?) AND `password`=MD5(?) LIMIT 1", [account, account, account, password])
+            let res = await db.Query("SELECT id,parent_id,account,type,email,mobile,status,usdt_trc20,usdt_erc20,eth,create_datetime,update_datetime FROM `user` WHERE (account=? OR email=? OR mobile=?) AND `password`=MD5(?) LIMIT 1", [account, account, account, password])
             return res.length > 0 ? res[0] : null
         },
         /**
@@ -188,7 +188,7 @@ let service = {
          * @returns 
          */
         async list() {
-            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,u.usdt_trc20,u.eth,u.btc,ucg.label,ucg.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type ORDER BY id DESC LIMIT 1000')
+            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,u.usdt_trc20,u.usdt_erc20,u.eth,u.btc,ucg.label,ucg.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type ORDER BY id DESC LIMIT 1000')
             for (let i = 0; i < res.length; i++) {
                 let item = res[i]
                 item = await service.user.userDetailInfo(item)
@@ -206,7 +206,7 @@ let service = {
             r = await db.Query('SELECT id,code FROM invite_code WHERE user_id=? LIMIT 1', [user.id])
             user.invite = r.length > 0 ? r[0] : null
             // 我的上级
-            r = await db.Query('SELECT u.id,u.email,u.mobile,u.account,u.status,u.type,u.usdt_trc20,u.eth,u.btc,ucg.label,ucg.value FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type WHERE u.id=? LIMIT 1', [user.parent_id])
+            r = await db.Query('SELECT u.id,u.email,u.mobile,u.account,u.status,u.type,u.usdt_trc20,u.usdt_erc20,u.eth,u.btc,ucg.label,ucg.value FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type WHERE u.id=? LIMIT 1', [user.parent_id])
             user.parent = r.length > 0 ? r[0] : null
             // 钱包地址
             r = await db.Query('SELECT id,wallet_address,wallet_type FROM system_wallet WHERE bind_user_id=? LIMIT 10', [user.id])
@@ -252,7 +252,7 @@ let service = {
          * @param {*} user_id 
          */
         async inviteList(user_id) {
-            let res = await db.Query('SELECT id,parent_id,account,type,email,mobile,status,usdt_trc20,eth,create_datetime,update_datetime FROM user WHERE parent_id=? ORDER BY id DESC LIMIT 500', [user_id])
+            let res = await db.Query('SELECT id,parent_id,account,type,email,mobile,status,usdt_trc20,usdt_erc20,eth,create_datetime,update_datetime FROM user WHERE parent_id=? ORDER BY id DESC LIMIT 500', [user_id])
             return res
         },
 
@@ -363,15 +363,17 @@ let service = {
          * @param {*} user_id 
          */
         async bindWalletAddressToUserId(user_id) {
-            let usdtRes = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type="usdt-trc20" ORDER BY id LIMIT 1')
-            let btcRes = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type="btc" ORDER BY id LIMIT 1')
-            let ethRes = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type="eth" ORDER BY id LIMIT 1')
+            let usdt_trc20_res = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type=? ORDER BY id LIMIT 1', [common.coin.type.USDT_TRC20])
+            let usdt_erc20_res = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type=? ORDER BY id LIMIT 1', [common.coin.type.USDT_ERC20])
+            let btc_res = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type=? ORDER BY id LIMIT 1', [common.coin.type.BTC])
+            let eth_res = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type=? ORDER BY id LIMIT 1', [common.coin.type.ETH])
 
-            let usdt = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, usdtRes[0].id])
-            let btc = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, btcRes[0].id])
-            let eth = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, ethRes[0].id])
+            let usdt_trc20 = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, usdt_trc20_res[0].id])
+            let usdt_erc20 = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, usdt_erc20_res[0].id])
+            let btc = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, btc_res[0].id])
+            let eth = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, eth_res[0].id])
 
-            return [usdt, btc, eth]
+            return [usdt_trc20, usdt_erc20, btc, eth]
         },
         /**
          * 通过钱包地址 查询系统钱包相关数据
@@ -452,11 +454,13 @@ let service = {
          * @returns 
          */
         async coinAmount() {
-            let usdt = await db.Query('SELECT SUM(recharge_log.amount) AS amount FROM recharge_log WHERE type=? ', [common.coin.type.USDT])
+            let usdt_trc20 = await db.Query('SELECT SUM(recharge_log.amount) AS amount FROM recharge_log WHERE type=? ', [common.coin.type.USDT_TRC20])
+            let usdt_erc20 = await db.Query('SELECT SUM(recharge_log.amount) AS amount FROM recharge_log WHERE type=? ', [common.coin.type.USDT_ERC20])
             let eth = await db.Query('SELECT SUM(recharge_log.amount) AS amount FROM recharge_log WHERE type=? ', [common.coin.type.ETH])
             let btc = await db.Query('SELECT SUM(recharge_log.amount) AS amount FROM recharge_log WHERE type=? ', [common.coin.type.BTC])
             return {
-                usdt: usdt[0].amount || 0,
+                usdt_trc20: usdt_trc20[0].amount || 0,
+                usdt_erc20: usdt_erc20[0].amount || 0,
                 eth: eth[0].amount || 0,
                 btc: btc[0].amount || 0
             }
@@ -518,6 +522,17 @@ let service = {
                 let wallet_type = tools.getWalletType(wallet_address)
                 let create_datetime = utils99.Time()
                 let update_datetime = utils99.Time()
+                if (wallet_type == common.coin.type.ETH) {
+                    // 当做 usdt-erc20插入
+                    await db.Query(`INSERT INTO system_wallet (upload_user_id,bind_user_id,wallet_address,wallet_type,create_datetime,update_datetime) VALUES (?,?,?,?,?,?)`, [
+                        upload_user_id,
+                        bind_user_id,
+                        wallet_address,
+                        common.coin.type.USDT_ERC20,
+                        create_datetime,
+                        update_datetime
+                    ])
+                }
                 await db.Query(`INSERT INTO system_wallet (upload_user_id,bind_user_id,wallet_address,wallet_type,create_datetime,update_datetime) VALUES (?,?,?,?,?,?)`, [
                     upload_user_id,
                     bind_user_id,
@@ -595,7 +610,7 @@ let service = {
 
                 if (o.toAddress == wallet_address) {
                     // 转入记录日志
-                    await service.wallet.tradeAddLog(o.hash, o.block, utils99.Timestamp(o.timestamp), o.amount, o.ownerAddress, o.toAddress, common.coin.type.USDT)
+                    await service.wallet.tradeAddLog(o.hash, o.block, utils99.Timestamp(o.timestamp), o.amount, o.ownerAddress, o.toAddress, common.coin.type.USDT_TRC20)
                 }
             }
 

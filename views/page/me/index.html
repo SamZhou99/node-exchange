@@ -88,12 +88,14 @@
                 </div>
                 <div class="col-md-9 col-sm-12">
 
+                    <!-- Total -->
                     <div class="row">
                         <div class="mb-3">
                             <h3>{{lang.list[defLang].page.total_assets}}：{[round(usd.total,2,8)]} USD</h3>
                         </div>
                     </div>
 
+                    <!-- BTC -->
                     <div class="card mb-3 bg-dark2">
                         <div class="row no-gutters">
                             <div class="col-md-6">
@@ -125,11 +127,10 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
 
-
+                    <!-- ETH -->
                     <div class="card mb-3 bg-dark2">
                         <div class="row no-gutters">
                             <div class="col-md-6">
@@ -161,29 +162,27 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
-
-
+                    <!-- USDT-TRC20 -->
                     <div class="card mb-3 bg-dark2">
                         <div class="row no-gutters">
                             <div class="col-md-6">
                                 <div class="card-body">
-                                    <h3 class="card-title">USDT</h3>
-                                    <p class="card-text"><span class="gray1">{[user.usdt_trc20]} USDT</span><span class="gray"> ≈ {[usd.usdt_trc20]} USD</span></p>
+                                    <h3 class="card-title">USDT-TRC20</h3>
+                                    <p class="card-text"><span class="gray1">{[user.usdt_trc20]} USDT-TRC20</span><span class="gray"> ≈ {[usd.usdt_trc20]} USD</span></p>
                                     <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="card-body text-right cztx">
-                                    <button @click="onClickShowWallet('usdt-trc20')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
+                                    <button @click="onClickShowWallet('usdt_trc20')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
                                     <button @click="onClickGo('/me/withdraw')" class="btn btn-primary ml-10">{{lang.list[defLang].page.withdraw}}</button>
                                 </div>
                             </div>
                         </div>
 
-                        <div v-if="is_show['usdt-trc20']" class="row no-gutters">
+                        <div v-if="is_show.usdt_trc20" class="row no-gutters">
                             <div class="col-md-12">
                                 <div class="card-body">
                                     <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
@@ -197,11 +196,43 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
+                    <!-- USDT-ERC20 -->
+                    <div class="card mb-3 bg-dark2">
+                        <div class="row no-gutters">
+                            <div class="col-md-6">
+                                <div class="card-body">
+                                    <h3 class="card-title">USDT-ERC20</h3>
+                                    <p class="card-text"><span class="gray1">{[user.usdt_erc20]} USDT-ERC20</span><span class="gray"> ≈ {[usd.usdt_erc20]} USD</span></p>
+                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card-body text-right cztx">
+                                    <button @click="onClickShowWallet('usdt_erc20')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
+                                    <button @click="onClickGo('/me/withdraw')" class="btn btn-primary ml-10">{{lang.list[defLang].page.withdraw}}</button>
+                                </div>
+                            </div>
+                        </div>
 
+                        <div v-if="is_show.usdt_erc20" class="row no-gutters">
+                            <div class="col-md-12">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
+                                    <div class="input-group">
+                                        <input id="wallet_address_txt" type="text" readonly="readonly" class="form-control" :value="wallet_address">
+                                        <div @click="onClickCopyText('wallet_address_txt')" class="col-auto my-1"> <button type="buton" class="btn btn-primary">{{lang.list[defLang].page.copy}}</button> </div>
+                                    </div>
+                                    <p class="card-text">
+                                    <div id="qrcode"></div>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Platform Currency -->
                     <div class="card mb-3 bg-dark2">
                         <div class="row no-gutters">
                             <div class="col-md-6">
@@ -247,6 +278,7 @@
                     btc: 0,
                     eth: 0,
                     usdt_trc20: 0,
+                    usdt_erc20: 0,
                     platform_currency: 0,
                     platform_currency_percent: 0,
                     platform_currency_is_up: '',
@@ -257,7 +289,8 @@
                 is_show: {
                     'btc': false,
                     'eth': false,
-                    'usdt-trc20': false,
+                    'usdt_trc20': false,
+                    'usdt_erc20': false,
                 },
             },
             methods: {
@@ -283,6 +316,9 @@
                 },
                 findWalletAddress(name) {
                     let a = this.user.wallet
+                    // if (name == 'usdt_erc20') {
+                    //     name = 'eth'
+                    // }
                     let result
                     for (let i = 0; i < a.length; i++) {
                         let item = a[i]
@@ -411,7 +447,8 @@
                             this.usd.btc = o.bitcoin * this.user.btc
                             this.usd.eth = o.ethereum * this.user.eth
                             this.usd.usdt_trc20 = this.user.usdt_trc20
-                            this.usd.total = this.usd.btc + this.usd.eth + this.usd.usdt_trc20 + this.usd.platform_currency
+                            this.usd.usdt_erc20 = this.user.usdt_erc20
+                            this.usd.total = this.usd.btc + this.usd.eth + this.usd.usdt_trc20 + this.usd.usdt_erc20 + this.usd.platform_currency
 
                             this.initWS()
                         })

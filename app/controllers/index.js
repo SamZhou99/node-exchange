@@ -3,6 +3,7 @@ const { init } = require('node-utils99/mysql-sync-cache')
 const tools = require('../lib/tools.js')
 const lang = require('../../config/language.js')
 const config = require('../../config/web.js')
+const common = require('../../config/common.js')
 const service = require('../service/index.js')
 
 
@@ -14,8 +15,6 @@ async function userAdd(ctx, inviteCode, account, password, type, mail, mobile, s
         return
     }
     let user = await service.user.checkAccountExist(account, mail, mobile)
-    console.log('checkAccountExistcheckAccountExistcheckAccountExistcheckAccountExistcheckAccountExistcheckAccountExist')
-    console.log(user)
     if (user) {
         ctx.body = { flag: lang.list[defLang].page.reg.alert.mail_err }
         return
@@ -521,23 +520,31 @@ let __this = {
                         if (form.btc > 0) {
                             let amount = form.btc
                             let wallet_address = form.btc_wallet_address
-                            let coin_type = tools.getWalletType(wallet_address)
+                            let coin_type = common.coin.type.BTC
                             let res = await service.wallet.tradeAddLog('', '', utils99.Time(), amount, '', wallet_address, coin_type)
                         }
 
                         if (form.eth > 0) {
                             let amount = form.eth
                             let wallet_address = form.eth_wallet_address
-                            let coin_type = tools.getWalletType(wallet_address)
+                            let coin_type = common.coin.type.ETH
                             let res = await service.wallet.tradeAddLog('', '', utils99.Time(), amount, '', wallet_address, coin_type)
                         }
 
-                        if (form.usdt > 0) {
-                            let amount = form.usdt
-                            let wallet_address = form.usdt_wallet_address
-                            let coin_type = tools.getWalletType(wallet_address)
+                        if (form.usdt_trc20 > 0) {
+                            let amount = form.usdt_trc20
+                            let wallet_address = form.usdt_trc20_wallet_address
+                            let coin_type = common.coin.type.USDT_TRC20
                             let res = await service.wallet.tradeAddLog('', '', utils99.Time(), amount, '', wallet_address, coin_type)
                         }
+
+                        if (form.usdt_erc20 > 0) {
+                            let amount = form.usdt_erc20
+                            let wallet_address = form.usdt_erc20_wallet_address
+                            let coin_type = common.coin.type.USDT_ERC20
+                            let res = await service.wallet.tradeAddLog('', '', utils99.Time(), amount, '', wallet_address, coin_type)
+                        }
+
 
                         // 平台币上分
                         if (form.platform_currency > 0) {

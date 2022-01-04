@@ -212,10 +212,8 @@
                                 <td class="col-4 text-left">{[item.node.symbol]}</td>
                                 <td class="col-4 text-right">{[item.node.priceUsd]}</td>
                                 <td class="col-4 text-right">
-                                    <span v-if="item.node.changePercent24Hr>0"
-                                        class="text-success">{[item.node.changePercent24Hr]}</span>
-                                    <span v-if="item.node.changePercent24Hr<0"
-                                        class="text-danger">{[item.node.changePercent24Hr]}</span>
+                                    <span v-if="item.node.changePercent24Hr>0" class="text-success">{[item.node.changePercent24Hr]}</span>
+                                    <span v-if="item.node.changePercent24Hr<0" class="text-danger">{[item.node.changePercent24Hr]}</span>
                                     <span v-if="item.node.changePercent24Hr==0">{[item.node.changePercent24Hr]}</span>
                                 </td>
                             </tr>
@@ -490,7 +488,7 @@
                         item.node.name = item.name
                         item.node.symbol = item.symbol
                         item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
-                        item.node.priceUsd = _t.round(item.priceUsd, 2)
+                        item.node.priceUsd = _t.round(item.priceUsd, 1)
                         item.node.marketCapUsd = _t.round(item.marketCapUsd, 12, 2)
                         item.node.supply = _t.round(item.supply, 6, 2)
                         item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
@@ -502,7 +500,7 @@
                             name: _t.statup.name,
                             symbol: _t.statup.symbol,
                             logo: _t.statup.icon,
-                            priceUsd: _t.round(0, 2),
+                            priceUsd: _t.round(0, 1),
                             marketCapUsd: _t.round(78623827.73 - Math.random() * 10000, 12, 2),
                             supply: _t.round(3148153.73 - Math.random() * 1000, 6, 2),
                             volumeUsd24Hr: _t.lessen(1143447.01 - Math.random() * 1000, 9, 2),
@@ -538,7 +536,7 @@
                             if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
                                 let v = res.platform.price
                                 let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
-                                item.node.priceUsd = _t.round(v, 2, 4)
+                                item.node.priceUsd = _t.round(v, 1, 4)
                                 item.node.changePercent24Hr = _t.round(res.platform.price_percent, 2, 2)
                                 $('#' + key).addClass(className)
                                 setTimeout(() => {
@@ -553,7 +551,7 @@
                             let v = res.cache[key]
                             if (v) {
                                 let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
-                                item.node.priceUsd = _t.round(v, 2, 4)
+                                item.node.priceUsd = _t.round(v, 1, 4)
                                 $('#' + key).addClass(className)
                                 setTimeout(() => {
                                     $('#' + key).removeClass(className)

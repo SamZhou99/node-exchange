@@ -75,7 +75,7 @@
     <script>
         $(document).ready(function () {
             function GetRequest() {
-                const url = location.search; //获取url中"?"符后的字串
+                const url = location.search;
                 let theRequest = new Object();
                 if (url.indexOf("?") != -1) {
                     let str = url.substr(1);
@@ -89,23 +89,12 @@
 
             if (GetRequest().invite) {
                 $('#inviteCode').val(GetRequest().invite)
-                // $('#inviteCode').attr('disabled', true)
             }
 
             let temp
             let alertObj = JSON.parse('{{lang.list[defLang].page.reg.alert}}'.replace(/&#34;/g, '"'))
             let f = {
                 alert: (text) => {
-                    // clearTimeout(temp)
-                    // $(".alert").removeClass('show')
-
-                    // $('#error_content').text(text)
-                    // $(".alert").addClass('show')
-
-                    // temp = setTimeout(() => {
-                    //     $(".alert").removeClass('show')
-                    // }, 7000)
-
                     UIkit.notification(text);
                 }
             }

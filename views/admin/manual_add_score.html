@@ -57,10 +57,18 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="col-md-2 control-label">USDT</label>
+                                <label class="col-md-2 control-label">USDT-TRC20</label>
                                 <div class="col-md-10">
-                                    <input v-model="form.usdt" class="form-control" value="" type="number" min="0">
-                                    系统钱包地址：{[form.usdt_wallet_address]}
+                                    <input v-model="form.usdt_trc20" class="form-control" value="" type="number" min="0">
+                                    系统钱包地址：{[form.usdt_trc20_wallet_address]}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label">USDT-ERC20</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.usdt_erc20" class="form-control" value="" type="number" min="0">
+                                    系统钱包地址：{[form.usdt_erc20_wallet_address]}
                                 </div>
                             </div>
 
@@ -130,10 +138,12 @@
                 user_list: [],
                 form: {
                     id: 0,
-                    usdt: 0,
+                    usdt_trc20: 0,
+                    usdt_erc20: 0,
                     eth: 0,
                     btc: 0,
-                    usdt_wallet_address: '-',
+                    usdt_trc20_wallet_address: '-',
+                    usdt_erc20_wallet_address: '-',
                     eth_wallet_address: '-',
                     btc_wallet_address: '-',
                     platform_currency: 0
@@ -154,7 +164,7 @@
                         return
                     }
                     console.log(this.form)
-                    if (Number(this.form.usdt) == 0 && Number(this.form.eth) == 0 && Number(this.form.btc) == 0 && Number(this.form.platform_currency) == 0) {
+                    if (Number(this.form.usdt_trc20) == 0 && Number(this.form.usdt_erc20) == 0 && Number(this.form.eth) == 0 && Number(this.form.btc) == 0 && Number(this.form.platform_currency) == 0) {
                         alert('请填写要添加的金额数量。')
                         return
                     }
@@ -174,9 +184,10 @@
                         return
                     }
                     let userItem = this.getUserItem(this.form.id)
-                    this.form.usdt_wallet_address = userItem.wallet[0].wallet_address
-                    this.form.eth_wallet_address = userItem.wallet[1].wallet_address
-                    this.form.btc_wallet_address = userItem.wallet[2].wallet_address
+                    this.form.usdt_trc20_wallet_address = userItem.wallet[0].wallet_address
+                    this.form.usdt_erc20_wallet_address = userItem.wallet[1].wallet_address
+                    this.form.eth_wallet_address = userItem.wallet[2].wallet_address
+                    this.form.btc_wallet_address = userItem.wallet[3].wallet_address
                 },
                 getUserItem(id) {
                     for (let i = 0; i < this.user_list.length; i++) {
@@ -190,10 +201,12 @@
                 resetFrom() {
                     this.form = {
                         id: 0,
-                        usdt: 0,
+                        usdt_trc20: 0,
+                        usdt_erc20: 0,
                         eth: 0,
                         btc: 0,
-                        usdt_wallet_address: '-',
+                        usdt_trc20_wallet_address: '-',
+                        usdt_erc20_wallet_address: '-',
                         eth_wallet_address: '-',
                         btc_wallet_address: '-',
                         platform_currency: 0

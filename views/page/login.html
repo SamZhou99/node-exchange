@@ -66,14 +66,15 @@
                 </label>
             </div>
             <button @click="onClick" id="submit_btn" class="btn btn-lg btn-primary btn-block" type="button">{{lang.list[defLang].page.login.submit_button}}</button>
+
+            <div>
+                <a href="/reg">{{lang.list[defLang].page.login.no_account_reg}}</a>
+            </div>
         </form>
 
         <div class="container">
             <div class="alert alert-danger alert-dismissible fade" role="alert">
                 <strong>{{lang.list[defLang].page.reg.alert.label}}</strong> <span id="error_content"></span>
-                <!-- <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button> -->
             </div>
         </div>
 

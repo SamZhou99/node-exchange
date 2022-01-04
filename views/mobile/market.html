@@ -53,7 +53,31 @@
     <div id="app">
         <div class="uk-flex">
             <div class="uk-flex-left uk-flex-2 overflow-text2 uk-width-1-2">
-                <div style="height: 450px; background-color: #1e2126;">
+                <!-- marketing -->
+                <div>
+                    <table class="t1 tb1" style="height: 210px; line-height: 1;">
+                        <thead>
+                            <tr>
+                                <th scope="col-4 text-left">Currency</th>
+                                <th scope="col-4 text-right">Last Price</th>
+                                <th scope="col-4 text-right">Change</th>
+                            </tr>
+                        </thead>
+                        <tbody class="font-small" style="overflow:scroll;">
+                            <tr :id="item.node.id" v-for="item in this.list" @click="onClickGo(item.node.symbol)" style="height:20px;cursor: pointer;">
+                                <td class="col-4 text-left">{[item.node.symbol]}</td>
+                                <td class="col-4 text-right">{[item.node.priceUsd]}</td>
+                                <td class="col-4 text-right">
+                                    <span v-if="item.node.changePercent24Hr>0" class="text-success">{[item.node.changePercent24Hr]}</span>
+                                    <span v-if="item.node.changePercent24Hr<0" class="text-danger">{[item.node.changePercent24Hr]}</span>
+                                    <span v-if="item.node.changePercent24Hr==0">{[item.node.changePercent24Hr]}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- bug && sell -->
+                <div style="height: 235px; background-color: #1e2126;">
                     <div class="t1">{{lang.list[defLang].page.lastest}} {[newPrice]} {[symbol1]}/USDT</div>
                     <div>
                         <table class="t1 tb1" style="height: 210px; line-height: 1;">
@@ -78,6 +102,7 @@
                     </div>
                 </div>
             </div>
+            <!-- k-line -->
             <div class="uk-flex-right overflow-text2 uk-width-1-1">
                 <div id="paint_chart" style="width:100%;height:450px;overflow:hidden;margin: 0 auto;">
                     <iframe style="border-style: none;" border="0" width="100%" height="100%" id="market_chart" :src="iframeUrl"></iframe>
@@ -133,7 +158,7 @@
 
         </div>
 
-       
+
     </div>
 
     <div class="placeholder-b"></div>
@@ -159,7 +184,7 @@
                 shishichengjiao: [],
                 newPrice: 0,
                 market: {
-                    len: 10,
+                    len: 5,
                     buy: [],
                     sell: [],
                 }
@@ -242,7 +267,7 @@
                         item.node.name = item.name
                         item.node.symbol = item.symbol
                         item.node.logo = `https://assets.coincap.io/assets/icons/${item.symbol.toLocaleLowerCase()}@2x.png`
-                        item.node.priceUsd = _t.round(item.priceUsd, 2)
+                        item.node.priceUsd = _t.round(item.priceUsd, 1)
                         item.node.marketCapUsd = _t.round(item.marketCapUsd, 12, 2)
                         item.node.supply = _t.round(item.supply, 6, 2)
                         item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
@@ -290,7 +315,7 @@
                             if (key == _t.statup.name.toLocaleLowerCase() && Math.random() * 5 > 2) {
                                 let v = res.platform.price
                                 let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
-                                item.node.priceUsd = _t.round(v, 2, 4)
+                                item.node.priceUsd = _t.round(v, 1, 4)
                                 item.node.changePercent24Hr = _t.round(res.platform.price_percent, 2, 2)
                                 $('#' + key).addClass(className)
                                 setTimeout(() => {
@@ -305,7 +330,7 @@
                             let v = res.cache[key]
                             if (v) {
                                 let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
-                                item.node.priceUsd = _t.round(v, 2, 4)
+                                item.node.priceUsd = _t.round(v, 1, 4)
                                 $('#' + key).addClass(className)
                                 setTimeout(() => {
                                     $('#' + key).removeClass(className)

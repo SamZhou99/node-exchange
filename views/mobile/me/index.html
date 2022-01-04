@@ -136,6 +136,7 @@
         <div class="profilePictureBg" style="margin-top:20px;">
             <img class="profilePicture" src="/images/profile01.png" alt="{{session.user.email}}">
             <span>{{session.user.email}}</span>
+            <span> <a href="/me/authentication">{{lang.list[defLang].page.verified}}</a> </span>
         </div>
 
 
@@ -146,6 +147,7 @@
                 {{lang.list[defLang].page.total_assets}}：{[round(usd.total,2,8)]} USD
             </div>
 
+            <!-- BTC -->
             <div class="card-item uk-box-shadow-medium">
                 <div>
                     <div class="card-title">BTC</div>
@@ -160,7 +162,7 @@
                 </div>
 
                 <div v-if="is_show.btc">
-                    <div class="card-content">
+                    <div class="card-content uk-width-1-1">
                         <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
                         <div class="card-content card-content-left">
                             <input id="wallet_address_txt" type="text" readonly="readonly" class="uk-input" :value="wallet_address">
@@ -173,9 +175,9 @@
                         <div id="qrcode"></div>
                     </div>
                 </div>
-
             </div>
 
+            <!-- ETH -->
             <div class="card-item uk-box-shadow-medium">
                 <div>
                     <div class="card-title">ETH</div>
@@ -190,7 +192,7 @@
                 </div>
 
                 <div v-if="is_show.eth">
-                    <div class="card-content">
+                    <div class="card-content uk-width-1-1">
                         <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
                         <div class="card-content card-content-left">
                             <input id="wallet_address_txt" type="text" readonly="readonly" class="uk-input" :value="wallet_address">
@@ -203,24 +205,24 @@
                         <div id="qrcode"></div>
                     </div>
                 </div>
-
             </div>
 
+            <!-- USDT-TRC20 -->
             <div class="card-item uk-box-shadow-medium">
                 <div>
-                    <div class="card-title">USDT</div>
+                    <div class="card-title">USDT-TRC20</div>
                     <div class="card-content card-content-left">
-                        <p class="card-text"><span class="gray1">{[user.usdt_trc20]} USDT</span><span class="gray"> ≈ {[usd.usdt_trc20]} USD</span></p>
+                        <p class="card-text"><span class="gray1">{[user.usdt_trc20]} USDT-TRC20</span><span class="gray"> ≈ {[usd.usdt_trc20]} USD</span></p>
                         <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                     </div>
                     <div class="card-content card-content-right">
-                        <button @click="onClickShowWallet('usdt-trc20')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
+                        <button @click="onClickShowWallet('usdt_trc20')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
                         <button @click="onClickGo('/me/withdraw')" class="btn btn-primary">{{lang.list[defLang].page.withdraw}}</button>
                     </div>
                 </div>
 
-                <div v-if="is_show['usdt-trc20']">
-                    <div class="card-content">
+                <div v-if="is_show['usdt_trc20']">
+                    <div class="card-content uk-width-1-1">
                         <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
                         <div class="card-content card-content-left">
                             <input id="wallet_address_txt" type="text" readonly="readonly" class="uk-input" :value="wallet_address">
@@ -233,7 +235,36 @@
                         <div id="qrcode"></div>
                     </div>
                 </div>
+            </div>
 
+            <!-- USDT-ERC20 -->
+            <div class="card-item uk-box-shadow-medium">
+                <div>
+                    <div class="card-title">USDT-ERC20</div>
+                    <div class="card-content card-content-left">
+                        <p class="card-text"><span class="gray1">{[user.usdt_erc20]} USDT-ERC20</span><span class="gray"> ≈ {[usd.usdt_erc20]} USD</span></p>
+                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    </div>
+                    <div class="card-content card-content-right">
+                        <button @click="onClickShowWallet('usdt_erc20')" class="btn btn-primary">{{lang.list[defLang].page.recharge}}</button>
+                        <button @click="onClickGo('/me/withdraw')" class="btn btn-primary">{{lang.list[defLang].page.withdraw}}</button>
+                    </div>
+                </div>
+
+                <div v-if="is_show['usdt_erc20']">
+                    <div class="card-content uk-width-1-1">
+                        <h5 class="card-title">{{lang.list[defLang].page.address}}</h5>
+                        <div class="card-content card-content-left">
+                            <input id="wallet_address_txt" type="text" readonly="readonly" class="uk-input" :value="wallet_address">
+                        </div>
+                        <div class="card-content card-content-right">
+                            <button @click="onClickCopyText('wallet_address_txt')" class="uk-button uk-button-primary">{{lang.list[defLang].page.copy}}</button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div id="qrcode"></div>
+                    </div>
+                </div>
             </div>
 
 
@@ -249,7 +280,9 @@
                         </p>
 
                         <div class="uk-flex uk-width-1-1">
-                            <div class="uk-flex-left uk-width-1-2"><p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p></div>
+                            <div class="uk-flex-left uk-width-1-2">
+                                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            </div>
                             <div class="uk-flex-right uk-width-1-2" style="text-align: right"><button @click="onClickGo('/startup')">{{lang.list[defLang].page.buy}}</button></div>
                         </div>
                     </div>
@@ -286,6 +319,7 @@
                     btc: 0,
                     eth: 0,
                     usdt_trc20: 0,
+                    usdt_erc20: 0,
                     platform_currency: 0,
                     platform_currency_percent: 0,
                     platform_currency_is_up: '',
@@ -296,7 +330,8 @@
                 is_show: {
                     'btc': false,
                     'eth': false,
-                    'usdt-trc20': false,
+                    'usdt_trc20': false,
+                    'usdt_erc20': false,
                 },
             },
             methods: {
@@ -322,6 +357,9 @@
                 },
                 findWalletAddress(name) {
                     let a = this.user.wallet
+                    // if (name == 'usdt_erc20') {
+                    //     name = 'eth'
+                    // }
                     let result
                     for (let i = 0; i < a.length; i++) {
                         let item = a[i]
@@ -450,7 +488,8 @@
                             this.usd.btc = o.bitcoin * this.user.btc
                             this.usd.eth = o.ethereum * this.user.eth
                             this.usd.usdt_trc20 = this.user.usdt_trc20
-                            this.usd.total = this.usd.btc + this.usd.eth + this.usd.usdt_trc20 + this.usd.platform_currency
+                            this.usd.usdt_erc20 = this.user.usdt_erc20
+                            this.usd.total = this.usd.btc + this.usd.eth + this.usd.usdt_trc20 + this.usd.usdt_erc20 + this.usd.platform_currency
 
                             this.initWS()
                         })

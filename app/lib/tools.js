@@ -8,11 +8,13 @@ module.exports = {
     },
 
     getWalletType(wallet_address) {
+        // todo:usdt-erc20怎么区别？
+        // 解决方案 遇到eth类型，直接插入两条数据，一条eth，另一条usdt-erc20
         if (wallet_address.substr(0, 2) == "0x") {
             return common.coin.type.ETH
         }
         if (wallet_address.substr(0, 1) == "T") {
-            return common.coin.type.USDT
+            return common.coin.type.USDT_TRC20
         }
         if (wallet_address.substr(0, 1) == "1") {
             return common.coin.type.BTC

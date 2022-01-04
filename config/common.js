@@ -1,7 +1,8 @@
 module.exports = {
     coin: {
         type: {
-            "USDT": "usdt-trc20",
+            "USDT_ERC20": "usdt_erc20",
+            "USDT_TRC20": "usdt_trc20",
             "ETH": "eth",
             "BTC": "btc",
         },

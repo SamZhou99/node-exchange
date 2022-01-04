@@ -71,6 +71,9 @@ module.exports = {
                     title: 'Please login by email',
                     submit_button: 'Login',
                     remember_me: 'Remember, you don\'t need to log in again',
+
+                    no_account_reg: 'No Account, Go Register.',
+
                     alert: {
                         err: 'The email address or password is incorrect.',
                         status: 'The account is disabled.',
@@ -263,6 +266,9 @@ module.exports = {
                     title: '请使用邮箱登录',
                     submit_button: '登录',
                     remember_me: '记住免登录',
+
+                    no_account_reg: '没有帐号，去注册。',
+
                     alert: {
                         err: '邮箱或密码错误。',
                         status: '帐号已禁用。',
