@@ -21,8 +21,9 @@ async function userAdd(ctx, inviteCode, account, password, type, mail, mobile, s
     }
     let res = await service.inviteCode.findByCode(inviteCode)
     if (!res) {
-        ctx.body = { flag: lang.list[defLang].page.reg.alert.invite_code_err }
-        return
+        // ctx.body = { flag: lang.list[defLang].page.reg.alert.invite_code_err }
+        // return
+        inviteCode = '!@#$'
     }
     await service.user.createNewUser(inviteCode, account, utils99.MD5(password), type, mail, mobile, status, create_datetime, update_datetime)
     ctx.body = { flag: 'ok' }
