@@ -26,7 +26,7 @@
         }
 
         .t1 {
-            font-size: 0.15rem;
+            font-size: 0.65rem;
         }
 
         .t11 {
@@ -43,6 +43,10 @@
         .tb1 {
             background-color: #ff000000;
         }
+
+        .bd-right {
+            border-right: 1px solid #333;
+        }
     </style>
 </head>
 
@@ -52,35 +56,27 @@
 
     <div id="app">
         <div class="uk-flex">
-            <div class="uk-flex-left uk-flex-2 overflow-text2 uk-width-1-2">
+            <div class="uk-flex-left uk-flex-2 overflow-text2 uk-width-1-2 bd-right">
                 <!-- marketing -->
-                <div>
-                    <table class="t1 tb1" style="height: 210px; line-height: 1;">
-                        <thead>
-                            <tr>
-                                <th scope="col-4 text-left">Currency</th>
-                                <th scope="col-4 text-right">Last Price</th>
-                                <th scope="col-4 text-right">Change</th>
-                            </tr>
-                        </thead>
-                        <tbody class="font-small" style="overflow:scroll;">
-                            <tr :id="item.node.id" v-for="item in this.list" @click="onClickGo(item.node.symbol)" style="height:20px;cursor: pointer;">
-                                <td class="col-4 text-left">{[item.node.symbol]}</td>
-                                <td class="col-4 text-right">{[item.node.priceUsd]}</td>
-                                <td class="col-4 text-right">
-                                    <span v-if="item.node.changePercent24Hr>0" class="text-success">{[item.node.changePercent24Hr]}</span>
-                                    <span v-if="item.node.changePercent24Hr<0" class="text-danger">{[item.node.changePercent24Hr]}</span>
-                                    <span v-if="item.node.changePercent24Hr==0">{[item.node.changePercent24Hr]}</span>
-                                </td>
-                            </tr>
-                        </tbody>
+                <div style="height: 233px; overflow: hidden; background-color: #1e2126;">
+                    <div class="t1">Currency Last Price Change</div>
+                    <table class="t1 tb1" style="height: 210px; line-height: 1;" border=0 cellspacing=1 frame=void>
+                        <tr :id="item.node.id" v-for="item in this.list" @click="onClickGo(item.node.symbol)" style="height:20px;cursor: pointer;">
+                            <td class="col-4 text-left">{[item.node.symbol]}</td>
+                            <td class="col-4 text-right">{[item.node.priceUsd]}</td>
+                            <td class="col-4 text-right">
+                                <span v-if="item.node.changePercent24Hr>0" class="text-success">{[item.node.changePercent24Hr]}</span>
+                                <span v-if="item.node.changePercent24Hr<0" class="text-danger">{[item.node.changePercent24Hr]}</span>
+                                <span v-if="item.node.changePercent24Hr==0">{[item.node.changePercent24Hr]}</span>
+                            </td>
+                        </tr>
                     </table>
                 </div>
                 <!-- bug && sell -->
-                <div style="height: 235px; background-color: #1e2126;">
+                <div style="height: 233px; overflow: hidden; background-color: #1e2126;">
                     <div class="t1">{{lang.list[defLang].page.lastest}} {[newPrice]} {[symbol1]}/USDT</div>
                     <div>
-                        <table class="t1 tb1" style="height: 210px; line-height: 1;">
+                        <table class="t1 tb1" style="height: 110px; line-height: 1;">
                             <tbody class="t11" style="vertical-align:bottom;">
                                 <tr v-for="item,index in market.sell">
                                     <td class="uk-text-danger">{{lang.list[defLang].page.sell}}{[market.len-index]}</td>
@@ -90,7 +86,7 @@
                             </tbody>
                         </table>
                         <hr class="hr1">
-                        <table class="t1 tb1" style="height: 210px; line-height: 1;">
+                        <table class="t1 tb1" style="height: 110px; line-height: 1;">
                             <tbody class="t11" style="vertical-align:top;">
                                 <tr v-for="item,index in market.buy">
                                     <td class="uk-text-success">{{lang.list[defLang].page.buy}}{[index+1]}</td>
@@ -104,7 +100,7 @@
             </div>
             <!-- k-line -->
             <div class="uk-flex-right overflow-text2 uk-width-1-1">
-                <div id="paint_chart" style="width:100%;height:450px;overflow:hidden;margin: 0 auto;">
+                <div id="paint_chart" style="width:100%;height:466px;overflow:hidden;margin: 0 auto;">
                     <iframe style="border-style: none;" border="0" width="100%" height="100%" id="market_chart" :src="iframeUrl"></iframe>
                 </div>
             </div>
@@ -112,7 +108,7 @@
 
         <div class="uk-flex">
             <div class="uk-flex-left overflow-text2 t1 uk-width-1-2" style="padding: 5px;">
-                <div style="font-size:0.25rem">{{lang.list[defLang].page.available}}：0.000000 USDT</div>
+                <div class="t1">{{lang.list[defLang].page.available}}：0.000000 USDT</div>
                 <hr class="hr1">
                 <div>
                     <div class="form-group row">
@@ -134,7 +130,7 @@
                 </div>
             </div>
             <div class="uk-flex-right overflow-text2 t1  uk-width-1-2" style="padding: 5px;">
-                <div style="font-size:0.25rem">{{lang.list[defLang].page.available}}：0.000000 {[symbol1]}</div>
+                <div class="t1">{{lang.list[defLang].page.available}}：0.000000 {[symbol1]}</div>
                 <hr class="hr1">
                 <div>
                     <div class="form-group row">
@@ -279,7 +275,7 @@
                             name: _t.statup.name,
                             symbol: _t.statup.symbol,
                             logo: _t.statup.icon,
-                            priceUsd: _t.round(0, 2),
+                            priceUsd: _t.round(0, 1),
                             marketCapUsd: _t.round(78623827.73 - Math.random() * 10000, 12, 2),
                             supply: _t.round(3148153.73 - Math.random() * 1000, 6, 2),
                             volumeUsd24Hr: _t.lessen(1143447.01 - Math.random() * 1000, 9, 2),
@@ -398,8 +394,10 @@
                         let a = data.data.tick.data
                         a.forEach(function (item) {
                             item.ts = moment(item.ts).format('YYYY-MM-D HH:mm:ss')
-                            item.price = _t.round(item.price, 2, 4)
-                            item.amount = _t.round(item.amount, 2)
+                            // item.price = _t.round(item.price, 2, 4)
+                            // item.amount = _t.round(item.amount, 2)
+                            item.price = item.price
+                            item.amount = item.amount
                         })
                         for (let i = 0; i < a.length; i++) {
                             let item = a[i]

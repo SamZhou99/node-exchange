@@ -65,7 +65,8 @@
                                 <h3>充值额</h3>
                                 <div class="analytics-info">
                                     <div class="analytics-stats">
-                                        <label class="text-danger">{[result.coinCount.usdt]} <span>USDT</span></label>
+                                        <label class="text-danger">{[result.coinCount.usdt_trc20]} <span>USDT-TRC20</span></label>
+                                        <label class="text-danger">{[result.coinCount.usdt_erc20]} <span>USDT-ERC20</span></label>
                                         <label class="text-primary">{[result.coinCount.eth]} <span>ETH</span></label>
                                         <label class="text-info">{[result.coinCount.btc]} <span>BTC</span></label>
                                     </div>
@@ -80,7 +81,8 @@
                                 <h3>钱包地址数(已用/总共)</h3>
                                 <div class="analytics-info">
                                     <div class="analytics-stats">
-                                        <label class="text-danger">{[result.walletAddressCount.USDT.used]} / {[result.walletAddressCount.USDT.total]} <span>USDT</span></label>
+                                        <label class="text-danger">{[result.walletAddressCount.USDT_TRC20.used]} / {[result.walletAddressCount.USDT_TRC20.total]} <span>USDT-TRC20</span></label>
+                                        <label class="text-danger">{[result.walletAddressCount.USDT_ERC20.used]} / {[result.walletAddressCount.USDT_ERC20.total]} <span>USDT-ERC20</span></label>
                                         <label class="text-primary">{[result.walletAddressCount.ETH.used]} / {[result.walletAddressCount.ETH.total]} <span>ETH</span></label>
                                         <label class="text-info">{[result.walletAddressCount.BTC.used]} / {[result.walletAddressCount.BTC.total]} <span>BTC</span></label>
                                     </div>
@@ -292,12 +294,17 @@
                 result: {
                     "userCount": 0,
                     "coinCount": {
-                        usdt: 0,
+                        usdt_trc20: 0,
+                        usdt_erc20: 0,
                         eth: 0,
                         btc: 0
                     },
                     "walletAddressCount": {
-                        "USDT": {
+                        "USDT_TRC20": {
+                            "total": 0,
+                            "used": 0
+                        },
+                        "USDT_ERC20": {
                             "total": 0,
                             "used": 0
                         },

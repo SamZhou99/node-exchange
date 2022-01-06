@@ -61,7 +61,7 @@
                         </label>
                     </div>
 
-                    <button id="submit_btn" class="uk-button uk-button-primary uk-width-1-1">{{lang.list[defLang].page.login.submit_button}}</button>
+                    <button id="submit_btn" class="uk-button uk-button-primary uk-width-1-1">{{lang.list[defLang].page.reg.submit_button}}</button>
                     <!-- </form> -->
                 </div>
             </div>
@@ -129,11 +129,11 @@
                 from.password = md5(from.password)
                 from.password1 = md5(from.password1)
 
-                if (!from.inviteCode || from.inviteCode.length < 4) {
-                    f.alert(alertObj.invite_code)
-                    $(this).attr('disabled', false)
-                    return
-                }
+                // if (!from.inviteCode || from.inviteCode.length < 4) {
+                //     f.alert(alertObj.invite_code)
+                //     $(this).attr('disabled', false)
+                //     return
+                // }
 
 
                 $.post("/reg", from, function (data) {

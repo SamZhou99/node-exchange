@@ -9,7 +9,7 @@ module.exports = {
             name: 'English',
             lang: 'en',
             icon: 'UnitedStates.png',
-            title: 'Panda Coin trading platform',
+            title: 'Leth Cryptocurrency Trading Center',
             menu: {
                 home: 'Home',
                 login: 'Login',
@@ -204,7 +204,7 @@ module.exports = {
             name: '简体中文',
             lang: 'zh-CN',
             icon: 'China.png',
-            title: '熊猫币交易平台',
+            title: 'Leth 加密货币中心',
             menu: {
                 home: '首页',
                 login: '登录',
