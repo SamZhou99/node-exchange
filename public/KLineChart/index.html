@@ -17,6 +17,12 @@
     <link href="./assets/main.59f63fb8.chunk.css" rel="stylesheet">
     <script src="https://wo99.oss-cn-qingdao.aliyuncs.com/scripts/jquery/3.2.1/jquery.min.js"></script>
     <script src="./assets/pako.min.js"></script>
+    <style>
+        .tag-name{
+            margin-top:10px;
+            margin-left:10px;
+        }
+    </style>
 </head>
 
 <body>
@@ -573,6 +579,10 @@
         }
 
         function getKLineData() {
+            let U=String(symbol).toLocaleUpperCase()
+            let tag = U.substring(0,U.length-4)+'/'+U.substring(U.length-4,U.length)
+            jQuery('.top-bar-periods-small').html(`<div class="tag-name">${tag}</div><div class="tag-name">    Last Price <span id="late_price">0</span></div>`)
+
 
             jQuery.get('/api/kline', { symbol: symbol }, (data) => {
                 // console.log(data)
@@ -608,13 +618,17 @@
                 volume: item.vol,
             }
             chart.updateData(d)
-
+            showLatePrice(d.close)
             window.parent.postMessage({ d }, '/');
         }
 
         function getUpdateDataTrade(data) {
             // console.log('此主题提供市场最新成交逐笔明细。')
             window.parent.postMessage({ data }, '/');
+        }
+
+        function showLatePrice(price){
+            jQuery('#late_price').text(price)
         }
 
         function initWS() {
@@ -635,6 +649,8 @@
                     let lastData = chartDataList[chartDataList.length - 1]
                     lastData.close = res.price
                     console.log(res, lastData)
+                    let b=100000000
+                    showLatePrice(Math.round(res.price*b)/b)
                     chart.updateData(lastData)
                 }
                 return
@@ -650,7 +666,7 @@
             };
             ws.onclose = () => {
                 console.log('connection close...')
-                // 一分钟后重联
+                // reconnection
                 setTimeout(() => {
                     this.initWS()
                 }, 1000 * 60)
@@ -674,8 +690,6 @@
                 }
                 fr.readAsArrayBuffer(event.data);
             }
-
-
         }
 
         jQuery.noConflict();

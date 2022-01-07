@@ -54,6 +54,7 @@
                                         <th>邀请人(上级)</th>
                                         <th>平台币({[this.platform_currency.symbol]})</th>
                                         <th>USDT-RTC20</th>
+                                        <th>USDT-ETC20</th>
                                         <th>ETH</th>
                                         <th>BTC</th>
                                         <th>当前状态</th>
@@ -96,10 +97,15 @@
                                         <td>
                                             地址：<a :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address" target="_blank">{[item.wallet[1].wallet_address]}</a>
                                             <br>
+                                            数量：<span v-if="item.usdt_erc20 > 0" class="badge badge-success" style="background-color:#c02424;">{[item.usdt_erc20]}</span>
+                                        </td>
+                                        <td>
+                                            地址：<a :href="'https://etherscan.io/address/'+item.wallet[2].wallet_address" target="_blank">{[item.wallet[2].wallet_address]}</a>
+                                            <br>
                                             数量：<span v-if="item.eth > 0" class="badge badge-success" style="background-color:#c02424;">{[item.eth]}</span>
                                         </td>
                                         <td>
-                                            地址：<a :href="'https://www.btc.com/btc/address/'+item.wallet[2].wallet_address" target="_blank">{[item.wallet[2].wallet_address]}</a>
+                                            地址：<a :href="'https://www.btc.com/btc/address/'+item.wallet[3].wallet_address" target="_blank">{[item.wallet[3].wallet_address]}</a>
                                             <br>
                                             数量：<span v-if="item.btc > 0" class="badge badge-success" style="background-color:#c02424;">{[item.btc]}</span>
                                         </td>
