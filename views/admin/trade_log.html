@@ -68,6 +68,7 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>帐号</th>
                                         <th>数额</th>
                                         <th>类型</th>
                                         <!-- <th>区块高度</th> -->
@@ -81,6 +82,11 @@
                                 <tbody>
                                     <tr v-for="item in this.list" :class="item.type">
                                         <td>{[item.id]}</td>
+                                        <td>
+                                            <div>帐号：{[item.user.account]}</div>
+                                            <div>手机：{[item.user.mobile]}</div>
+                                            <div>邮箱：{[item.user.email]}</div>
+                                        </td>
                                         <td>{[item.amount]}</td>
                                         <td>{[item.type]}</td>
                                         <!-- <td>{[item.block]}</td> -->
