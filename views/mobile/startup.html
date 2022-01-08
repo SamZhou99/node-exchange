@@ -242,11 +242,11 @@
                 <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical">
                     <h3 class="uk-modal-title">{{lang.list[defLang].page.enter_participation}}</h3>
                     <div style="color:#414141;">
-                        <div class="uk-flex-row">
-                            <div class="col-md-8" style="margin-top: 8px;">{{lang.list[defLang].page.available_balance}}：<span
+                        <div class="uk-flex">
+                            <div class="uk-width-1-1" style="margin-top: 8px;">{{lang.list[defLang].page.available_balance}}：<span
                                     style="color:#cc3333;">{[this.balance.curr_balance]} {[coinType]}</span>
                             </div>
-                            <div class="col-md-auto ml-auto text-right">
+                            <div class="uk-width-1-6" style="margin-top: 8px;">
                                 <a @click="onClickAllIn()" class="uk-link-muted" href="javascript:void();">{{lang.list[defLang].page.all_in}}</a>
                             </div>
                         </div>
