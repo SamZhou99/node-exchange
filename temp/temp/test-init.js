@@ -2,7 +2,7 @@ const utils99 = require('node-utils99')
 const path = require('path')
 const db_config = require('../../config/db.js')
 
-const csvFileArr = ['./Bitpie_USDT-TRC20_addresses_202111142214.csv', './Bitpie_ETH_addresses_202111281351.csv', './BTC.csv']
+const csvFileArr = ['./Bitpie.csv']
 
 const server = require('../../app/service/index.js')
 
@@ -20,6 +20,7 @@ async function truncateTable() {
     // 删减后没有初始化
     await db.Query('TRUNCATE `platform_currency_buy_log`')
     await db.Query('TRUNCATE `user_authentication`')
+    await db.Query('TRUNCATE `user_authentication_photo`')
 }
 
 async function initUserCategory() {
@@ -43,13 +44,19 @@ async function initUser() {
 async function testUser() {
     let code = await server.inviteCode.getOnlyInviteCode()
     await server.inviteCode.bindInviteCode(1, code)
+
+    // let adminPassword = server.inviteCode.createRandomCode(12)
+    // console.log('管理密码', adminPassword)
+
+    let adminPassword = 'admin'
+
     // 测试数据，真实环境，需要注销掉，不要执行。
     // 注册三个测试用户
     let data = [
-        { inviteCode: '!@#$', account: 'admin', password: utils99.MD5(utils99.MD5('admin')), mail: 'admin@qq.com', mobile: '13600000000' },
-        { inviteCode: code, account: 'user1', password: utils99.MD5(utils99.MD5('user1')), mail: 'user1@qq.com', mobile: '13600001111' },
-        { inviteCode: code, account: 'user2', password: utils99.MD5(utils99.MD5('user2')), mail: 'user2@qq.com', mobile: '13600002222' },
-        { inviteCode: code, account: 'user3', password: utils99.MD5(utils99.MD5('user3')), mail: 'user3@qq.com', mobile: '13600003333' }
+        { inviteCode: '!@#$', account: 'admin', password: utils99.MD5(utils99.MD5(adminPassword)), mail: 'admin@qq.com', mobile: '13600000000' },
+        // { inviteCode: code, account: 'user1', password: utils99.MD5(utils99.MD5('user1')), mail: 'user1@qq.com', mobile: '13600001111' },
+        // { inviteCode: code, account: 'user2', password: utils99.MD5(utils99.MD5('user2')), mail: 'user2@qq.com', mobile: '13600002222' },
+        // { inviteCode: code, account: 'user3', password: utils99.MD5(utils99.MD5('user3')), mail: 'user3@qq.com', mobile: '13600003333' }
     ]
     for (let i = 0; i < data.length; i++) {
         let item = data[i]
@@ -87,7 +94,7 @@ async function importCSV() {
 }
 
 async function initPlatformCurrency() {
-    await db.Query("INSERT INTO `platform_currency` VALUES ('1', 'https://uploadfile.huiyi8.com/up/3e/d1/3e/3ed13e27028c0dfca77505ef22884414.png', 'LETH', 'Leth', '100000000', '0', '4', '0.03400000', '20.00000000', '0.00000000', '0.00000000', '2021-12-01 00:00:00', '2022-12-01 00:00:00', '2021-12-19 18:43:25', '2021-12-19 18:43:28');")
+    await db.Query("INSERT INTO `platform_currency` VALUES ('1', '/images/symbol.png', 'LETH', 'Leth', '100000000', '0', '4', '0.03400000', '20.00000000', '0.00000000', '0.00000000', '2021-12-01 00:00:00', '2022-12-01 00:00:00', '2021-12-19 18:43:25', '2021-12-19 18:43:28');")
 }
 
 async function init() {

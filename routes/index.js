@@ -56,6 +56,9 @@ router.get('/me/login-log', middleware.commmonData, middleware.checkLogin, contr
 router.get('/me/withdraw', middleware.commmonData, middleware.checkLogin, controllers.me.withdraw)
 // 身份认证
 router.get('/me/authentication', middleware.commmonData, middleware.checkLogin, controllers.me.authentication)
+// 修改密码
+router.get('/me/change-password', middleware.commmonData, middleware.checkLogin, controllers.me.changePassword)
+router.post('/me/change-password', middleware.commmonData, middleware.checkLogin, controllers.api.post.changePassword)
 
 // router.get('/me/finance', middleware.checkLogin, controllers.index)
 // // 资产转入

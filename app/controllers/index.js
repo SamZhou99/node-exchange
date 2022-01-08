@@ -186,6 +186,11 @@ let __this = {
         // api
         api: {
             post: {
+                async changePassword(ctx) {
+                    const user_id = ctx.session.user.id
+                    const res = await service.user.updateOneField(user_id, 'password', utils99.MD5(ctx.request.body.password1))
+                    ctx.body = { flag: 'ok', data: res }
+                },
                 async startup(ctx) {
                     const form = ctx.request.body
                     const user_id = ctx.session.user.id
@@ -436,6 +441,10 @@ let __this = {
             async authentication(ctx) {
                 ctx.data.session = ctx.session
                 await ctx.render(deviceTemplatePath(ctx) + '/me/authentication', ctx.data)
+            },
+            async changePassword(ctx) {
+                ctx.data.session = ctx.session
+                await ctx.render(deviceTemplatePath(ctx) + '/me/change_password', ctx.data)
             },
         },
 

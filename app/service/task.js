@@ -49,10 +49,10 @@ async function loopTradeLog() {
         await loopTradeLog()
     }, 1000 * 60 * 10)
 }
-// // 循环查询用户钱包充值记录
-// setTimeout(() => {
-//     loopTradeLog()
-// }, 1000 * 60)
+// 循环查询用户钱包充值记录
+setTimeout(() => {
+    loopTradeLog()
+}, 1000 * 60)
 
 
 
