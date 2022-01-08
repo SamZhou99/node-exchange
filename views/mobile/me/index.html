@@ -144,7 +144,7 @@
         <div class="uk-container">
 
             <div class="totalBg">
-                {{lang.list[defLang].page.total_assets}}：{[round(usd.total,2,8)]} USD
+                {{lang.list[defLang].page.total_assets}}：{[round(usd.total,1,8)]} USD
             </div>
 
             <!-- BTC -->
@@ -274,7 +274,7 @@
                     <div class="card-title">{[currency.symbol]}</div>
                     <div class="card-content uk-width-1-1">
                         <p class="card-text"><span class="gray1">{[user.platform_currency_buy_total]} {[currency.symbol]}</span>
-                            <span v-if="usd.platform_currency_is_up=='+'" class="green"> ≈ {[round(usd.platform_currency,2,8)]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
+                            <span v-if="usd.platform_currency_is_up=='+'" class="green"> ≈ {[round(usd.platform_currency,1,8)]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
                             <span v-if="usd.platform_currency_is_up=='-'" class="red"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
                             <span v-if="usd.platform_currency_is_up==''" class="gray"> ≈ {[usd.platform_currency]} USD ({[usd.platform_currency_is_up]}{[usd.platform_currency_percent]}%)</span>
                         </p>
@@ -471,7 +471,7 @@
                     ws.onmessage = (event) => {
                         let res = JSON.parse(event.data)
                         this.usd.platform_currency = this.user.platform_currency_buy_total * res.price
-                        this.usd.platform_currency_percent = this.round(res.price_percent * 100, 2, 4)
+                        this.usd.platform_currency_percent = this.round(res.price_percent * 100, 1, 4)
                         this.usd.platform_currency_is_up = res.is_up == 1 ? '+' : res.is_up == -1 ? '-' : ''
                         this.usd.total = this.usd.btc + this.usd.eth + this.usd.usdt_trc20 + this.usd.platform_currency
                     }

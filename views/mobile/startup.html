@@ -419,7 +419,7 @@
                     updateTime() {
                         this.temp_setInterval = setInterval(() => {
                             let currTime = new Date().getTime() / 1000
-                            let endTime = new Date(this.platform_currency.end_time).getTime() / 1000
+                            let endTime = new Date(this.platform_currency.end_time.replace(/-/g, '/')).getTime() / 1000
                             let defTime = endTime - currTime
                             $('#entTime').html(this.formatTime(defTime))
                             if (defTime >= 0) {
