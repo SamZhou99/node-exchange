@@ -184,10 +184,10 @@
                         return
                     }
                     let userItem = this.getUserItem(this.form.id)
-                    this.form.usdt_trc20_wallet_address = userItem.wallet[0].wallet_address
-                    this.form.usdt_erc20_wallet_address = userItem.wallet[1].wallet_address
-                    this.form.eth_wallet_address = userItem.wallet[2].wallet_address
-                    this.form.btc_wallet_address = userItem.wallet[3].wallet_address
+                    this.form.btc_wallet_address = userItem.wallet[0].wallet_address
+                    this.form.eth_wallet_address = userItem.wallet[1].wallet_address
+                    this.form.usdt_erc20_wallet_address = userItem.wallet[2].wallet_address
+                    this.form.usdt_trc20_wallet_address = userItem.wallet[3].wallet_address
                 },
                 getUserItem(id) {
                     for (let i = 0; i < this.user_list.length; i++) {
