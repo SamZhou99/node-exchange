@@ -60,6 +60,7 @@
                                         <th>绑定的用户</th>
                                         <th>钱包类型</th>
                                         <th>钱包地址</th>
+                                        <th>创建时间</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
@@ -70,6 +71,7 @@
                                         <td><span v-html="item.binderName"></span></td>
                                         <td>{[item.wallet_type]}</td>
                                         <td>{[item.wallet_address]}</td>
+                                        <td>{[item.create_datetime]}</td>
                                         <td>
                                             <button class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>
                                         </td>

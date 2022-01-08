@@ -283,7 +283,10 @@
                             <div class="uk-flex-left uk-width-1-2">
                                 <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
                             </div>
-                            <div class="uk-flex-right uk-width-1-2" style="text-align: right"><button @click="onClickGo('/startup')">{{lang.list[defLang].page.buy}}</button></div>
+                            <div class="uk-flex-right uk-width-1-2" style="text-align: right">
+                                <button @click="onClickGo('/startup')">{{lang.list[defLang].page.buy}}</button>
+                                <button @click="onClickGo('/me/withdraw')" class="">{{lang.list[defLang].page.withdraw}}</button>
+                            </div>
                         </div>
                     </div>
                 </div>

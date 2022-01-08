@@ -1,6 +1,7 @@
 const utils99 = require('node-utils99')
 const CronJob = require('cron').CronJob
 const service = require('./index.js')
+const common = require('../../config/common.js')
 
 /**
  秒数：Seconds: 0-59
@@ -39,21 +40,30 @@ async function loopTradeLog() {
     let res = await service.user.simpleList()
     for (let i = 0; i < res.length; i++) {
         let item = res[i]
-        await service.wallet.getInternetTradeLog(item.wallet.wallet_address)
-        // 延迟5秒后，查询下个钱包记录。
-        await delay(1000 * 5)
+        for (let j = 0; j < item.wallet.length; j++) {
+            let wallet_item = item.wallet[j]
+            if (wallet_item.wallet_type == common.coin.type.USDT_TRC20) {
+                console.log('任务调度-------------------->', wallet_item.wallet_address)
+                await service.wallet.getInternetTradeLog(wallet_item.wallet_address)
+                // 延迟5秒后，查询下个钱包记录。
+                await delay(1000 * 5)
+            }
+        }
     }
 
     // 上面钱包查询完后，10分钟后，再次查询。
     setTimeout(async function () {
+        console.log('轮循结束下一次开始')
         await loopTradeLog()
     }, 1000 * 60 * 10)
 }
+
 // 循环查询用户钱包充值记录
 setTimeout(() => {
     loopTradeLog()
 }, 1000 * 60)
 
+// loopTradeLog()
 
 
 

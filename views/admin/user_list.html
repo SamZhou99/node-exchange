@@ -53,8 +53,8 @@
                                         <th>邀请码</th>
                                         <th>邀请人(上级)</th>
                                         <th>平台币({[this.platform_currency.symbol]})</th>
-                                        <th>USDT-RTC20</th>
-                                        <th>USDT-ETC20</th>
+                                        <th>USDT-TRC20</th>
+                                        <th>USDT-ERC20</th>
                                         <th>ETH</th>
                                         <th>BTC</th>
                                         <th>当前状态</th>
@@ -90,22 +90,22 @@
                                             数量：<span v-if="item.platform_currency_buy_total > 0" class="badge badge-success" style="background-color:#6fa30f;">{[item.platform_currency_buy_total]}</span>
                                         </td>
                                         <td>
-                                            地址：<a :href="'https://usdt.tokenview.com/cn/address/'+item.wallet[0].wallet_address" target="_blank">{[item.wallet[0].wallet_address]}</a>
+                                            地址：<a :href="'https://usdt.tokenview.com/cn/address/'+item.wallet[3].wallet_address" target="_blank">{[item.wallet[3].wallet_address]}</a>
                                             <br>
                                             数量：<span v-if="item.usdt_trc20 > 0" class="badge badge-success" style="background-color:#c02424;">{[item.usdt_trc20]}</span>
                                         </td>
                                         <td>
-                                            地址：<a :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address" target="_blank">{[item.wallet[1].wallet_address]}</a>
+                                            地址：<a :href="'https://etherscan.io/address/'+item.wallet[2].wallet_address" target="_blank">{[item.wallet[2].wallet_address]}</a>
                                             <br>
                                             数量：<span v-if="item.usdt_erc20 > 0" class="badge badge-success" style="background-color:#c02424;">{[item.usdt_erc20]}</span>
                                         </td>
                                         <td>
-                                            地址：<a :href="'https://etherscan.io/address/'+item.wallet[2].wallet_address" target="_blank">{[item.wallet[2].wallet_address]}</a>
+                                            地址：<a :href="'https://etherscan.io/address/'+item.wallet[1].wallet_address" target="_blank">{[item.wallet[1].wallet_address]}</a>
                                             <br>
                                             数量：<span v-if="item.eth > 0" class="badge badge-success" style="background-color:#c02424;">{[item.eth]}</span>
                                         </td>
                                         <td>
-                                            地址：<a :href="'https://www.btc.com/btc/address/'+item.wallet[3].wallet_address" target="_blank">{[item.wallet[3].wallet_address]}</a>
+                                            地址：<a :href="'https://www.btc.com/btc/address/'+item.wallet[0].wallet_address" target="_blank">{[item.wallet[0].wallet_address]}</a>
                                             <br>
                                             数量：<span v-if="item.btc > 0" class="badge badge-success" style="background-color:#c02424;">{[item.btc]}</span>
                                         </td>
@@ -120,7 +120,7 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <button @click="onRefreshWalletAddress(item.wallet[0].wallet_address)" :disabled="refreshButtonStatus" class="btn">
+                                            <button @click="onRefreshWalletAddress(item.wallet[3].wallet_address)" :disabled="refreshButtonStatus" class="btn">
                                                 <i class="fa fa-refresh"></i>
                                             </button>
                                             <button class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>

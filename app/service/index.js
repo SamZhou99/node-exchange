@@ -209,7 +209,7 @@ let service = {
             r = await db.Query('SELECT u.id,u.email,u.mobile,u.account,u.status,u.type,u.usdt_trc20,u.usdt_erc20,u.eth,u.btc,ucg.label,ucg.value FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type WHERE u.id=? LIMIT 1', [user.parent_id])
             user.parent = r.length > 0 ? r[0] : null
             // 钱包地址
-            r = await db.Query('SELECT id,wallet_address,wallet_type FROM system_wallet WHERE bind_user_id=? LIMIT 10', [user.id])
+            r = await db.Query('SELECT id,wallet_address,wallet_type FROM system_wallet WHERE bind_user_id=? ORDER BY wallet_type LIMIT 10', [user.id])
             user.wallet = r
             for (let i = 0; i < r.length; i++) {
                 let walletItem = r[i]
@@ -242,8 +242,8 @@ let service = {
             for (let i = 0; i < res.length; i++) {
                 let item = res[i]
                 // 钱包地址
-                let r = await db.Query('SELECT id,wallet_address FROM system_wallet WHERE bind_user_id=? LIMIT 1', [item.id])
-                item.wallet = r.length > 0 ? r[0] : null
+                let r = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=?', [item.id])
+                item.wallet = r
             }
             return res
         },
@@ -418,7 +418,7 @@ let service = {
 
             // 往用户信息里 加币
             let userRes = await service.user.oneByWalletAddress(toAddress)
-            console.log('机会啊', userRes)
+            console.log('往用户信息里 加币', userRes.id, userRes.email)
             let coin_type = coinType.replace('-', '_')
             let value = Number(userRes[coin_type]) + Number(amount)
             console.log(userRes.id, coin_type, value)

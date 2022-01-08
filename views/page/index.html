@@ -626,19 +626,19 @@
 								let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
 								item.node.priceUsd = _t.round(v, 1, 6)
 								item.node.changePercent24Hr = _t.round(res.platform.price_percent, 2, 2)
-								$('#' + key).addClass(className)
-								setTimeout(() => {
-									$('#' + key).removeClass(className)
-								}, time)
+								// $('#' + key).addClass(className)
+								// setTimeout(() => {
+								// 	$('#' + key).removeClass(className)
+								// }, time)
 							}
 							let v = res.cache[key]
 							if (v) {
 								let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
 								item.node.priceUsd = _t.round(v, 1, 6)
-								$('#' + key).addClass(className)
-								setTimeout(() => {
-									$('#' + key).removeClass(className)
-								}, time)
+								// $('#' + key).addClass(className)
+								// setTimeout(() => {
+								// 	$('#' + key).removeClass(className)
+								// }, time)
 							}
 						})
 					}
