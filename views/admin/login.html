@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/admin-assets/images/favicon.png" type="image/png">
+    <title></title>
+    <link href="/admin-assets/css/icons.css" rel="stylesheet">
+    <link href="/admin-assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/admin-assets/css/style.css" rel="stylesheet">
+    <link href="/admin-assets/css/responsive.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+          <script src="js/html5shiv.min.js"></script>
+          <script src="js/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- vue -->
+    <script src="/default/js/vue.js"></script>
+    <!-- md5 -->
+    <script src="/default/js/md5.js"></script>
+</head>
+
+<body class="sticky-header">
+
+
+    <!--Start login Section-->
+    <section class="login-section">
+        <div id="app" class="container">
+            <div class="row">
+                <div class="login-wrapper">
+                    <div class="login-inner">
+
+                        <div class="logo">
+                            <img src="/admin-assets/images/logo-dark.png" alt="logo" />
+                        </div>
+
+                        <h2 class="header-title text-center">Login</h2>
+
+                        <!-- <form> -->
+                        <div class="form-group">
+                            <input v-model="form.mail" type="text" class="form-control" placeholder="Account">
+                        </div>
+
+                        <div class="form-group">
+                            <input @keyup.enter="onClickSubmit()" v-model="form.password" type="password" class="form-control" placeholder="Password" autocomplete="off">
+                        </div>
+
+                        <div class="form-group">
+                            <input @click="onClickSubmit()" :disabled="disabled" type="button" value="Login" class="btn btn-primary btn-block">
+                        </div>
+
+                        <!-- </form> -->
+
+                        <div class="copy-text">
+                            <p class="m-0">Meter admin</p>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!--End login Section-->
+
+
+
+
+    <!--Begin core plugin -->
+    <script src="/admin-assets/js/jquery.min.js"></script>
+    <script src="/admin-assets/js/bootstrap.min.js"></script>
+    <!-- End core plugin -->
+
+
+    <script>
+        let app = new Vue({
+            delimiters: ["{[", "]}"],
+            el: '#app',
+            data: {
+                loading: false,
+                disabled: false,
+                form: {
+                    mail: '',
+                    password: '',
+                }
+            },
+            methods: {
+                onClickSubmit() {
+                    if (this.form.mail.length < 1) {
+                        alert('请填写完整帐号！')
+                        return
+                    }
+
+                    if (this.form.password.length < 5) {
+                        alert('请填写完整密码！')
+                        return
+                    }
+
+                    this.disabled = false
+                    this.form.password = md5(this.form.password)
+                    $.post("/login", this.form, (data) => {
+                        this.disabled = true
+                        if (data.flag != 'ok') {
+                            this.alert(data.flag)
+                            return
+                        }
+                        document.location = '/admin/dashboard'
+                    }, 'json')
+                },
+                post(url, params, callback) {
+                    this.loading = true;
+                    $.post(url, params, res => {
+                        this.loading = false;
+                        callback(res);
+                    })
+                },
+                get(url, params, callback) {
+                    this.loading = true;
+                    $.ajax({
+                        'url': url,
+                        'type': 'GET',
+                        'dataType': 'json',
+                        'data': params,
+                        'success': res => {
+                            this.loading = false;
+                            callback(res);
+                        },
+                        'error': err => {
+                            this.loading = false;
+                            console.log(err);
+                            alert(err.statusText);
+                        }
+                    })
+                },
+
+                init() {
+                }
+            },
+            mounted() {
+                this.init();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

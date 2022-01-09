@@ -10,21 +10,25 @@ const service = require('../service/index.js')
 
 async function userAdd(ctx, inviteCode, account, password, type, mail, mobile, status, create_datetime, update_datetime) {
     let defLang = getDefaultLanguage(ctx)
+    // 检查帐号，邮箱是否有值
     if (!account && !mail && !mobile) {
         ctx.body = { flag: lang.list[defLang].page.reg.alert.check_form_whole }
         return
     }
+    // 检查是否帐号重复
     let user = await service.user.checkAccountExist(account, mail, mobile)
     if (user) {
         ctx.body = { flag: lang.list[defLang].page.reg.alert.mail_err }
         return
     }
+    // 检查用户输入的邀请码是否存在，如果不存在，就默认为系统的用户。
     let res = await service.inviteCode.findByCode(inviteCode)
     if (!res) {
         // ctx.body = { flag: lang.list[defLang].page.reg.alert.invite_code_err }
         // return
         inviteCode = '!@#$'
     }
+    // 创建帐户
     await service.user.createNewUser(inviteCode, account, utils99.MD5(password), type, mail, mobile, status, create_datetime, update_datetime)
     ctx.body = { flag: 'ok' }
 }
@@ -453,8 +457,14 @@ let __this = {
         // 管理面板
         admin: {
             // 首页
-            async index(ctx) {
-                ctx.redirect('/admin/dashboard')
+            index: {
+                async page(ctx) {
+                    await ctx.render('admin/login', ctx.data)
+                },
+                async post(ctx) {
+                    const body = ctx.request.body
+                    await __this.page.login.actLogin(ctx, body)
+                }
             },
             // 统计表首页 
             async dashboard(ctx) {

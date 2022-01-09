@@ -138,6 +138,7 @@ let service = {
         async createNewUser(inviteCode, account, password, type, mail, mobile, status, create_datetime, update_datetime) {
             let res = inviteCode == '!@#$' ? { user_id: 0 } : await service.inviteCode.findByCode(inviteCode)
             let parent_id = res.user_id
+            // 插入新帐户
             res = await db.Query(`INSERT INTO user(parent_id,account,password,type,email,mobile,status,create_datetime,update_datetime) VALUES(?,?,?,?,?,?,?,?,?)`,
                 [parent_id, account, password, type, mail, mobile, status, create_datetime, update_datetime])
             // 新用户绑定 邀请码
@@ -363,15 +364,37 @@ let service = {
          * @param {*} user_id 
          */
         async bindWalletAddressToUserId(user_id) {
+
+
+            async function bindAddress(res, type, user_id) {
+                if (res.length <= 0) {
+                    // 如果btc地址没有了，就从库中 【随机】 找一个，插入一条
+                    let res = await db.Query('SELECT * FROM system_wallet WHERE wallet_type=? ORDER BY RAND() LIMIT 1', [type])
+                    // 复制插入这条数据
+                    let item = res[0]
+                    let upload_user_id = item.upload_user_id
+                    let bind_user_id = user_id
+                    let wallet_address = item.wallet_address
+                    let wallet_type = item.wallet_type
+                    let create_datetime = utils99.Time()
+                    let update_datetime = utils99.Time()
+                    return await db.Query(`INSERT INTO system_wallet(upload_user_id,bind_user_id,wallet_address,wallet_type,create_datetime,update_datetime) VALUE(?,?,?,?,?,?)`, [upload_user_id, bind_user_id, wallet_address, wallet_type, create_datetime, update_datetime])
+                }
+                // 库有空的地址，直接绑定
+                return await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, res[0].id])
+            }
+
+            // 查询库中 没有 空的 钱包地址
             let usdt_trc20_res = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type=? ORDER BY id LIMIT 1', [common.coin.type.USDT_TRC20])
             let usdt_erc20_res = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type=? ORDER BY id LIMIT 1', [common.coin.type.USDT_ERC20])
             let btc_res = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type=? ORDER BY id LIMIT 1', [common.coin.type.BTC])
             let eth_res = await db.Query('SELECT * FROM system_wallet WHERE bind_user_id=0 AND wallet_type=? ORDER BY id LIMIT 1', [common.coin.type.ETH])
 
-            let usdt_trc20 = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, usdt_trc20_res[0].id])
-            let usdt_erc20 = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, usdt_erc20_res[0].id])
-            let btc = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, btc_res[0].id])
-            let eth = await db.Query('UPDATE system_wallet SET bind_user_id=? WHERE id=?', [user_id, eth_res[0].id])
+            // 有空的直接绑定，没有空的，重复利用原有的地址。
+            let usdt_trc20 = await bindAddress(usdt_trc20_res, common.coin.type.USDT_TRC20, user_id)
+            let usdt_erc20 = await bindAddress(usdt_erc20_res, common.coin.type.USDT_ERC20, user_id)
+            let eth = await bindAddress(eth_res, common.coin.type.ETH, user_id)
+            let btc = await bindAddress(btc_res, common.coin.type.BTC, user_id)
 
             return [usdt_trc20, usdt_erc20, btc, eth]
         },

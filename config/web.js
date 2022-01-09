@@ -7,6 +7,10 @@ module.exports = {
         host: '127.0.0.1',
         port: 3031,
     },
+    admin: {
+        host: '127.0.0.1',
+        port: 3040,
+    },
     // 邀请码长度
     invite_code_length: 4,
 }
