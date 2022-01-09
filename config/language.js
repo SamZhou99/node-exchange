@@ -4,7 +4,7 @@ module.exports = {
     copyright: 'Copyright © 2021 temp02.go9488.cn',   // 版权 域名要 改
     mail: 'admin@go9488.cn',
     name: 'LETH',
-    ws: 'ws',
+    ws: 'ws://localhost:3031',
     list: {
         en: {
             name: 'English',
