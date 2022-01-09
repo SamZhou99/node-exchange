@@ -1,6 +1,6 @@
 #自定义
 backups/
-config/db.js
+config/
 public/article/
 public/_upload/
 public/Upload/
