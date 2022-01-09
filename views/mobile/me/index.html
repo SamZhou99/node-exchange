@@ -458,7 +458,7 @@
                     })
                 },
                 initWS() {
-                    let ws = new WebSocket('{{lang.ws}}://{{lang.domain}}:3031/coin/price/platform')
+                    let ws = new WebSocket('{{lang.ws}}/coin/price/platform')
                     ws.onopen = () => {
                         console.log('websocket init ...')
                         if (this.user.platform_currency_buy_total <= 0) {

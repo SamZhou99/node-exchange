@@ -291,7 +291,7 @@
                     this.list = a
                 },
                 initWS() {
-                    let ws = new WebSocket('{{lang.ws}}://{{lang.domain}}:3031/coin/price')
+                    let ws = new WebSocket('{{lang.ws}}/coin/price')
                     ws.onopen = () => {
                         console.log('websocket init ...')
                     };

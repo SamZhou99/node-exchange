@@ -53,7 +53,7 @@ let _t = {
         let max = Math.max(dayItem.open, dayItem.close)
         let min = Math.min(dayItem.open, dayItem.close)
         let difference = max - min
-        let percent = difference / dayItem.open
+        let percent = difference / dayItem.open * 100
         let target_price = Math.max(dayItem.open, dayItem.close)
 
         console.log(`K线 ${_t.data.kline.data.length} 天`)

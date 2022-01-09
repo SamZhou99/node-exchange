@@ -415,7 +415,7 @@
                     })
                 },
                 initWS() {
-                    let ws = new WebSocket('{{lang.ws}}://{{lang.domain}}:3031/coin/price/platform')
+                    let ws = new WebSocket('{{lang.ws}}/coin/price/platform')
                     ws.onopen = () => {
                         console.log('websocket init ...')
                         if (this.user.platform_currency_buy_total <= 0) {
@@ -428,7 +428,7 @@
                     ws.onmessage = (event) => {
                         let res = JSON.parse(event.data)
                         this.usd.platform_currency = this.user.platform_currency_buy_total * res.price
-                        this.usd.platform_currency_percent = this.round(res.price_percent * 100, 1, 4)
+                        this.usd.platform_currency_percent = this.round(res.price_percent, 1, 4)
                         this.usd.platform_currency_is_up = res.is_up == 1 ? '+' : res.is_up == -1 ? '-' : ''
                         this.usd.total = this.usd.btc + this.usd.eth + this.usd.usdt_trc20 + this.usd.platform_currency
                     }
