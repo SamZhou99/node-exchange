@@ -57,7 +57,7 @@ let service = {
          * @returns 
          */
         async oneById(id) {
-            let res = await db.Query('SELECT id,parent_id,account,type,email,mobile,status,usdt_trc20,usdt_erc20,eth,btc,create_datetime,update_datetime FROM `user` WHERE id=? LIMIT 1', [id])
+            let res = await db.Query('SELECT id,parent_id,account,type,notes,email,mobile,status,usdt_trc20,usdt_erc20,eth,btc,create_datetime,update_datetime FROM `user` WHERE id=? LIMIT 1', [id])
             return res.length > 0 ? res[0] : null
         },
         /**
@@ -189,7 +189,7 @@ let service = {
          * @returns 
          */
         async list() {
-            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,u.usdt_trc20,u.usdt_erc20,u.eth,u.btc,ucg.label,ucg.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type ORDER BY id DESC LIMIT 1000')
+            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,u.notes,u.usdt_trc20,u.usdt_erc20,u.eth,u.btc,ucg.label,ucg.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type ORDER BY id DESC LIMIT 1000')
             for (let i = 0; i < res.length; i++) {
                 let item = res[i]
                 item = await service.user.userDetailInfo(item)
@@ -239,7 +239,7 @@ let service = {
          * @returns 
          */
         async simpleList() {
-            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,ucg.label,ucg.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type WHERE u.status=1 ORDER BY id DESC LIMIT 1000')
+            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,u.notes,ucg.label,ucg.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type WHERE u.status=1 ORDER BY id DESC LIMIT 1000')
             for (let i = 0; i < res.length; i++) {
                 let item = res[i]
                 // 钱包地址

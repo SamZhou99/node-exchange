@@ -50,7 +50,7 @@
                                         <th>ID</th>
                                         <th>帐号</th>
                                         <th>用户类型/认证</th>
-                                        <th>邀请码</th>
+                                        <th>备注</th>
                                         <th>邀请人(上级)</th>
                                         <th>平台币({[this.platform_currency.symbol]})</th>
                                         <th>USDT-TRC20</th>
@@ -78,8 +78,9 @@
                                             </div>
                                             </p>
                                         </td>
-                                        <td><a :href="'/reg?invite='+item.invite.code"
-                                                target="_blank">{[item.invite.code]}</a>
+                                        <td>
+                                            <!-- <a :href="'/reg?invite='+item.invite.code" target="_blank">{[item.invite.code]}</a> -->
+                                            {[item.notes]}
                                         </td>
                                         <td><span v-html="item.parent ? item.parent_name : '无'"></span></td>
 
@@ -123,7 +124,7 @@
                                             <button @click="onRefreshWalletAddress(item.wallet[3].wallet_address)" :disabled="refreshButtonStatus" class="btn">
                                                 <i class="fa fa-refresh"></i>
                                             </button>
-                                            <button class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>
+                                            <button @click="onClickEdit(item)" class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -135,6 +136,68 @@
             </div>
             <!--End row-->
 
+            <!-- Modal -->
+            <div class="modal fade" id="modalId" tabindex="-1" role="dialog" aria-labelledby="modalIdTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="color: black">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+                            <div class="form-row">
+                                <h5 id="modalIdTitle" class="col-md-6 modal-title">编辑用户数据 <span style="color:#c02424;">{[form.email]}</span> </h5>
+                                <div class="col-md-6">
+                                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-body">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">备注信息</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" v-model="form.notes" type="text">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">BTC</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" v-model="form.btc" type="number">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">ETH</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" v-model="form.eth" type="number">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">USDT-TRC20</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" v-model="form.usdt_trc20" type="number">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">USDT_ERC20</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" v-model="form.usdt_erc20" type="number">
+                                    </div>
+                                </div>
+
+
+
+                                <div class="clearfix"></div>
+                            </form>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="modal-footer text-center">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button @click="onClickEditSubmit()" :disabled="this.loading" type="button" class="btn btn-primary">确认修改</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
 
         </div>
         <!-- End Wrapper-->
@@ -166,9 +229,48 @@
                 list: [],
                 refreshButtonStatus: false,
                 categoryList: [],
-                platform_currency: {}
+                platform_currency: {},
+                form: {
+                    user_id: null,
+                    email: null,
+                    notes: null,
+                    usdt_trc20: null,
+                    usdt_erc20: null,
+                    eth: null,
+                    btc: null,
+                },
+                currItem: null,
             },
             methods: {
+                onClickEditSubmit() {
+                    console.log(this.form, this.currItem)
+                    if (this.form.notes != this.currItem.notes) {
+                        this.get('/admin/api/user/update-one-field', { id: this.form.user_id, field: 'notes', value: this.form.notes }, (data) => console.log)
+                    }
+                    if (this.form.usdt_trc20 != this.currItem.usdt_trc20) {
+                        this.get('/admin/api/user/update-one-field', { id: this.form.user_id, field: 'usdt_trc20', value: this.form.usdt_trc20 }, (data) => console.log)
+                    }
+                    if (this.form.usdt_erc20 != this.currItem.usdt_erc20) {
+                        this.get('/admin/api/user/update-one-field', { id: this.form.user_id, field: 'usdt_erc20', value: this.form.usdt_erc20 }, (data) => console.log)
+                    }
+                    if (this.form.eth != this.currItem.eth) {
+                        this.get('/admin/api/user/update-one-field', { id: this.form.user_id, field: 'eth', value: this.form.eth }, (data) => console.log)
+                    }
+                    if (this.form.btc != this.currItem.btc) {
+                        this.get('/admin/api/user/update-one-field', { id: this.form.user_id, field: 'btc', value: this.form.btc }, (data) => console.log)
+                    }
+                },
+                onClickEdit(item) {
+                    this.currItem = item
+                    this.form.user_id = item.id;
+                    this.form.email = item.email;
+                    this.form.notes = item.notes;
+                    this.form.usdt_trc20 = item.usdt_trc20;
+                    this.form.usdt_erc20 = item.usdt_erc20;
+                    this.form.eth = item.eth;
+                    this.form.btc = item.btc;
+                    $('#modalId').modal("show");
+                },
                 onClickStatus(item) {
                     item.status = item.status == 1 ? 0 : 1
                     console.log('item.status ===============')
