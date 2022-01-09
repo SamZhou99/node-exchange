@@ -492,7 +492,7 @@
                         item.node.marketCapUsd = _t.round(item.marketCapUsd, 12, 2)
                         item.node.supply = _t.round(item.supply, 6, 2)
                         item.node.volumeUsd24Hr = _t.lessen(item.volumeUsd24Hr, 9, 2)
-                        item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 2, 2)
+                        item.node.changePercent24Hr = _t.round(item.changePercent24Hr, 1, 2)
                     })
                     let ptb = {
                         node: {
@@ -504,7 +504,7 @@
                             marketCapUsd: _t.round(78623827.73 - Math.random() * 10000, 12, 2),
                             supply: _t.round(3148153.73 - Math.random() * 1000, 6, 2),
                             volumeUsd24Hr: _t.lessen(1143447.01 - Math.random() * 1000, 9, 2),
-                            changePercent24Hr: _t.round(0, 2, 2),
+                            changePercent24Hr: _t.round(0, 1, 2),
                             rank: this.statup.sort,
                         }
                     }
@@ -537,7 +537,7 @@
                                 let v = res.platform.price
                                 let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
                                 item.node.priceUsd = _t.round(v, 1, 4)
-                                item.node.changePercent24Hr = _t.round(res.platform.price_percent, 2, 2)
+                                item.node.changePercent24Hr = _t.round(res.platform.price_percent, 1, 2)
                                 $('#' + key).addClass(className)
                                 setTimeout(() => {
                                     $('#' + key).removeClass(className)
