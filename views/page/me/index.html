@@ -389,6 +389,16 @@
                     let zl = z.substr(0, dotLaterLen)
                     return `${s}.${zl}`
                 },
+                getObjBySymbol(arr, symbol) {
+                    for (let i = 0; i < arr.length; i++) {
+                        let item = arr[i]
+                        console.log(item.symbol, symbol)
+                        if (item.symbol == symbol) {
+                            return item
+                        }
+                    }
+                    return null
+                },
                 post(url, params, callback) {
                     this.loading = true;
                     $.post(url, params, res => {
@@ -442,11 +452,10 @@
                     this.get('/api/startup', {}, (data) => {
                         this.currency = data.data.currency
                         this.user = data.data.user
-
-                        this.get('/api/coincap-prices-assets/caches', {}, (data) => {
-                            let o = data.data.value
-                            this.usd.btc = o.bitcoin * this.user.btc
-                            this.usd.eth = o.ethereum * this.user.eth
+                        this.get('/api/coincap-coin-list/caches', {}, (data) => {
+                            let a = data.data.value
+                            this.usd.btc = Number(this.getObjBySymbol(a, 'BTC').priceUsd)
+                            this.usd.eth = Number(this.getObjBySymbol(a, 'ETH').priceUsd)
                             this.usd.usdt_trc20 = this.user.usdt_trc20
                             this.usd.usdt_erc20 = this.user.usdt_erc20
                             this.usd.total = this.usd.btc + this.usd.eth + this.usd.usdt_trc20 + this.usd.usdt_erc20 + this.usd.platform_currency
