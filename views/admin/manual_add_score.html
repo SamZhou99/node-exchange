@@ -92,6 +92,7 @@
                                 <label class="col-md-2 control-label">(平台币){[this.platform_currency.currency.symbol]}</label>
                                 <div class="col-md-10">
                                     <input v-model="form.platform_currency" class="form-control" value="" type="number" min="0">
+                                    时价：{[form.platform_currency_price]} ≈ {[form.platform_currency_price*form.platform_currency]}
                                 </div>
                             </div>
 
@@ -146,7 +147,8 @@
                     usdt_erc20_wallet_address: '-',
                     eth_wallet_address: '-',
                     btc_wallet_address: '-',
-                    platform_currency: 0
+                    platform_currency: 0,
+                    platform_currency_price: 0,
                 },
                 platform_currency: {
                     currency: {
@@ -212,6 +214,28 @@
                         platform_currency: 0
                     }
                 },
+
+                initWS() {
+                    let ws = new WebSocket('{{lang.ws}}/coin/price')
+                    ws.onopen = () => {
+                        console.log('websocket init ...')
+                    };
+                    ws.onclose = () => {
+                        console.log('websocket close ...')
+
+                        setTimeout(() => {
+                            this.initWS()
+                        }, 60000)
+                    }
+                    ws.onmessage = (event) => {
+                        const time = 1000
+                        let _t = this
+                        let res = JSON.parse(event.data)
+                        this.form.platform_currency_price = res.platform.price
+                        // ws.close()
+                    }
+                },
+
                 post(url, params, callback) {
                     this.loading = true;
                     $.post(url, params, res => {
@@ -237,12 +261,12 @@
                         }
                     })
                 },
-
                 init() {
                     this.get('/admin/api/user-list', {}, (data) => {
                         let a = data.data.list
                         this.user_list = a
                         this.updateUserInfoAndWalletAddress()
+                        this.initWS()
                     })
 
                     this.get('/api/startup', {}, (data) => {
