@@ -41,17 +41,24 @@
                     <div class="white-box">
                         <h2 class="header-title">上分表单</h2>
 
-
-
                         <form class="form-horizontal">
+
                             <div class="form-group">
-                                <label class="col-md-2 control-label">要上分的帐号</label>
+                                <label class="col-md-2 control-label"><span style="color:red;">(必填)</span>要修改的帐号</label>
                                 <div class="col-md-10">
-                                    <select @change="onChangeSelected" v-model="form.id" class="form-control" id="type" name="type">
+                                    <select @change="onChangeSelected(form)" v-model="form.id" class="form-control" id="type" name="type">
                                         <option disabled value="0">请选择</option>
-                                        <option v-for="option in user_list" :value="option.id">帐号：{[option.account]},
-                                            电话：{[option.mobile]}, 邮箱：{[option.email]}, 帐号类型：{[option.value]}
-                                        </option>
+                                        <option v-for="option in user_list" :value="option.id">帐号：{[option.account]},电话：{[option.mobile]}, 邮箱：{[option.email]}, 帐号类型：{[option.value]}</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label"><span style="color:red;">(必填)</span>上分或下分</label>
+                                <div class="col-md-10">
+                                    <select v-model="form.action" class="form-control">
+                                        <option disabled value="">请选择</option>
+                                        <option v-for="option in actions" :value="option.value">{[option.label]}</option>
                                     </select>
                                 </div>
                             </div>
@@ -60,7 +67,7 @@
                                 <label class="col-md-2 control-label">USDT-TRC20</label>
                                 <div class="col-md-10">
                                     <input v-model="form.usdt_trc20" class="form-control" value="" type="number" min="0">
-                                    系统钱包地址：{[form.usdt_trc20_wallet_address]}
+                                    系统钱包地址：{[form.usdt_trc20_wallet_address]}　　余额：{[curr_user_item.user_trc20]}
                                 </div>
                             </div>
 
@@ -68,7 +75,7 @@
                                 <label class="col-md-2 control-label">USDT-ERC20</label>
                                 <div class="col-md-10">
                                     <input v-model="form.usdt_erc20" class="form-control" value="" type="number" min="0">
-                                    系统钱包地址：{[form.usdt_erc20_wallet_address]}
+                                    系统钱包地址：{[form.usdt_erc20_wallet_address]}　　余额：{[curr_user_item.user_erc20]}
                                 </div>
                             </div>
 
@@ -76,7 +83,7 @@
                                 <label class="col-md-2 control-label">ETH</label>
                                 <div class="col-md-10">
                                     <input v-model="form.eth" class="form-control" value="" type="number" min="0">
-                                    系统钱包地址：{[form.eth_wallet_address]}
+                                    系统钱包地址：{[form.eth_wallet_address]}　　余额：{[curr_user_item.eth]}
                                 </div>
                             </div>
 
@@ -84,7 +91,7 @@
                                 <label class="col-md-2 control-label">BTC</label>
                                 <div class="col-md-10">
                                     <input v-model="form.btc" class="form-control" value="" type="number" min="0">
-                                    系统钱包地址：{[form.btc_wallet_address]}
+                                    系统钱包地址：{[form.btc_wallet_address]}　　余额：{[curr_user_item.btc]}
                                 </div>
                             </div>
 
@@ -92,14 +99,21 @@
                                 <label class="col-md-2 control-label">(平台币){[this.platform_currency.currency.symbol]}</label>
                                 <div class="col-md-10">
                                     <input v-model="form.platform_currency" class="form-control" value="" type="number" min="0">
-                                    时价：{[form.platform_currency_price]} ≈ {[form.platform_currency_price*form.platform_currency]}
+                                    时价：{[form.platform_currency_price]} ≈ {[form.platform_currency_price*form.platform_currency]}　　余额：{[curr_user_item.platform_currency_buy_total]}
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-md-2 control-label"><span style="color:red;">(必填)</span>备注</label>
+                                <div class="col-md-10">
+                                    <input v-model="form.notes" class="form-control" value="" type="text" maxlength="200">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-md-2 control-label"></label>
                                 <div class="col-md-10">
-                                    <button @click="onClickSubmit()" type="button"
+                                    <button @click="onClickSubmit(form)" type="button"
                                         class="btn btn-primary col-md-1">Submit</button>
                                 </div>
                             </div>
@@ -107,9 +121,12 @@
                         </form>
 
 
-
-
                     </div>
+
+
+
+
+
                 </div>
             </div>
             <!--End row-->
@@ -137,19 +154,36 @@
             data: {
                 loading: false,
                 user_list: [],
+
+                actions: [
+                    { label: '上分', value: 'add' },
+                    { label: '下分', value: 'subtract' },
+                ],
+
+                curr_user_item: {
+                    usdt_trc20: null,
+                    usdt_erc20: null,
+                    eth: null,
+                    btc: null,
+                    platform_currency_buy_total: null,
+                },
+
                 form: {
                     id: 0,
+                    action: '',
                     usdt_trc20: 0,
                     usdt_erc20: 0,
                     eth: 0,
                     btc: 0,
-                    usdt_trc20_wallet_address: '-',
-                    usdt_erc20_wallet_address: '-',
-                    eth_wallet_address: '-',
-                    btc_wallet_address: '-',
+                    usdt_trc20_wallet_address: '',
+                    usdt_erc20_wallet_address: '',
+                    eth_wallet_address: '',
+                    btc_wallet_address: '',
                     platform_currency: 0,
                     platform_currency_price: 0,
+                    notes: '',
                 },
+
                 platform_currency: {
                     currency: {
                         symbol: ''
@@ -157,40 +191,45 @@
                 },
             },
             methods: {
-                onChangeSelected() {
-                    this.updateUserInfoAndWalletAddress()
+                onChangeSelected(form) {
+                    if (form.id <= 0) {
+                        return
+                    }
+                    let userItem = this.curr_user_item = this.getUserItem(form.id)
+                    form.btc_wallet_address = userItem.wallet[0].wallet_address
+                    form.eth_wallet_address = userItem.wallet[1].wallet_address
+                    form.usdt_erc20_wallet_address = userItem.wallet[2].wallet_address
+                    form.usdt_trc20_wallet_address = userItem.wallet[3].wallet_address
                 },
-                onClickSubmit() {
-                    if (this.form.id <= 0) {
+                onClickSubmit(form) {
+                    if (form.id <= 0) {
                         alert('请选择一个用户')
                         return
                     }
-                    console.log(this.form)
-                    if (Number(this.form.usdt_trc20) == 0 && Number(this.form.usdt_erc20) == 0 && Number(this.form.eth) == 0 && Number(this.form.btc) == 0 && Number(this.form.platform_currency) == 0) {
-                        alert('请填写要添加的金额数量。')
+                    if (form.action.length <= 0) {
+                        alert('请选择要 上分 或 下分？')
+                        return
+                    }
+                    if (Number(form.usdt_trc20) <= 0 && Number(form.usdt_erc20) <= 0 && Number(form.eth) <= 0 && Number(form.btc) <= 0 && Number(form.platform_currency) <= 0) {
+                        alert('请填写正确的金额或数量，负数无效！')
+                        return
+                    }
+                    if (form.notes.trim().length <= 0) {
+                        alert('请填写备注项，上分下分的原因是什么？')
                         return
                     }
                     this.loading = true
-                    this.post('/admin/api/manual-add-score', this.form, (data) => {
+                    this.post('/admin/api/manual-add-score', form, (data) => {
                         this.loading = false
                         if (data.flag != 'ok') {
                             swal("修改完成！", "数据已修改完成！", "error")
                             return
                         }
-                        this.resetFrom()
+                        this.resetFrom(form)
                         swal("修改完成！", "数据已修改完成！", "success")
                     })
                 },
-                updateUserInfoAndWalletAddress() {
-                    if (this.form.id <= 0) {
-                        return
-                    }
-                    let userItem = this.getUserItem(this.form.id)
-                    this.form.btc_wallet_address = userItem.wallet[0].wallet_address
-                    this.form.eth_wallet_address = userItem.wallet[1].wallet_address
-                    this.form.usdt_erc20_wallet_address = userItem.wallet[2].wallet_address
-                    this.form.usdt_trc20_wallet_address = userItem.wallet[3].wallet_address
-                },
+
                 getUserItem(id) {
                     for (let i = 0; i < this.user_list.length; i++) {
                         let item = this.user_list[i]
@@ -200,19 +239,18 @@
                     }
                     return null
                 },
-                resetFrom() {
-                    this.form = {
-                        id: 0,
-                        usdt_trc20: 0,
-                        usdt_erc20: 0,
-                        eth: 0,
-                        btc: 0,
-                        usdt_trc20_wallet_address: '-',
-                        usdt_erc20_wallet_address: '-',
-                        eth_wallet_address: '-',
-                        btc_wallet_address: '-',
-                        platform_currency: 0
-                    }
+                resetFrom(form) {
+                    form.id = 0
+                    form.action = ''
+                    form.usdt_trc20 = 0
+                    form.usdt_erc20 = 0
+                    form.eth = 0
+                    form.btc = 0
+                    form.usdt_trc20_wallet_address = '-'
+                    form.usdt_erc20_wallet_address = '-'
+                    form.eth_wallet_address = '-'
+                    form.btc_wallet_address = '-'
+                    form.platform_currency = 0
                 },
 
                 initWS() {
@@ -265,7 +303,7 @@
                     this.get('/admin/api/user-list', {}, (data) => {
                         let a = data.data.list
                         this.user_list = a
-                        this.updateUserInfoAndWalletAddress()
+                        this.onChangeSelected(this.form)
                         this.initWS()
                     })
 

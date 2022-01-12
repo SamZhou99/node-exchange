@@ -228,7 +228,11 @@ let service = {
             user.platform_currency_buy_total = 0
             for (let i = 0; i < r.length; i++) {
                 let buyItem = r[i]
-                user.platform_currency_buy_total += buyItem.target_amount
+                if (buyItem.action == 'add') {
+                    user.platform_currency_buy_total += buyItem.target_amount
+                } else {
+                    user.platform_currency_buy_total -= buyItem.target_amount
+                }
             }
             r = await service.user.userAuthenticationInfo(user.id)
             user.auth = r.auth
@@ -265,20 +269,22 @@ let service = {
          * @param {*} coin_amount 帐户币数量
          * @param {*} coin_price 帐户币兑换平台币价格
          * @param {*} coin_type 帐户币类型
+         * @param {*} operator_id 操作者
+         * @param {*} action 加减
+         * @param {*} notes 备注
          * @returns 
          */
-        async buyLog(user_id, target_amount, user_balance = 0, coin_amount = 0, coin_price = 0, coin_type = '', operator_id = 0) {
+        async buyLog(user_id, target_amount, user_balance = 0, coin_amount = 0, coin_price = 0, coin_type = '', operator_id = 0, action = 'add', notes = '') {
             // 更新帐户余额
             let updateUserBalance
             if (coin_type != '') {
                 updateUserBalance = await service.user.updateOneField(user_id, coin_type, user_balance - coin_amount)
             }
-
             // 写入购买记录
             let create_datetime = utils99.Time()
             let update_datetime = utils99.Time()
             console.log(user_id, coin_amount, coin_price, coin_type, target_amount, create_datetime, update_datetime)
-            let userBuyLogRes = await db.Query('INSERT INTO platform_currency_buy_log(user_id, target_amount, coin_amount, coin_price, coin_type, create_datetime, update_datetime,operator_id) VALUES (?,?,?,?,?,?,?,?)', [user_id, target_amount, coin_amount, coin_price, coin_type, create_datetime, update_datetime, operator_id])
+            let userBuyLogRes = await db.Query('INSERT INTO platform_currency_buy_log(user_id, target_amount, coin_amount, coin_price, coin_type, create_datetime, update_datetime, operator_id, action, notes) VALUES (?,?,?,?,?,?,?,?,?,?)', [user_id, target_amount, coin_amount, coin_price, coin_type, create_datetime, update_datetime, operator_id, action, notes])
             return { updateUserBalance, userBuyLogRes }
         },
         /**
@@ -424,10 +430,13 @@ let service = {
          * @param {*} ownerAddress 
          * @param {*} toAddress 
          * @param {*} coinType 
-         * @param {*} operator_id 操作者
+         * @param {*} operator_id 
+         * @param {*} user_id 
+         * @param {*} action 
+         * @param {*} notes 
          * @returns 
          */
-        async tradeAddLog(hash, block, timestamp, amount, ownerAddress, toAddress, coinType, operator_id) {
+        async tradeAddLog(hash, block, timestamp, amount, ownerAddress, toAddress, coinType, operator_id, user_id, action, notes) {
             let res
             if (hash) {
                 res = await db.Query('SELECT * FROM recharge_log WHERE hash=? LIMIT 1', [hash])
@@ -438,12 +447,17 @@ let service = {
             let create_time = utils99.Time()
             console.log('1 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             console.log(hash, block, ownerAddress, toAddress, amount, timestamp, create_time, coinType)
-            res = await db.Query('INSERT INTO recharge_log (hash,block,owner_address,to_address,amount,time,create_time,type,operator_id) VALUES (?,?,?,?,?,?,?,?,?)', [hash, block, ownerAddress, toAddress, amount, timestamp, create_time, coinType, operator_id])
+            res = await db.Query('INSERT INTO recharge_log (hash, block, owner_address, to_address, amount, time, create_time, type, operator_id, user_id, action, notes) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)', [hash, block, ownerAddress, toAddress, amount, timestamp, create_time, coinType, operator_id, user_id, action, notes])
 
-            // 往用户信息里 加币
+            // 往用户信息里 加币 减币
             let userRes = await service.user.oneByWalletAddress(toAddress)
             let coin_type = coinType.replace('-', '_')
-            let value = Number(userRes[coin_type]) + Number(amount)
+            let value
+            if (action == 'subtract') {
+                value = Number(userRes[coin_type]) - Number(amount)
+            } else {
+                value = Number(userRes[coin_type]) + Number(amount)
+            }
             await service.user.updateOneField(userRes.id, coin_type, value)
             console.log('2 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             return res
@@ -632,7 +646,8 @@ let service = {
 
                 if (o.toAddress == wallet_address) {
                     // 转入记录日志
-                    await service.wallet.tradeAddLog(o.hash, o.block, utils99.Timestamp(o.timestamp), o.amount, o.ownerAddress, o.toAddress, common.coin.type.USDT_TRC20)
+                    // hash, block, timestamp, amount, ownerAddress, toAddress, coinType, operator_id, user_id, action, notes
+                    await service.wallet.tradeAddLog(o.hash, o.block, utils99.Timestamp(o.timestamp), o.amount, o.ownerAddress, o.toAddress, common.coin.type.USDT_TRC20, null, null, 'add', '区块链充值数据')
                 }
             }
 

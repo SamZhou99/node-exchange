@@ -537,40 +537,43 @@ let __this = {
                         let form = ctx.request.body
                         let user_id = form.id
                         let operator_id = ctx.session.user.id
+
                         if (form.btc > 0) {
-                            let amount = form.btc
+                            let amount = Math.abs(form.btc)
                             let wallet_address = form.btc_wallet_address
                             let coin_type = common.coin.type.BTC
-                            let res = await service.wallet.tradeAddLog('', 0, utils99.Time(), amount, '', wallet_address, coin_type, operator_id)
+                            // hash, block, timestamp, amount, ownerAddress, toAddress, coinType, operator_id, user_id, action, notes
+                            let res = await service.wallet.tradeAddLog('', 0, utils99.Time(), amount, '', wallet_address, coin_type, operator_id, user_id, form.action, form.notes)
                         }
 
                         if (form.eth > 0) {
-                            let amount = form.eth
+                            let amount = Math.abs(form.eth)
                             let wallet_address = form.eth_wallet_address
                             let coin_type = common.coin.type.ETH
-                            let res = await service.wallet.tradeAddLog('', 0, utils99.Time(), amount, '', wallet_address, coin_type, operator_id)
+                            let res = await service.wallet.tradeAddLog('', 0, utils99.Time(), amount, '', wallet_address, coin_type, operator_id, user_id, form.action, form.notes)
                         }
 
                         if (form.usdt_trc20 > 0) {
-                            let amount = form.usdt_trc20
+                            let amount = Math.abs(form.usdt_trc20)
                             let wallet_address = form.usdt_trc20_wallet_address
                             let coin_type = common.coin.type.USDT_TRC20
-                            let res = await service.wallet.tradeAddLog('', 0, utils99.Time(), amount, '', wallet_address, coin_type, operator_id)
+                            let res = await service.wallet.tradeAddLog('', 0, utils99.Time(), amount, '', wallet_address, coin_type, operator_id, user_id, form.action, form.notes)
                         }
 
                         if (form.usdt_erc20 > 0) {
-                            let amount = form.usdt_erc20
+                            let amount = Math.abs(form.usdt_erc20)
                             let wallet_address = form.usdt_erc20_wallet_address
                             let coin_type = common.coin.type.USDT_ERC20
-                            let res = await service.wallet.tradeAddLog('', 0, utils99.Time(), amount, '', wallet_address, coin_type, operator_id)
+                            let res = await service.wallet.tradeAddLog('', 0, utils99.Time(), amount, '', wallet_address, coin_type, operator_id, user_id, form.action, form.notes)
                         }
 
 
                         // 平台币上分
                         if (form.platform_currency > 0) {
-                            let target_amount = form.platform_currency
-                            // let target_price = form.platform_currency_price
-                            let res = await service.user.buyLog(user_id, target_amount, 0, 0, 0, '', operator_id)
+                            let target_amount = Math.abs(form.platform_currency)
+                            let coin_price = 1 / Number(form.platform_currency_price)
+                            // user_id, target_amount, user_balance = 0, coin_amount = 0, coin_price = 0, coin_type = '', operator_id = 0, action = 'add', notes = ''
+                            let res = await service.user.buyLog(user_id, target_amount, 0, 0, coin_price, common.coin.type.USDT_TRC20, operator_id, form.action, form.notes)
                         }
 
                         ctx.body = { flag: 'ok', form }
