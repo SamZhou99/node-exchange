@@ -497,8 +497,8 @@
                         this.user = data.data.user
                         this.get('/api/coincap-coin-list/caches', {}, (data) => {
                             let a = data.data.value
-                            this.usd.btc = Number(this.getObjBySymbol(a, 'BTC').priceUsd)
-                            this.usd.eth = Number(this.getObjBySymbol(a, 'ETH').priceUsd)
+                            this.usd.btc = Number(this.getObjBySymbol(a, 'BTC').priceUsd) * this.user.btc
+                            this.usd.eth = Number(this.getObjBySymbol(a, 'ETH').priceUsd) * this.user.eth
                             this.usd.usdt_trc20 = this.user.usdt_trc20
                             this.usd.usdt_erc20 = this.user.usdt_erc20
                             this.usd.total = this.usd.btc + this.usd.eth + this.usd.usdt_trc20 + this.usd.usdt_erc20 + this.usd.platform_currency
