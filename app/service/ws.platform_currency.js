@@ -36,7 +36,7 @@ let _t = {
         // console.log('2222222222222', new_ts)
         // console.log('3333333333333', end_ts)
         // console.log('4444444444444', end_ts - start_ts, end_ts - new_ts)
-        // console.log('5555555555555', Math.round(percent * 10000) / 100 + '%')
+        // console.log('5555555555555', percent)
 
         return { deff_ts, day_ts, percent }
     },
@@ -67,16 +67,17 @@ let _t = {
 
             let ts = _t.deffTime()
             let price_percent = percent
+            let ts_percent = ts.percent
             let price
             if (is_up == 1) {
-                price = difference * ts.percent + min
+                price = difference * ts_percent + min
             } else if (is_up == -1) {
-                price = max - difference * ts.percent
+                price = max - difference * ts_percent
             }
             // let price = tools.random(min, max)
             // console.log('price', tools.round(price, 2, 8))
             if (_t.callback) {
-                _t.callback({ price, price_percent, is_up })
+                _t.callback({ price, price_percent, ts_percent, is_up })
             }
 
         }, _t.intervalTime2)

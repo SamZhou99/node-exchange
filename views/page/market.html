@@ -537,7 +537,7 @@
                                 let v = res.platform.price
                                 let className = Number(item.node.priceUsd) > v ? 'donghuaGreen' : 'donghuaRed'
                                 item.node.priceUsd = _t.round(v, 1, 4)
-                                item.node.changePercent24Hr = _t.round(res.platform.price_percent, 1, 2)
+                                item.node.changePercent24Hr = _t.round(res.platform.price_percent * res.platform.ts_percent, 1, 2)
                                 $('#' + key).addClass(className)
                                 setTimeout(() => {
                                     $('#' + key).removeClass(className)
