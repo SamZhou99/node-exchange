@@ -101,7 +101,7 @@
 
                             <div class="form-group">
                                 <div class="col-sm-12">
-                                    <button @click="onClickRandom()" class="btn btn-primary">随机生成新走势图</button>
+                                    <button @click="onClickRandom()" class="btn btn-primary">生成走势图</button>
 
                                     <button @click="onClickRadnomAdd()" class="btn btn-primary">随机加一天</button>
                                     <button @click="onClickSub()" class="btn btn-primary">减一天</button>
@@ -120,7 +120,7 @@
                             <hr>
 
 
-                            <div class="form-group">
+                            <div class="form-group" style="display: none;">
                                 <h2 class="header-title">修改某一天的数据</h2>
 
                                 <div class="form-group">
@@ -215,10 +215,10 @@
                 testData: {
                     startDate: moment().format('YYYY/MM/DD'),
                     laterDay: 100,
-                    priceVolatility: 10,
-                    initPrice: 0.05,
-                    everydayUpProbability: 80,
-                    upProbability: 15,
+                    priceVolatility: 1,
+                    initPrice: 0,
+                    everydayUpProbability: 100,
+                    upProbability: 10,
                     downProbability: 5,
                 },
                 updateData: {
@@ -265,7 +265,7 @@
                             "close": d.close,
                             "high": d.high,
                             "low": d.low,
-                            "volume": Math.random() * d.close,
+                            "volume": this.getVolume(d),
                             "amount": 0,
                             "count": 0
                         }
@@ -288,7 +288,7 @@
                         "close": d.close,
                         "high": d.high,
                         "low": d.low,
-                        "volume": Math.random() * d.close,
+                        "volume": this.getVolume(d),
                         "amount": 0,
                         "count": 0
                     }
@@ -312,7 +312,7 @@
                         "close": d.close,
                         "high": d.high,
                         "low": d.low,
-                        "volume": Math.random() * d.close,
+                        "volume": this.getVolume(d),
                         "amount": 0,
                         "count": 0
                     }
@@ -332,7 +332,7 @@
                         "close": d.close,
                         "high": d.high,
                         "low": d.low,
-                        "volume": Math.random() * d.close,
+                        "volume": this.getVolume(d),
                         "amount": 0,
                         "count": 0
                     }
@@ -362,18 +362,22 @@
                 },
                 candle(isUp, price, upPercent, volatility) {
                     let item = { "open": 0, "close": 0, "high": 0, "low": 0 }
+                    const p = this.testData.priceVolatility
                     if (isUp) {
                         item.open = price
-                        item.close = item.open + (item.open * this.random(upPercent / 10, upPercent))
-                        item.high = item.close + (item.close * this.random(volatility / 10, volatility))
-                        item.low = item.open - (item.open * this.random(volatility / 10, volatility))
+                        item.close = item.open + (item.open * this.random(upPercent / p, upPercent))
+                        item.high = item.close + (item.close * this.random(volatility / p, volatility))
+                        item.low = item.open - (item.open * this.random(volatility / p, volatility))
                     } else {
                         item.open = price
-                        item.close = item.open - (item.open * this.random(upPercent / 10, upPercent))
-                        item.high = item.open + (item.open * this.random(volatility / 10, volatility))
-                        item.low = item.close - (item.close * this.random(volatility / 10, volatility))
+                        item.close = item.open - (item.open * this.random(upPercent / p, upPercent))
+                        item.high = item.open + (item.open * this.random(volatility / p, volatility))
+                        item.low = item.close - (item.close * this.random(volatility / p, volatility))
                     }
                     return item
+                },
+                getVolume(d) {
+                    return (99999 * Math.random()) * (d.open / d.close)
                 },
                 random(min, max) {
                     return min + Math.random() * (max - min)
@@ -408,11 +412,68 @@
                     })
                 },
                 init() {
-
+                    console.log(klinecharts.version())
                     this.chart = klinecharts.init('chart')
                     this.chart.createTechnicalIndicator('MA', false, { id: 'candle_pane' })
                     this.chart.createTechnicalIndicator('VOL')
-                    this.chart.setStyleOptions()
+                    this.chart.setStyleOptions({
+                        // candle: {
+                        //     tooltip: {
+                        //         // 'always' | 'follow_cross' | 'none'
+                        //         showRule: 'always',
+                        //         // 'standard' | 'rect'
+                        //         showType: 'standard',
+                        //         labels: ['时间', '开', '收', '高', '低', '成交量'],
+                        //         // 可以是数组，也可以是方法，如果是方法则需要返回一个数组
+                        //         // 数组和方法返回的数组格式为:
+                        //         // [xxx, xxx, ......]或者[{ color: '#fff', value: xxx }, { color: '#000', value: xxx }, .......]
+                        //         values: null,
+                        //         defaultValue: 'n/a',
+                        //         rect: {
+                        //             paddingLeft: 0,
+                        //             paddingRight: 0,
+                        //             paddingTop: 0,
+                        //             paddingBottom: 6,
+                        //             offsetLeft: 8,
+                        //             offsetTop: 8,
+                        //             offsetRight: 8,
+                        //             borderRadius: 4,
+                        //             borderSize: 1,
+                        //             borderColor: '#3f4254',
+                        //             backgroundColor: 'rgba(17, 17, 17, .3)'
+                        //         },
+                        //         text: {
+                        //             size: 12,
+                        //             family: 'Helvetica Neue',
+                        //             weight: 'normal',
+                        //             color: '#D9D9D9',
+                        //             marginLeft: 8,
+                        //             marginTop: 6,
+                        //             marginRight: 8,
+                        //             marginBottom: 0
+                        //         }
+                        //     },
+                        //     technicalIndicator: {
+                        //         // 'always' | 'follow_cross' | 'none'
+                        //         showRule: 'always',
+                        //         // 'standard' | 'rect'
+                        //         showType: 'standard',
+                        //         showName: true,
+                        //         showParams: true,
+                        //         defaultValue: 'n/a',
+                        //         text: {
+                        //             size: 12,
+                        //             family: 'Helvetica Neue',
+                        //             weight: 'normal',
+                        //             color: '#D9D9D9',
+                        //             marginTop: 6,
+                        //             marginRight: 8,
+                        //             marginBottom: 0,
+                        //             marginLeft: 8
+                        //         }
+                        //     }
+                        // }
+                    })
 
                     this.get('/api/startup', {}, (data) => {
                         this.currency = data.data.currency
