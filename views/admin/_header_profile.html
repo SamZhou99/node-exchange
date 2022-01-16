@@ -6,7 +6,7 @@
     <form class="searchform">
         <input type="text" class="form-control" name="keyword" placeholder="Search here..." />
     </form>
-    
+
 
     <!--notification menu start -->
     <div class="menu-right">
@@ -45,10 +45,10 @@
                     <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-usermenu pull-right">
-                    <li> <a href="#"> <i class="fa fa-wrench"></i> Settings </a> </li>
-                    <li> <a href="#"> <i class="fa fa-user"></i> Profile </a> </li>
-                    <li> <a href="#"> <i class="fa fa-info"></i> Help </a> </li>
-                    <li> <a href="/logout"> <i class="fa fa-lock"></i> Logout </a> </li>
+                    <!-- <li> <a href="#"> <i class="fa fa-wrench"></i> Settings </a> </li> -->
+                    <!-- <li> <a href="#"> <i class="fa fa-user"></i> Profile </a> </li> -->
+                    <li> <a href="/admin/change-password"> <i class="fa fa-key"></i> 修改密码 </a> </li>
+                    <li> <a href="javascript:$.get('/logout',{},()=>{window.location.href='/'})"> <i class="fa fa-lock"></i> 安全退出 </a> </li>
                 </ul>
             </li>
 

@@ -64,6 +64,9 @@ router.get('/admin/market-change', middleware.checkLogin, middleware.role, contr
 router.get('/admin/manual-add-score', middleware.checkLogin, middleware.role, controllers.admin.manualAddScore)
 // 提币列表
 router.get('/admin/withdraw', middleware.checkLogin, middleware.role, controllers.admin.withdraw)
+// 修改个人密码
+router.get('/admin/change-password', middleware.checkLogin, middleware.role, controllers.admin.changePassword.page)
+router.post('/admin/change-password', middleware.checkLogin, middleware.role, controllers.admin.changePassword.post)
 
 
 // /admin/coin-add

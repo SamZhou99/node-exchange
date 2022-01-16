@@ -521,6 +521,18 @@ let __this = {
                 await ctx.render('admin/withdraw', ctx.data)
             },
 
+            // 管理面板修改个人密码
+            changePassword: {
+                async page(ctx) {
+                    await ctx.render('admin/change_password', ctx.data)
+                },
+                async post(ctx) {
+                    const user_id = ctx.session.user.id
+                    const res = await service.user.updateOneField(user_id, 'password', utils99.MD5(ctx.request.body.password1))
+                    ctx.body = { flag: 'ok' }
+                },
+            },
+
             // 
             api: {
                 post: {

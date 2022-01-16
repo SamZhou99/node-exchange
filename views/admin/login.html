@@ -103,12 +103,12 @@
                         return
                     }
 
-                    this.disabled = false
+                    this.disabled = true
                     this.form.password = md5(this.form.password)
                     $.post("/login", this.form, (data) => {
-                        this.disabled = true
+                        this.disabled = false
                         if (data.flag != 'ok') {
-                            this.alert(data.flag)
+                            alert(data.flag)
                             return
                         }
                         document.location = '/admin/dashboard'

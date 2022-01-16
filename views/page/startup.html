@@ -159,24 +159,31 @@
                 </div>
 
 
-                <div class="col-sm-12 col-md-4 text-center">
+                <div class="col-sm-12 col-md-3 text-center">
                     <div class="coinType">
-                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：USDT</p>
-                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}：1 : {[this.platform_currency.usdt_exchange]}</p>
-                        <p><button @click="onClickParticipation('USDT')" :disabled="!this.disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：USDT-TRC20</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.usdt_trc20_exchange]}</p>
+                        <p><button @click="onClickParticipation('USDT-TRC20')" :disabled="!this.disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-4 text-center">
+                <div class="col-sm-12 col-md-3 text-center">
+                    <div class="coinType">
+                        <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：USDT-ERC20</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.usdt_erc20_exchange]}</p>
+                        <p><button @click="onClickParticipation('USDT-ERC20')" :disabled="!this.disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
+                    </div>
+                </div>
+                <div class="col-sm-12 col-md-3 text-center">
                     <div class="coinType">
                         <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：ETH</p>
-                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}：1 : {[this.platform_currency.eth_exchange]}</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.eth_exchange]}</p>
                         <p><button @click="onClickParticipation('ETH')" :disabled="!this.disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-4 text-center">
+                <div class="col-sm-12 col-md-3 text-center">
                     <div class="coinType">
                         <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：BTC</p>
-                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}：1 : {[this.platform_currency.btc_exchange]}</p>
+                        <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.btc_exchange]}</p>
                         <p><button @click="onClickParticipation('BTC')" :disabled="!this.disable" type="button" class="btn btn-danger btn-block">{{lang.list[defLang].page.participation}}</button></p>
                     </div>
                 </div>
@@ -283,9 +290,7 @@
                     </div>
                     <div class="modal-body">
                         <div class="form-row">
-                            <div class="col-md-8" style="margin-top: 8px;">{{lang.list[defLang].page.available_balance}}：<span
-                                    style="color:#cc3333;">{[this.balance.curr_balance]} {[coinType]}</span>
-                            </div>
+                            <div class="col-md-8" style="margin-top: 8px;">{{lang.list[defLang].page.available_balance}}：<span style="color:#cc3333;">{[this.balance.curr_balance]} {[coinType]}</span></div>
                             <div class="col-md-auto ml-auto text-right">
                                 <div @click="onClickAllIn()" class="btn btn-link">{{lang.list[defLang].page.all_in}}</div>
                             </div>
@@ -338,16 +343,18 @@
                 loading: false,
                 temp_setInterval: null,
                 alertObj: JSON.parse('{{lang.list[defLang].page.login.alert}}'.replace(/&#34;/g, '"')),
-                coinType: 'usdt',
+                coinType: 'usdt_trc20',
                 exchange: 0,
                 endTime: '0{{lang.list[defLang].page.day}} 0{{lang.list[defLang].page.hour}} 0{{lang.list[defLang].page.minute}} 0{{lang.list[defLang].page.second}}',
                 disable: true,
                 platform_currency: {
                     name: '',
                     value: 0,
-                    usdt: 0,
+                    usdt_trc20: 0,
+                    usdt_trc20_exchange: 0,
+                    usdt_erc20: 0,
+                    usdt_erc20_exchange: 0,
                     withdraw_charges: 0,
-                    usdt_exchange: 0,
                     eth_exchange: 0,
                     btc_exchange: 0,
                     start_time: 0,
@@ -355,7 +362,8 @@
                     curr_time: 0,
                 },
                 balance: {
-                    USDT: 0,
+                    USDT_TRC20: 0,
+                    USDT_ERC20: 0,
                     ETH: 0,
                     BTC: 0,
                     curr_balance: 0
@@ -364,7 +372,7 @@
                     target_amount: 0,
                     coin_price: 0,
                     coin_amount: 0,
-                    coin_type: 'usdt',
+                    coin_type: 'usdt_trc20',
                 }
             },
             methods: {
@@ -374,11 +382,13 @@
                         return
                     }
 
-                    this.coinType = type
-                    this.exchange = this.platform_currency[type.toLocaleLowerCase() + '_exchange']
+                    this.coinType = type.replace('-', '_')
+                    let key = type.toLocaleLowerCase().replace('-', '_')
+                    this.exchange = this.platform_currency[key + '_exchange']
+                    console.log('key', key, this.exchange)
                     this.balance.curr_balance = this.balance[this.coinType]
 
-                    this.form.coin_type = type
+                    this.form.coin_type = this.coinType
                     this.form.coin_amount = 0
                     this.form.coin_price = 0
                     this.form.target_amount = 0
@@ -389,9 +399,6 @@
                     this.form.coin_price = this.exchange
                     this.form.target_amount = $('#target_coin').val()
                     this.form.coin_type = this.form.coin_type.toLocaleLowerCase()
-                    if (this.form.coin_type == "usdt") {
-                        this.form.coin_type = 'usdt_trc20'
-                    }
 
                     if (this.form.target_amount <= 0) {
                         return
@@ -440,7 +447,7 @@
                     }
 
                     let zl = z.substr(0, dotLaterLen)
-                    return `${s}.${zl}`
+                    return Number(`${s}.${zl}`)
                 },
                 lessen(num, min, len) {
                     let n = num / min
@@ -485,7 +492,7 @@
                         const time = 1000
                         let _t = this
                         let res = JSON.parse(event.data)
-                        this.platform_currency.usdt_exchange = this.round(1 / res.platform.price, 1, 6)
+                        this.platform_currency.usdt_trc2_exchange = this.round(1 / res.platform.price, 1, 6)
                         ws.close()
                     }
                 },
@@ -493,8 +500,9 @@
                 getPrice() {
                     this.get('/api/coincap-prices-assets/caches', {}, (data) => {
                         let p = data.data.value
-                        this.platform_currency.eth_exchange = this.round(this.platform_currency.usdt_exchange * p.ethereum, 1, 6)
-                        this.platform_currency.btc_exchange = this.round(this.platform_currency.usdt_exchange * p.bitcoin, 1, 6)
+                        this.platform_currency.usdt_erc20_exchange = this.round(this.platform_currency.usdt_trc20_exchange, 1, 6)
+                        this.platform_currency.eth_exchange = this.round(this.platform_currency.usdt_trc20_exchange * p.ethereum, 1, 6)
+                        this.platform_currency.btc_exchange = this.round(this.platform_currency.usdt_trc20_exchange * p.bitcoin, 1, 6)
                     })
                 },
 
@@ -527,14 +535,16 @@
                 init() {
                     this.get('/api/startup', {}, (data) => {
                         if (this.is_login == 'true') {
-                            this.balance.USDT = data.data.user['usdt_trc20']
+                            this.balance.USDT_TRC20 = data.data.user['usdt_trc20']
+                            this.balance.USDT_ERC20 = data.data.user['usdt_erc20']
                             this.balance.ETH = data.data.user['eth']
                             this.balance.BTC = data.data.user['btc']
                         }
 
                         this.platform_currency = data.data.currency
 
-                        this.platform_currency.usdt_exchange = data.data.currency.usdt_exchange
+                        this.platform_currency.usdt_trc20_exchange = data.data.currency.usdt_exchange
+                        this.platform_currency.usdt_erc20_exchange = 0
                         this.platform_currency.eth_exchange = 0
                         this.platform_currency.btc_exchange = 0
 
