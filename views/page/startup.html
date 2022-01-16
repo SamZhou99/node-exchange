@@ -493,7 +493,8 @@
                         let _t = this
                         let res = JSON.parse(event.data)
                         this.platform_currency.usdt_trc20_exchange = this.round(1 / res.platform.price, 1, 6)
-                        // ws.close()
+                        console.log('2 this.platform_currency.usdt_trc20_exchange', this.platform_currency.usdt_trc20_exchange)
+                        ws.close()
                     }
                 },
 
@@ -543,7 +544,8 @@
 
                         this.platform_currency = data.data.currency
 
-                        this.platform_currency.usdt_trc20_exchange = 0
+                        this.platform_currency.usdt_trc20_exchange = data.data.currency.usdt_exchange
+                        console.log('1 this.platform_currency.usdt_trc20_exchange', this.platform_currency.usdt_trc20_exchange)
                         this.platform_currency.usdt_erc20_exchange = 0
                         this.platform_currency.eth_exchange = 0
                         this.platform_currency.btc_exchange = 0
