@@ -492,7 +492,7 @@
                         const time = 1000
                         let _t = this
                         let res = JSON.parse(event.data)
-                        this.platform_currency.usdt_trc2_exchange = this.round(1 / res.platform.price, 1, 6)
+                        this.platform_currency.usdt_trc20_exchange = this.round(1 / res.platform.price, 1, 6)
                         ws.close()
                     }
                 },
