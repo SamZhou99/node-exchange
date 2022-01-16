@@ -355,6 +355,9 @@ let __this = {
                 },
                 async allLogJson(ctx) {
                     let res = await service.withdraw.allList()
+                    for (let i = 0; i < res.length; i++) {
+                        res[i]['user'] = await service.user.oneById(res[i].user_id)
+                    }
                     ctx.body = { flag: 'ok', data: res }
                 },
                 // 提币申请
