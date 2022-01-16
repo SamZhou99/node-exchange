@@ -120,41 +120,31 @@
                             <hr>
 
 
-                            <div class="form-group" style="display: none;">
-                                <h2 class="header-title">修改某一天的数据</h2>
-
-                                <div class="form-group">
-                                    <label class="col-sm-1 control-label">日期</label>
-                                    <div class="col-sm-2">
-                                        <input v-model="moment(updateData.timestamp).format('YYYY/MM/DD')" class="form-control" placeholder="年/月/日" type="text">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <h2 class="header-title">数据列表</h2>
+                                    <div style="overflow:scroll; width:100%; height:300px;">
+                                        <table width="90%">
+                                            <tr>
+                                                <th>日期</th>
+                                                <th>开盘价</th>
+                                                <th>收盘价</th>
+                                                <th>最高价</th>
+                                                <th>最低价</th>
+                                                <th>预览</th>
+                                            </tr>
+                                            <tr v-for="item in this.chartData">
+                                                <td>{[dateFormat(item.timestamp)]}</td>
+                                                <td><input v-model="item.open" class="form-control" placeholder="50" type="number"></td>
+                                                <td><input v-model="item.close" class="form-control" placeholder="50" type="number"></td>
+                                                <td><input v-model="item.high" class="form-control" placeholder="50" type="number"></td>
+                                                <td><input v-model="item.low" class="form-control" placeholder="50" type="number"></td>
+                                                <td><button @click="onClickPreview()" class="btn btn-primary">预览数据</button></td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </div>
 
-
-                                <div class="form-group">
-                                    <label class="col-sm-1 control-label">开盘价</label>
-                                    <div class="col-sm-1">
-                                        <input v-model="updateData.open" class="form-control" placeholder="50" type="number">
-                                    </div>
-                                    <label class="col-sm-1 control-label">收盘价</label>
-                                    <div class="col-sm-1">
-                                        <input v-model="updateData.close" class="form-control" placeholder="50" type="number">
-                                    </div>
-                                    <label class="col-sm-1 control-label">最高价</label>
-                                    <div class="col-sm-1">
-                                        <input v-model="updateData.high" class="form-control" placeholder="50" type="number">
-                                    </div>
-                                    <label class="col-sm-1 control-label">最低价</label>
-                                    <div class="col-sm-1">
-                                        <input v-model="updateData.low" class="form-control" placeholder="50" type="number">
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="col-sm-12">
-                                        <button @click="onClickApply()" class="btn btn-primary">应用数据</button>
-                                    </div>
-                                </div>
                             </div>
 
                         </div>
@@ -163,14 +153,14 @@
 
 
 
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <div class="col-md-12">
                                 <div class="input-group">
                                     <input type="text" class="form-control" placeholder="mm/dd/yyyy" id="datepickerQWE">
                                     <span class="input-group-addon b-0 text-white"><i class="icon-calender"></i></span>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
 
 
@@ -234,17 +224,7 @@
                 moment: moment
             },
             methods: {
-                onClickApply() {
-                    this.updateData.timestamp = Number(this.updateData.timestamp)
-                    this.updateData.open = Number(this.updateData.open)
-                    this.updateData.close = Number(this.updateData.close)
-                    this.updateData.high = Number(this.updateData.high)
-                    this.updateData.low = Number(this.updateData.low)
-                    this.updateData.volume = Number(this.updateData.volume)
-                    this.updateData.amount = Number(this.updateData.amount)
-                    this.updateData.count = Number(this.updateData.count)
-
-                    console.log(this.chartData[this.chartData.length - 1])
+                onClickPreview() {
                     this.chart.applyNewData(this.chartData)
                 },
                 onClickShowDay() {
@@ -385,6 +365,9 @@
                 round(num) {
                     let len = 1000000
                     return Math.round(num * len) / len
+                },
+                dateFormat(date) {
+                    return moment(date).format('YYYY/MM/DD HH:mm:ss')
                 },
                 post(url, params, callback) {
                     this.loading = true;

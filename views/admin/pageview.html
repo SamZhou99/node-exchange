@@ -97,8 +97,6 @@
     {{include './_footer.html'}}
 
 
-    <link href="https://www.paginationjs.cn/dist/2.1.5/pagination.css" rel="stylesheet">
-    <script src="//www.paginationjs.cn/dist/2.1.5/pagination.min.js"></script>
     <script>
         let appVue = new Vue({
             delimiters: ["{[", "]}"],
@@ -108,7 +106,7 @@
                 list: [],
                 page: {
                     page: 1,
-                    limit: 9910,
+                    limit: 10,
                     total: 0,
                 }
             },
@@ -120,10 +118,6 @@
                             this.init()
                         })
                     }
-                },
-                onClickPage(page) {
-                    this.page.page = page
-                    this.init()
                 },
                 accountName(data) {
                     let str = ''
@@ -167,29 +161,32 @@
                     })
                 },
                 init() {
-                    this.get('/admin/api/pageview', this.page, (data) => {
-                        // let a = data.data.list
-                        // for (let i = 0; i < a.length; i++) {
-                        //     let item = a[i]
-                        //     item.name = this.accountName(item.user)
-                        //     item.create_datetime = moment(item.create_datetime).format('YYYY-MM-DD HH:mm:ss')
-                        // }
-                        // this.list = a
-                        // this.page = data.data.page
 
-                        $('#page').pagination({
-                            dataSource: data.data.list,
-                            callback: (data, pagination) => {
-                                let a = data
-                                for (let i = 0; i < a.length; i++) {
-                                    let item = a[i]
-                                    item.name = this.accountName(item.user)
-                                    item.create_datetime = moment(item.create_datetime).format('YYYY-MM-DD HH:mm:ss')
-                                }
-                                this.list = a
+                    $('#page').pagination({
+                        dataSource: '/admin/api/pageview',
+                        locator: 'data.list',
+                        pageSize: 10,
+                        alias: {
+                            pageNumber: 'page',
+                            pageSize: 'limit'
+                        },
+                        totalNumberLocator: function (response) {
+                            return response.data.page.total;
+                        },
+                        ajax: {
+                            beforeSend: function () {
+                                console.log('正在加载...')
                             }
-                        })
-
+                        },
+                        callback: (data, pagination) => {
+                            let a = data
+                            for (let i = 0; i < a.length; i++) {
+                                let item = a[i]
+                                item.name = this.accountName(item.user)
+                                item.create_datetime = moment(item.create_datetime).format('YYYY-MM-DD HH:mm:ss')
+                            }
+                            this.list = a
+                        }
                     })
 
 

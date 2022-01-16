@@ -63,7 +63,8 @@
                                         <td>{[item.id]}</td>
                                         <td><span v-html="item.self_name"></span></td>
                                         <td>
-                                            <a href="#" :id="'selectType'+item.id" :data-item="item.id" data-type="select" data-pk="1" data-value="" data-title="选择用户类型" class="editable editable-click" style="color: gray;">{[item.value]}</a>
+                                            <!-- <a href="#" :id="'selectType'+item.id" :data-item="item.id" data-type="select" data-pk="1" data-value="" data-title="选择用户类型" class="editable editable-click" style="color: gray;">{[item.value]}</a> -->
+                                            {[item.value]}
                                             <p>
                                             <div v-if="item.auth">
                                                 <a v-if="item.auth.status==1" :href="'/admin/user-auth/'+item.id" class="text-danger bg-warning"><b>待审核</b></a>
@@ -88,7 +89,23 @@
                                             数量：<span v-if="item.platform_currency_buy_total > 0" class="badge badge-success" style="background-color:#6fa30f;">{[item.platform_currency_buy_total]}</span>
                                             <br>
                                             <a @click="onClickShowBuyLog(item)" href="javascript:void(0);">查看详情</a>
-                                            <p :id="'buy_log_'+item.id"> - </p>
+                                            <div v-if="item.buy_log_show">
+                                                <table>
+                                                    <tr>
+                                                        <th width="100px">数量</th>
+                                                        <th width="200px">备注</th>
+                                                        <th width="200px">日期</th>
+                                                    </tr>
+                                                    <tr v-for="log_item in item.platform_currency_buy_log">
+                                                        <td>{[log_item.target_amount]}</td>
+                                                        <td>
+                                                            <span v-if="log_item.notes==''">项目首发</span>
+                                                            <span v-else="">{[log_item.notes]}</span>
+                                                        </td>
+                                                        <td>{[dateFormat(log_item.create_datetime)]}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
                                         </td>
                                         <td width="600">
                                             <table style="padding:5px; line-height:26px;">
@@ -131,7 +148,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-
+                            <div id="page"></div>
                         </div>
                     </div>
                 </div>
@@ -160,34 +177,6 @@
                                         <input class="form-control" v-model="form.notes" type="text">
                                     </div>
                                 </div>
-
-                                <!-- <div class="form-group">
-                                    <label class="col-md-2 control-label">BTC</label>
-                                    <div class="col-md-10">
-                                        <input class="form-control" v-model="form.btc" type="number">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">ETH</label>
-                                    <div class="col-md-10">
-                                        <input class="form-control" v-model="form.eth" type="number">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">USDT-TRC20</label>
-                                    <div class="col-md-10">
-                                        <input class="form-control" v-model="form.usdt_trc20" type="number">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-2 control-label">USDT_ERC20</label>
-                                    <div class="col-md-10">
-                                        <input class="form-control" v-model="form.usdt_erc20" type="number">
-                                    </div>
-                                </div> -->
-
-
-
                                 <div class="clearfix"></div>
                             </form>
                         </div>
@@ -245,15 +234,7 @@
             },
             methods: {
                 onClickShowBuyLog(item) {
-                    console.log(item)
-                    let s = ""
-                    let a = item.platform_currency_buy_log
-                    let len = a.length
-                    for (let i = 0; i < len; i++) {
-                        s += a[i]
-                    }
-                    $('buy_log_' + item.id).html =
-                        $('buy_log_' + item.id).show();
+                    item.buy_log_show = !item.buy_log_show
                 },
                 onClickEditSubmit() {
                     // console.log(this.form, this.currItem)
@@ -309,7 +290,7 @@
                         $('#selectType' + userItem.id).editable({
                             // mode: 'inline',
                             prepend: userItem.value,
-                            source: this.categoryList,
+                            source: this.categoryList.concat(),
                             display: function (value, sourceData) {
                                 let user_id = this.attributes['data-item']['value']
                                 let type_id = value
@@ -366,6 +347,9 @@
                     }
                     return str
                 },
+                dateFormat(ts) {
+                    return moment(ts).format('YYYY/MM/DD HH:mm:ss')
+                },
                 post(url, params, callback) {
                     this.loading = true;
                     $.post(url, params, res => {
@@ -394,15 +378,42 @@
 
                 init() {
                     let t = this
-                    this.get('/admin/api/user-list', {}, (data) => {
+
+                    this.get('/admin/api/user-group-category', {}, (data) => {
                         let a = data.data.list
                         a.forEach(function (item) {
-                            item.self_name = t.accountName(item)
-                            item.parent_name = t.accountName(item.parent)
+                            item.text = item.value
+                            item.value = item.id
                         })
-                        console.log(a)
-                        this.list = a
-                        this.getcCategory()
+                        this.categoryList = a
+
+                        $('#page').pagination({
+                            dataSource: '/admin/api/user-list',
+                            locator: 'data.list',
+                            pageSize: 10,
+                            alias: {
+                                pageNumber: 'page',
+                                pageSize: 'limit'
+                            },
+                            totalNumberLocator: function (response) {
+                                return response.data.page.total;
+                            },
+                            ajax: {
+                                beforeSend: function () {
+                                    console.log('正在加载...')
+                                }
+                            },
+                            callback: (data, pagination) => {
+                                let a = data
+                                a.forEach(function (item) {
+                                    item.buy_log_show = false;
+                                    item.self_name = t.accountName(item)
+                                    item.parent_name = t.accountName(item.parent)
+                                })
+                                this.list = a
+                            }
+                        })
+
                     })
 
                     this.get('/api/startup', {}, (data) => {

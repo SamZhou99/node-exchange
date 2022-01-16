@@ -188,13 +188,14 @@ let service = {
          * 用户详细列表
          * @returns 
          */
-        async list() {
-            let res = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,u.notes,u.usdt_trc20,u.usdt_erc20,u.eth,u.btc,ucg.label,ucg.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type ORDER BY id DESC LIMIT 1000')
-            for (let i = 0; i < res.length; i++) {
-                let item = res[i]
+        async list(start, limit) {
+            let res = await db.Query('SELECT COUNT(0) AS total FROM user')
+            let list = await db.Query('SELECT u.id,u.parent_id,u.account,u.type,u.notes,u.usdt_trc20,u.usdt_erc20,u.eth,u.btc,ucg.label,ucg.value,u.email,u.mobile,u.status,u.create_datetime,u.update_datetime FROM user AS u LEFT JOIN user_category AS ucg ON ucg.id=u.type ORDER BY id DESC LIMIT ?,?', [start, limit])
+            for (let i = 0; i < list.length; i++) {
+                let item = list[i]
                 item = await service.user.userDetailInfo(item)
             }
-            return res
+            return { list, total: res[0].total }
         },
         /**
          * 一个用户的详细信息

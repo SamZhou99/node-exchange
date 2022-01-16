@@ -165,30 +165,32 @@
                     })
                 },
                 init() {
-                    this.get('/admin/api/trade-log', this.page, (data) => {
-                        // let a = data.data.list
-                        // a.forEach(function (item) {
-                        //     item.time = moment(item.time).format('YYYY/MM/DD HH:mm:ss')
-                        //     // item.create_time = moment(item.create_time).format('YYYY/MM/DD HH:mm:ss')
-                        // })
-                        // this.list = a
 
-
-
-                        $('#page').pagination({
-                            dataSource: data.data.list,
-                            callback: (data, pagination) => {
-                                let a = data
-                                a.forEach(function (item) {
-                                    item.time = moment(item.time).format('YYYY/MM/DD HH:mm:ss')
-                                    // item.create_time = moment(item.create_time).format('YYYY/MM/DD HH:mm:ss')
-                                })
-                                this.list = a
+                    $('#page').pagination({
+                        dataSource: '/admin/api/trade-log',
+                        locator: 'data.list',
+                        pageSize: 10,
+                        alias: {
+                            pageNumber: 'page',
+                            pageSize: 'limit'
+                        },
+                        totalNumberLocator: function (response) {
+                            return response.data.page.total;
+                        },
+                        ajax: {
+                            beforeSend: function () {
+                                console.log('正在加载...')
                             }
-                        })
-
-
+                        },
+                        callback: (data, pagination) => {
+                            let a = data
+                            a.forEach(function (item) {
+                                item.time = moment(item.time).format('YYYY/MM/DD HH:mm:ss')
+                            })
+                            this.list = a
+                        }
                     })
+
                 }
             },
             mounted() {

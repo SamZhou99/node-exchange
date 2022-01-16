@@ -26,9 +26,10 @@ let _t = {
         return res
     },
 
-    async allList() {
-        const res = await db.Query("SELECT * FROM withdraw_log ORDER BY id DESC", [])
-        return res
+    async allList(start, limit) {
+        let res = await db.Query('SELECT COUNT(0) AS total FROM withdraw_log')
+        const list = await db.Query("SELECT * FROM withdraw_log ORDER BY id DESC LIMIT ?,?", [start, limit])
+        return { list, total: res[0].total }
     },
 
     /**

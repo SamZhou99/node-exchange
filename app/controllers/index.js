@@ -354,11 +354,24 @@ let __this = {
                     ctx.body = { flag: 'ok', data: res }
                 },
                 async allLogJson(ctx) {
-                    let res = await service.withdraw.allList()
-                    for (let i = 0; i < res.length; i++) {
-                        res[i]['user'] = await service.user.oneById(res[i].user_id)
+                    let q = ctx.request.query
+                    let limit = q.limit ? parseInt(q.limit) : 20
+                    let page = q.page ? parseInt(q.page) : 1
+                    let start = limit * (page - 1)
+                    let res = await service.withdraw.allList(start, limit)
+                    for (let i = 0; i < res.list.length; i++) {
+                        res.list[i]['user'] = await service.user.oneById(res.list[i].user_id)
                     }
-                    ctx.body = { flag: 'ok', data: res }
+                    ctx.body = {
+                        flag: 'ok', data: {
+                            list: res.list,
+                            page: {
+                                page,
+                                limit,
+                                total: res.total
+                            }
+                        }
+                    }
                 },
                 // 提币申请
                 async applyForJson(ctx) {
@@ -620,8 +633,24 @@ let __this = {
                     ctx.body = { flag: 'ok', data: { userCount, coinCount: coinAmount, walletAddressCount, pageViewCount } }
                 },
                 async userListJson(ctx) {
-                    let list = await service.user.list()
-                    ctx.body = { flag: 'ok', data: { list } }
+                    let q = ctx.request.query
+                    let limit = q.limit ? parseInt(q.limit) : 20
+                    let page = q.page ? parseInt(q.page) : 1
+                    let start = limit * (page - 1)
+                    // let res = await service.withdraw.allList(start, limit)
+
+                    let res = await service.user.list(start, limit)
+                    // ctx.body = { flag: 'ok', data: { list } }
+                    ctx.body = {
+                        flag: 'ok', data: {
+                            list: res.list,
+                            page: {
+                                page,
+                                limit,
+                                total: res.total
+                            }
+                        }
+                    }
                 },
                 async userGroupCategoryJson(ctx) {
                     let list = await service.user.groupCategory()

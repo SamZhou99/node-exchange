@@ -78,12 +78,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="btn-group m-b-20">
-                                <button @click="onClickPage(i)" :disabled="page.page==i"
-                                    :style="page.page==i ? 'background-color: #ddd' : ''"
-                                    v-for="i in Math.ceil(this.page.total / this.page.limit)" type="button"
-                                    class="btn btn-white">{[i]}</button>
-                            </div>
+                            <div id="page" class="btn-group m-b-20"></div>
                         </div>
                     </div>
                 </div>
@@ -114,11 +109,6 @@
             data: {
                 loading: false,
                 list: [],
-                page: {
-                    page: 1,
-                    limit: 10,
-                    total: 0,
-                }
             },
             methods: {
                 onClickGoUpload() {
@@ -169,17 +159,35 @@
                         }
                     })
                 },
-                init() {//http://127.0.0.1:3030/admin/api/wallet-list?page=1&limit=4
-                    this.get('/admin/api/wallet-list', this.page, (data) => {
-                        let a = data.data.list
-                        for (let i = 0; i < a.length; i++) {
-                            let item = a[i]
-                            item.uploaderName = this.accountName(item.uploader)
-                            item.binderName = this.accountName(item.binder)
+                init() {
+
+                    $('#page').pagination({
+                        dataSource: '/admin/api/wallet-list',
+                        locator: 'data.list',
+                        pageSize: 10,
+                        alias: {
+                            pageNumber: 'page',
+                            pageSize: 'limit'
+                        },
+                        totalNumberLocator: function (response) {
+                            return response.data.page.total;
+                        },
+                        ajax: {
+                            beforeSend: function () {
+                                console.log('正在加载...')
+                            }
+                        },
+                        callback: (data, pagination) => {
+                            let a = data
+                            for (let i = 0; i < a.length; i++) {
+                                let item = a[i]
+                                item.uploaderName = this.accountName(item.uploader)
+                                item.binderName = this.accountName(item.binder)
+                            }
+                            this.list = a
                         }
-                        this.list = a
-                        this.page = data.data.page
                     })
+
                 }
             },
             mounted() {
