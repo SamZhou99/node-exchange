@@ -98,7 +98,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-
+                            <div id="page" class="btn-group m-b-20"></div>
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,8 @@
     {{include './_footer.html'}}
 
 
-
+    <link href="https://www.paginationjs.cn/dist/2.1.5/pagination.css" rel="stylesheet">
+    <script src="//www.paginationjs.cn/dist/2.1.5/pagination.min.js"></script>
     <script>
         let appVue = new Vue({
             delimiters: ["{[", "]}"],
@@ -131,7 +132,7 @@
                 list: [],
                 page: {
                     page: 1,
-                    limit: 10,
+                    limit: 9910,
                     total: 0,
                 }
             },
@@ -165,12 +166,28 @@
                 },
                 init() {
                     this.get('/admin/api/trade-log', this.page, (data) => {
-                        let a = data.data.list
-                        a.forEach(function (item) {
-                            item.time = moment(item.time).format('YYYY/MM/DD HH:mm:ss')
-                            // item.create_time = moment(item.create_time).format('YYYY/MM/DD HH:mm:ss')
+                        // let a = data.data.list
+                        // a.forEach(function (item) {
+                        //     item.time = moment(item.time).format('YYYY/MM/DD HH:mm:ss')
+                        //     // item.create_time = moment(item.create_time).format('YYYY/MM/DD HH:mm:ss')
+                        // })
+                        // this.list = a
+
+
+
+                        $('#page').pagination({
+                            dataSource: data.data.list,
+                            callback: (data, pagination) => {
+                                let a = data
+                                a.forEach(function (item) {
+                                    item.time = moment(item.time).format('YYYY/MM/DD HH:mm:ss')
+                                    // item.create_time = moment(item.create_time).format('YYYY/MM/DD HH:mm:ss')
+                                })
+                                this.list = a
+                            }
                         })
-                        this.list = a
+
+
                     })
                 }
             },

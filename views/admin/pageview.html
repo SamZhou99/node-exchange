@@ -74,12 +74,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="btn-group m-b-20">
-                                <button @click="onClickPage(i)" :disabled="page.page==i"
-                                    :style="page.page==i ? 'background-color: #ddd' : ''"
-                                    v-for="i in Math.ceil(this.page.total / this.page.limit)" type="button"
-                                    class="btn btn-white">{[i]}</button>
-                            </div>
+                            <div id="page" class="btn-group m-b-20"></div>
                         </div>
                     </div>
                 </div>
@@ -102,7 +97,8 @@
     {{include './_footer.html'}}
 
 
-
+    <link href="https://www.paginationjs.cn/dist/2.1.5/pagination.css" rel="stylesheet">
+    <script src="//www.paginationjs.cn/dist/2.1.5/pagination.min.js"></script>
     <script>
         let appVue = new Vue({
             delimiters: ["{[", "]}"],
@@ -112,7 +108,7 @@
                 list: [],
                 page: {
                     page: 1,
-                    limit: 10,
+                    limit: 9910,
                     total: 0,
                 }
             },
@@ -172,21 +168,38 @@
                 },
                 init() {
                     this.get('/admin/api/pageview', this.page, (data) => {
-                        let a = data.data.list
-                        for (let i = 0; i < a.length; i++) {
-                            let item = a[i]
-                            item.name = this.accountName(item.user)
-                            item.create_datetime = moment(item.create_datetime).format('YYYY-MM-DD HH:mm:ss')
-                        }
-                        this.list = a
-                        this.page = data.data.page
+                        // let a = data.data.list
+                        // for (let i = 0; i < a.length; i++) {
+                        //     let item = a[i]
+                        //     item.name = this.accountName(item.user)
+                        //     item.create_datetime = moment(item.create_datetime).format('YYYY-MM-DD HH:mm:ss')
+                        // }
+                        // this.list = a
+                        // this.page = data.data.page
+
+                        $('#page').pagination({
+                            dataSource: data.data.list,
+                            callback: (data, pagination) => {
+                                let a = data
+                                for (let i = 0; i < a.length; i++) {
+                                    let item = a[i]
+                                    item.name = this.accountName(item.user)
+                                    item.create_datetime = moment(item.create_datetime).format('YYYY-MM-DD HH:mm:ss')
+                                }
+                                this.list = a
+                            }
+                        })
+
                     })
+
+
                 }
             },
             mounted() {
                 this.init();
             }
         });
+
     </script>
 </body>
 
