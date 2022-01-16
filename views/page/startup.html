@@ -486,15 +486,15 @@
 
                         setTimeout(() => {
                             this.initWS()
-                        }, 60000)
+                        }, 6000)
                     }
                     ws.onmessage = (event) => {
                         const time = 1000
                         let _t = this
                         let res = JSON.parse(event.data)
                         this.platform_currency.usdt_trc20_exchange = this.round(1 / res.platform.price, 1, 6)
-                        console.log('2 this.platform_currency.usdt_trc20_exchange', this.platform_currency.usdt_trc20_exchange)
                         ws.close()
+                        this.getPrice()
                     }
                 },
 
@@ -544,27 +544,17 @@
 
                         this.platform_currency = data.data.currency
 
-                        this.platform_currency.usdt_trc20_exchange = data.data.currency.usdt_exchange
-                        console.log('1 this.platform_currency.usdt_trc20_exchange', this.platform_currency.usdt_trc20_exchange)
-                        this.platform_currency.usdt_erc20_exchange = 0
-                        this.platform_currency.eth_exchange = 0
-                        this.platform_currency.btc_exchange = 0
+                        // this.platform_currency.usdt_trc20_exchange = data.data.currency.usdt_exchange
+                        // this.platform_currency.usdt_erc20_exchange = 0
+                        // this.platform_currency.eth_exchange = 0
+                        // this.platform_currency.btc_exchange = 0
 
                         this.platform_currency.start_time = moment(this.platform_currency.start_time).format('YYYY-MM-DD HH:mm:ss')
                         this.platform_currency.end_time = moment(this.platform_currency.end_time).format('YYYY-MM-DD HH:mm:ss')
                         this.updateTime()
 
-
-                        this.getPrice()
-                        setInterval(() => {
-                            this.getPrice()
-                        }, 1000 * 60)
-
-
                         this.initWS()
-
                     })
-
                 }
             },
             mounted() {
