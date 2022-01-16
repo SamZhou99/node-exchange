@@ -102,7 +102,8 @@ router.post('/admin/api/kline', middleware.checkLogin, middleware.role, controll
 router.post('/admin/api/update-authentication', middleware.checkLogin, middleware.role, controllers.admin.api.post.updateAuthentication)
 // 提币审核更新
 router.post('/admin/api/withdraw-update', middleware.checkLogin, middleware.role, controllers.api.withdraw.updateJson)
-
+// 提币列表
+router.get('/admin/api/withdraw-log', middleware.checkLogin, controllers.api.withdraw.allLogJson)
 // 数据库初始化
 router.get('/admin/api/init', controllers.admin.api.init)
 

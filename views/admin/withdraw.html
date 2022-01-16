@@ -276,7 +276,7 @@
                     })
                 },
                 init() {
-                    this.get('/api/withdraw-log', {}, (data) => {
+                    this.get('/admin/api/withdraw-log', {}, (data) => {
                         if (data.flag != 'ok') {
                             tip(data.flag)
                             return

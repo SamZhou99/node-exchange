@@ -353,6 +353,10 @@ let __this = {
                     }
                     ctx.body = { flag: 'ok', data: res }
                 },
+                async allLogJson(ctx) {
+                    let res = await service.withdraw.allList()
+                    ctx.body = { flag: 'ok', data: res }
+                },
                 // 提币申请
                 async applyForJson(ctx) {
                     const form = ctx.request.body

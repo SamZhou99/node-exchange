@@ -26,6 +26,11 @@ let _t = {
         return res
     },
 
+    async allList() {
+        const res = await db.Query("SELECT * FROM withdraw_log ORDER BY id DESC", [])
+        return res
+    },
+
     /**
      * 提币申请
      * @param {*} user_id 
