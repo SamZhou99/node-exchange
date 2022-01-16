@@ -499,15 +499,25 @@
                 },
 
                 getPrice() {
-                    this.get('/api/coincap-prices-assets/caches', {}, (data) => {
-                        let p = data.data.value
+                    this.get('/api/coincap-coin-list/caches', {}, (data) => {
+                        let a = data.data.value
+                        let btc = Number(this.getObjBySymbol(a, 'BTC').priceUsd)
+                        let eth = Number(this.getObjBySymbol(a, 'ETH').priceUsd)
                         this.platform_currency.usdt_erc20_exchange = this.round(this.platform_currency.usdt_trc20_exchange, 1, 6)
-                        this.platform_currency.eth_exchange = this.round(this.platform_currency.usdt_trc20_exchange * p.ethereum, 1, 6)
-                        this.platform_currency.btc_exchange = this.round(this.platform_currency.usdt_trc20_exchange * p.bitcoin, 1, 6)
+                        this.platform_currency.eth_exchange = this.round(this.platform_currency.usdt_trc20_exchange * eth, 1, 6)
+                        this.platform_currency.btc_exchange = this.round(this.platform_currency.usdt_trc20_exchange * btc, 1, 6)
                     })
                 },
 
-
+                getObjBySymbol(arr, symbol) {
+                    for (let i = 0; i < arr.length; i++) {
+                        let item = arr[i]
+                        if (item.symbol == symbol) {
+                            return item
+                        }
+                    }
+                    return null
+                },
                 post(url, params, callback) {
                     this.loading = true;
                     $.post(url, params, res => {
