@@ -116,7 +116,7 @@
                     <div class="coinType">
                         <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：USDT-TRC20</p>
                         <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.usdt_trc20_exchange]}</p>
-                        <p><button @click="onClickParticipation('USDT-TRC20')" :disabled="!this.disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
+                        <p><button @click="onClickParticipation('USDT-TRC20')" :disabled="!this.disable || !this.btn_disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
                     </div>
                 </div>
 
@@ -124,7 +124,7 @@
                     <div class="coinType">
                         <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：USDT-ERC20</p>
                         <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.usdt_erc20_exchange]}</p>
-                        <p><button @click="onClickParticipation('USDT-ERC20')" :disabled="!this.disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
+                        <p><button @click="onClickParticipation('USDT-ERC20')" :disabled="!this.disable || !this.btn_disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
                     </div>
                 </div>
 
@@ -132,7 +132,7 @@
                     <div class="coinType">
                         <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：ETH</p>
                         <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.eth_exchange]}</p>
-                        <p><button @click="onClickParticipation('ETH')" :disabled="!this.disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
+                        <p><button @click="onClickParticipation('ETH')" :disabled="!this.disable || !this.btn_disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
                     </div>
                 </div>
 
@@ -140,7 +140,7 @@
                     <div class="coinType">
                         <p class="titleStyle">{{lang.list[defLang].page.target_coin_type}}：BTC</p>
                         <p class="convertibleProportionStyle">{{lang.list[defLang].page.exchange_ratio}}<br>1 : {[this.platform_currency.btc_exchange]}</p>
-                        <p><button @click="onClickParticipation('BTC')" :disabled="!this.disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
+                        <p><button @click="onClickParticipation('BTC')" :disabled="!this.disable || !this.btn_disable" type="button" class="uk-button-danger uk-button uk-button-small">{{lang.list[defLang].page.participation}}</button></p>
                     </div>
                 </div>
 
@@ -312,6 +312,7 @@
                     exchange: 0,
                     endTime: '0{{lang.list[defLang].page.day}} 0{{lang.list[defLang].page.hour}} 0{{lang.list[defLang].page.minute}} 0{{lang.list[defLang].page.second}}',
                     disable: true,
+                    btn_disable: false,
                     platform_currency: {
                         name: '',
                         value: 0,
@@ -462,6 +463,9 @@
                             let _t = this
                             let res = JSON.parse(event.data)
                             this.platform_currency.usdt_trc20_exchange = this.round(1 / res.platform.price, 1, 6)
+                            if (this.platform_currency.usdt_trc20_exchange) {
+                                this.btn_disable = true
+                            }
                             ws.close()
                             this.getPrice()
                         }
