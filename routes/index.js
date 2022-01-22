@@ -108,6 +108,9 @@ router.get('/api/withdraw-log', middleware.checkLogin, controllers.api.withdraw.
 // 我的信息
 router.get('/api/me', middleware.checkLogin, controllers.api.meJson)
 
+// 代理
+router.get('/api/proxy', controllers.api.proxy.get)
+
 // // 用户列表
 // router.get('/api/user-list', middleware.checkLogin, controllers.api.userListJson)
 

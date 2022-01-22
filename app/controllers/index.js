@@ -237,6 +237,44 @@ let __this = {
                 },
             },
 
+            proxy: {
+                // 代理
+                async get(ctx) {
+                    // 示例
+                    let bf = {
+                        chunk: [],
+                        length: 0,
+                    };
+                    const url = ctx.request.query.url
+                    console.log('代理请求', url)
+                    if (!url) {
+                        ctx.body = { flag: '缺少参数' }
+                        return
+                    }
+
+                    async function get(url) {
+                        return new Promise((resolve, reject) => {
+                            utils99.request.http(url, (err, res) => {
+                                if (err) {
+                                    reject(err)
+                                    return
+                                }
+
+                                if (res.type == "data") {
+                                    bf.chunk.push(res.chunk);
+                                    bf.length += res.chunk.length;
+                                } else if (res.type == 'end') {
+                                    // let base64 = Buffer.concat(bf.chunk, bf.length).toString('base64');
+                                    let res = Buffer.concat(bf.chunk, bf.length).toString()
+                                    resolve(res)
+                                }
+                            })
+                        })
+                    }
+
+                    ctx.body = await get(url)
+                }
+            },
             // 我的基本信息
             async meJson(ctx) {
                 const user_id = ctx.session.user.id

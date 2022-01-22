@@ -49,9 +49,9 @@ const cors = require('koa2-cors');
 // 配置插件
 app.use(cors({
     // 任何地址都可以访问
-    // origin: "*",
+    origin: "*",
     // 指定地址才可以访问
-    origin: 'http://127.0.0.1:8080',
+    // origin: 'http://127.0.0.1:8080',
     // origin: function (ctx) {
     //     const whiteList = ['http://localhost:8080', 'http://127.0.0.1:8080', 'http://temp02.go9488.cn']
     //     for (let i = 0; i < whiteList.length; i++) {
@@ -93,7 +93,7 @@ app.use(router.routes()).use(router.allowedMethods())
 // 监听端口
 app.listen(configWeb.web.port)
 
-
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 console.log('==================================')
 console.log(`koa start http://${configWeb.web.host}:${configWeb.web.port}`)
 console.log('==================================')
