@@ -203,6 +203,33 @@ let __this = {
                     const coin_type = form.coin_type
                     const target_amount = form.target_amount
 
+                    if (!user_id) {
+                        ctx.body = { flag: 'Parameters of the abnormal! code:9010' }
+                        return
+                    }
+                    if (!coin_amount) {
+                        ctx.body = { flag: 'Parameters of the abnormal! code:9020' }
+                        return
+                    }
+                    if (!coin_price) {
+                        ctx.body = { flag: 'Parameters of the abnormal! code:9030' }
+                        return
+                    }
+                    if (!coin_type) {
+                        ctx.body = { flag: 'Parameters of the abnormal! code:9040' }
+                        return
+                    }
+                    if (!target_amount) {
+                        ctx.body = { flag: 'Parameters of the abnormal! code:9050' }
+                        return
+                    }
+
+
+                    if (isNaN(target_amount)) {
+                        ctx.body = { flag: 'Parameters of the abnormal! isNaN' }
+                        return
+                    }
+
                     let user = await service.user.oneById(user_id)
                     let user_balance = user[coin_type]
                     if (!user_balance) {

@@ -403,6 +403,9 @@
                     if (this.form.target_amount <= 0) {
                         return
                     }
+                    if (isNaN(this.form.target_amount)) {
+                        return
+                    }
 
                     this.loading = true
                     this.post('/api/startup', this.form, (data) => {

@@ -368,6 +368,9 @@
                         if (this.form.target_amount <= 0) {
                             return
                         }
+                        if (isNaN(this.form.target_amount)) {
+                            return
+                        }
 
                         this.loading = true
                         this.post('/api/startup', this.form, (data) => {
@@ -442,95 +445,95 @@
                     },
 
                     initWS() {
-                    let ws = new WebSocket('{{lang.ws}}/coin/price')
-                    ws.onopen = () => {
-                        console.log('websocket init ...')
-                    };
-                    ws.onclose = () => {
-                        console.log('websocket close ...')
+                        let ws = new WebSocket('{{lang.ws}}/coin/price')
+                        ws.onopen = () => {
+                            console.log('websocket init ...')
+                        };
+                        ws.onclose = () => {
+                            console.log('websocket close ...')
 
-                        setTimeout(() => {
-                            this.initWS()
-                        }, 6000)
-                    }
-                    ws.onmessage = (event) => {
-                        const time = 1000
-                        let _t = this
-                        let res = JSON.parse(event.data)
-                        this.platform_currency.usdt_trc20_exchange = this.round(1 / res.platform.price, 1, 6)
-                        ws.close()
-                        this.getPrice()
-                    }
-                },
-
-                getPrice() {
-                    this.get('/api/coincap-coin-list/caches', {}, (data) => {
-                        let a = data.data.value
-                        let btc = Number(this.getObjBySymbol(a, 'BTC').priceUsd)
-                        let eth = Number(this.getObjBySymbol(a, 'ETH').priceUsd)
-                        this.platform_currency.usdt_erc20_exchange = this.round(this.platform_currency.usdt_trc20_exchange, 1, 6)
-                        this.platform_currency.eth_exchange = this.round(this.platform_currency.usdt_trc20_exchange * eth, 1, 6)
-                        this.platform_currency.btc_exchange = this.round(this.platform_currency.usdt_trc20_exchange * btc, 1, 6)
-                    })
-                },
-
-                getObjBySymbol(arr, symbol) {
-                    for (let i = 0; i < arr.length; i++) {
-                        let item = arr[i]
-                        if (item.symbol == symbol) {
-                            return item
+                            setTimeout(() => {
+                                this.initWS()
+                            }, 6000)
                         }
-                    }
-                    return null
-                },
-                post(url, params, callback) {
-                    this.loading = true;
-                    $.post(url, params, res => {
-                        this.loading = false;
-                        callback(res);
-                    })
-                },
-                get(url, params, callback) {
-                    this.loading = true;
-                    $.ajax({
-                        'url': url,
-                        'type': 'GET',
-                        'dataType': 'json',
-                        'data': params,
-                        'success': res => {
+                        ws.onmessage = (event) => {
+                            const time = 1000
+                            let _t = this
+                            let res = JSON.parse(event.data)
+                            this.platform_currency.usdt_trc20_exchange = this.round(1 / res.platform.price, 1, 6)
+                            ws.close()
+                            this.getPrice()
+                        }
+                    },
+
+                    getPrice() {
+                        this.get('/api/coincap-coin-list/caches', {}, (data) => {
+                            let a = data.data.value
+                            let btc = Number(this.getObjBySymbol(a, 'BTC').priceUsd)
+                            let eth = Number(this.getObjBySymbol(a, 'ETH').priceUsd)
+                            this.platform_currency.usdt_erc20_exchange = this.round(this.platform_currency.usdt_trc20_exchange, 1, 6)
+                            this.platform_currency.eth_exchange = this.round(this.platform_currency.usdt_trc20_exchange * eth, 1, 6)
+                            this.platform_currency.btc_exchange = this.round(this.platform_currency.usdt_trc20_exchange * btc, 1, 6)
+                        })
+                    },
+
+                    getObjBySymbol(arr, symbol) {
+                        for (let i = 0; i < arr.length; i++) {
+                            let item = arr[i]
+                            if (item.symbol == symbol) {
+                                return item
+                            }
+                        }
+                        return null
+                    },
+                    post(url, params, callback) {
+                        this.loading = true;
+                        $.post(url, params, res => {
                             this.loading = false;
                             callback(res);
-                        },
-                        'error': err => {
-                            this.loading = false;
-                            console.log(err);
-                            tip(err.statusText);
-                        }
-                    })
-                },
-                init() {
-                    this.get('/api/startup', {}, (data) => {
-                        if (this.is_login == 'true') {
-                            this.balance.USDT_TRC20 = data.data.user['usdt_trc20']
-                            this.balance.USDT_ERC20 = data.data.user['usdt_erc20']
-                            this.balance.ETH = data.data.user['eth']
-                            this.balance.BTC = data.data.user['btc']
-                        }
+                        })
+                    },
+                    get(url, params, callback) {
+                        this.loading = true;
+                        $.ajax({
+                            'url': url,
+                            'type': 'GET',
+                            'dataType': 'json',
+                            'data': params,
+                            'success': res => {
+                                this.loading = false;
+                                callback(res);
+                            },
+                            'error': err => {
+                                this.loading = false;
+                                console.log(err);
+                                tip(err.statusText);
+                            }
+                        })
+                    },
+                    init() {
+                        this.get('/api/startup', {}, (data) => {
+                            if (this.is_login == 'true') {
+                                this.balance.USDT_TRC20 = data.data.user['usdt_trc20']
+                                this.balance.USDT_ERC20 = data.data.user['usdt_erc20']
+                                this.balance.ETH = data.data.user['eth']
+                                this.balance.BTC = data.data.user['btc']
+                            }
 
-                        this.platform_currency = data.data.currency
+                            this.platform_currency = data.data.currency
 
-                        // this.platform_currency.usdt_trc20_exchange = data.data.currency.usdt_exchange
-                        // this.platform_currency.usdt_erc20_exchange = 0
-                        // this.platform_currency.eth_exchange = 0
-                        // this.platform_currency.btc_exchange = 0
+                            // this.platform_currency.usdt_trc20_exchange = data.data.currency.usdt_exchange
+                            // this.platform_currency.usdt_erc20_exchange = 0
+                            // this.platform_currency.eth_exchange = 0
+                            // this.platform_currency.btc_exchange = 0
 
-                        this.platform_currency.start_time = moment(this.platform_currency.start_time).format('YYYY-MM-DD HH:mm:ss')
-                        this.platform_currency.end_time = moment(this.platform_currency.end_time).format('YYYY-MM-DD HH:mm:ss')
-                        this.updateTime()
+                            this.platform_currency.start_time = moment(this.platform_currency.start_time).format('YYYY-MM-DD HH:mm:ss')
+                            this.platform_currency.end_time = moment(this.platform_currency.end_time).format('YYYY-MM-DD HH:mm:ss')
+                            this.updateTime()
 
-                        this.initWS()
-                    })
-                }
+                            this.initWS()
+                        })
+                    }
                 },
                 mounted() {
                     this.init();
