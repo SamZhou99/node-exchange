@@ -63,12 +63,18 @@ async function pageViewLog(ctx) {
  * @returns 
  */
 function checkMobile(ctx) {
-    var ua = ctx.request.header['user-agent'].toLowerCase();
-    const isMobile = /mobile|android|iphone|ipad|phone/i.test(ua);
-    const isWechat = /micromessenger/i.test(ua);
-    ctx.data.isMobile = isMobile
-    ctx.data.isWechat = isWechat
-    return true
+    let ua = ctx.request.header['user-agent'];
+    if (ua) {
+        ua = ua.toLowerCase()
+        const isMobile = /mobile|android|iphone|ipad|phone/i.test(ua);
+        const isWechat = /micromessenger/i.test(ua);
+        ctx.data.isMobile = isMobile
+        ctx.data.isWechat = isWechat
+        return true
+    }
+    ctx.data.isMobile = false
+    ctx.data.isWechat = false
+    return false
 }
 
 
