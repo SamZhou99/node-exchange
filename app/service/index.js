@@ -614,18 +614,23 @@ let service = {
          * @returns 
          */
         async tradeLog(start, limit) {
-            let res = await db.Query('SELECT COUNT(0) AS total FROM recharge_log')
+            let rechargeRes = await db.Query('SELECT COUNT(0) AS total FROM recharge_log')
             let list = await db.Query('SELECT * FROM recharge_log ORDER BY id DESC LIMIT ?,?', [start, limit])
             for (let i = 0; i < list.length; i++) {
                 let item = list[i]
-                let res = await db.Query('SELECT bind_user_id FROM system_wallet WHERE wallet_address=?', [item.to_address])
-                let bind_user_id = res[0].bind_user_id
-                if (bind_user_id > 0) {
-                    res = await db.Query('SELECT id,account,email,mobile FROM user WHERE id=?', [bind_user_id])
-                    item.user = res[0]
+                if (item.hash) {
+                    let bindRes = await db.Query('SELECT bind_user_id FROM system_wallet WHERE wallet_address=?', [item.to_address])
+                    let bind_user_id = bindRes[0].bind_user_id
+                    if (bind_user_id > 0) {
+                        let userRes = await db.Query('SELECT id,account,email,mobile FROM user WHERE id=?', [bind_user_id])
+                        item.user = userRes[0]
+                    }
+                } else {
+                    let userRes = await db.Query('SELECT id,account,email,mobile FROM user WHERE id=?', [item.user_id])
+                    item.user = userRes[0]
                 }
             }
-            return { list, total: res[0].total }
+            return { list, total: rechargeRes[0].total }
         },
         /**
          * 获取网络浏览器的交易记录

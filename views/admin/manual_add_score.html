@@ -300,7 +300,7 @@
                     })
                 },
                 init() {
-                    this.get('/admin/api/user-list', {}, (data) => {
+                    this.get('/admin/api/user-list', { limit: 999 }, (data) => {
                         let a = data.data.list
                         this.user_list = a
                         this.onChangeSelected(this.form)
