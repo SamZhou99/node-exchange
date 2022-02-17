@@ -607,6 +607,60 @@ let service = {
             }
             return results
         },
+        async importWallet(list) {
+            let results = {
+                // 总数
+                total: list.length,
+                // 不合格的数据
+                unqualified: 0,
+                unqualifiedArr: [],
+                // 已存在的数据
+                exist: 0,
+                // 导入成功的数据
+                success: 0,
+            }
+            for (let i = 0; i < list.length; i++) {
+                let item = list[i]
+                // if (!tools.isNumber(item)) {
+                //     results.unqualified++
+                //     results.unqualifiedArr.push(item)
+                //     continue
+                // }
+                // 检查 地址 是否有重复
+                let res = await db.Query('SELECT * FROM system_wallet WHERE wallet_address=? LIMIT 1', [item])
+                if (res.length > 0) {
+                    results.exist++
+                    continue
+                }
+                let upload_user_id = 1
+                let bind_user_id = 0
+                let wallet_address = item
+                let wallet_type = tools.getWalletType(wallet_address)
+                let create_datetime = utils99.Time()
+                let update_datetime = utils99.Time()
+                if (wallet_type == common.coin.type.ETH) {
+                    // 当做 usdt-erc20插入
+                    await db.Query(`INSERT INTO system_wallet (upload_user_id,bind_user_id,wallet_address,wallet_type,create_datetime,update_datetime) VALUES (?,?,?,?,?,?)`, [
+                        upload_user_id,
+                        bind_user_id,
+                        wallet_address,
+                        common.coin.type.USDT_ERC20,
+                        create_datetime,
+                        update_datetime
+                    ])
+                }
+                await db.Query(`INSERT INTO system_wallet (upload_user_id,bind_user_id,wallet_address,wallet_type,create_datetime,update_datetime) VALUES (?,?,?,?,?,?)`, [
+                    upload_user_id,
+                    bind_user_id,
+                    wallet_address,
+                    wallet_type,
+                    create_datetime,
+                    update_datetime
+                ])
+                results.success++
+            }
+            return results
+        },
         /**
          * 查询 交易记录
          * @param {*} start 

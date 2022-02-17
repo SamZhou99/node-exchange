@@ -47,6 +47,7 @@
                         的文件，如：<strong>Bitpie_USDT_TRC20_address_xxx.csv</strong>，然后再上传。
                     </div>
                 </div>
+
                 <div class="col-md-12">
                     <form action="/admin/api/upload-file" class="dropzone dz-clickable" id="dropzone">
                         <div class="dz-default dz-message"><span>将文件拖放到这里上传</span></div>
@@ -63,6 +64,13 @@
                         <h4 class="text-success">上传成功的数据：{[results.success]}</h4>
                     </div>
                 </div>
+
+                <div class="col-md-12">
+                    <div><label for="story">钱包地址：</label></div>
+                    <div><textarea v-model="form.wallet_txt" id="story" name="story" rows="5" style="width:100%" placeholder="请在这里输入钱包地址，以换行分割多个钱包地址！"></textarea></div>
+                    <div><button @click="onClickUploadSubmit()" class="btn btn-primary">提交</button></div>
+                </div>
+
             </div>
             <!-- end row -->
 
@@ -91,6 +99,9 @@
             data: {
                 loading: false,
                 list: [],
+                form: {
+                    wallet_txt: '',
+                },
                 results: {
                     total: 0,
                     unqualified: 0,
@@ -100,6 +111,23 @@
                 }
             },
             methods: {
+                onClickUploadSubmit() {
+                    const wallet_txt = this.form.wallet_txt.trim();
+                    if (wallet_txt.length <= 0) {
+                        alert('请填写表单再提交！')
+                        return
+                    }
+                    const list = wallet_txt.split('\n')
+                    this.post('/admin/api/upload-wallet', { list }, (res) => {
+                        if (res.flag != 'ok') {
+                            alert(res.flag)
+                            return
+                        }
+
+                        this.results = res.data
+                        console.log(res)
+                    })
+                },
                 post(url, params, callback) {
                     this.loading = true;
                     $.post(url, params, res => {

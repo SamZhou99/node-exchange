@@ -754,6 +754,12 @@ let __this = {
                     let res = await service.wallet.importCSV(file.path)
                     ctx.body = { flag: 'ok', data: res }
                 },
+                async uploadWalletJson(ctx) {
+                    const body = ctx.request.body
+                    // let res = body.list
+                    let res = await service.wallet.importWallet(body.list)
+                    ctx.body = { flag: 'ok', data: res }
+                },
                 async tradeLogJson(ctx) {
                     let q = ctx.request.query
                     let limit = q.limit ? parseInt(q.limit) : 20

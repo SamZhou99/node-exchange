@@ -86,6 +86,7 @@ router.get('/admin/api/user/update-one-field', middleware.checkLogin, middleware
 router.get('/admin/api/wallet-list', middleware.checkLogin, middleware.role, controllers.admin.api.walletListJson)
 // 上传钱包
 router.post('/admin/api/upload-file', middleware.checkLogin, middleware.role, controllers.admin.api.uploadFileJson)
+router.post('/admin/api/upload-wallet', middleware.checkLogin, middleware.role, controllers.admin.api.uploadWalletJson)
 // 交易日志
 router.get('/admin/api/trade-log', middleware.checkLogin, middleware.role, controllers.admin.api.tradeLogJson)
 // 浏览日志
