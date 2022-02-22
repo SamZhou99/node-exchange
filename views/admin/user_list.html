@@ -54,7 +54,7 @@
                                         <th>邀请人(上级)</th>
                                         <th>平台币({[this.platform_currency.symbol]})</th>
                                         <th>币种 / 地址 / 数量</th>
-                                        <th>当前状态</th>
+                                        <th>注册时间</th>
                                         <th>操作</th>
                                     </tr>
                                 </thead>
@@ -134,16 +134,17 @@
 
 
                                         <td>
+                                            {[dateFormat(item.create_datetime)]}
+                                        </td>
+                                        <td>
                                             <span v-if="!!item.status">
                                                 <button @click="onClickStatus(item)" class="btn btn-success"> <i class="fa fa-check"></i> 可用</button>
                                             </span>
                                             <span v-else>
                                                 <button @click="onClickStatus(item)" class="btn btn-danger"> <i class="fa fa-remove"></i> 禁用</button>
                                             </span>
-                                        </td>
-                                        <td>
-                                            <button @click="onRefreshWalletAddress(item.wallet[3].wallet_address)" :disabled="refreshButtonStatus" class="btn"><i class="fa fa-refresh"></i> 手动更新充值</button>
                                             <button @click="onClickEdit(item)" class="btn btn-info"> <i class="fa fa-edit"></i> 编辑</button>
+                                            <button @click="onRefreshWalletAddress(item.wallet[3].wallet_address)" :disabled="refreshButtonStatus" class="btn"><i class="fa fa-refresh"></i> 更新充值</button>
                                         </td>
                                     </tr>
                                 </tbody>
