@@ -83,9 +83,11 @@
                                     <tr v-for="item in this.list" :class="item.type">
                                         <td>{[item.id]}</td>
                                         <td>
-                                            <div>帐号：{[item.user.account]}</div>
-                                            <div>手机：{[item.user.mobile]}</div>
-                                            <div>邮箱：{[item.user.email]}</div>
+                                            <div v-if="item.user">
+                                                <div>帐号：{[item.user.account]}</div>
+                                                <div>手机：{[item.user.mobile]}</div>
+                                                <div>邮箱：{[item.user.email]}</div>
+                                            </div>
                                         </td>
                                         <td>{[item.amount]}</td>
                                         <td>{[item.type]}</td>
