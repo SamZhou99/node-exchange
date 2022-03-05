@@ -87,8 +87,8 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <span v-if="item.action=='add'">+</span>
-                                            <span v-if="item.action=='subtract'">-</span>
+                                            <span v-if="item.action=='add'" style="color:green;">+</span>
+                                            <span v-if="item.action=='subtract'" style="color:red;">-</span>
                                             {[item.amount]}
                                         </td>
                                         <td>{[item.type]}</td>
