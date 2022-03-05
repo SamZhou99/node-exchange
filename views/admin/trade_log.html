@@ -71,12 +71,9 @@
                                         <th>帐号</th>
                                         <th>数额</th>
                                         <th>类型</th>
-                                        <!-- <th>区块高度</th> -->
                                         <th>哈希</th>
-                                        <!-- <th>他人钱包地址</th> -->
                                         <th>系统钱包地址</th>
                                         <th>交易时间</th>
-                                        <!-- <th>记录时间</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -89,11 +86,13 @@
                                                 <div>邮箱：{[item.user.email]}</div>
                                             </div>
                                         </td>
-                                        <td>{[item.amount]}</td>
+                                        <td>
+                                            <span v-if="item.action=='add'">+</span>
+                                            <span v-if="item.action=='subtract'">-</span>
+                                            {[item.amount]}
+                                        </td>
                                         <td>{[item.type]}</td>
-                                        <!-- <td>{[item.block]}</td> -->
                                         <td>{[item.hash]}</td>
-                                        <!-- <td><a :href="'https://usdt.tokenview.com/cn/address/'+item.owner_address" target="_blank">{[item.owner_address]}</td> -->
                                         <td>
                                             <a v-if="item.type=='btc'" :href="'https://www.btc.com/btc/address/'+item.to_address" target="_blank">{[item.to_address]}</a>
                                             <a v-if="item.type=='eth'" :href="'https://etherscan.io/address/'+item.to_address" target="_blank">{[item.to_address]}</a>
@@ -101,7 +100,6 @@
                                             <a v-if="item.type=='usdt_trc20'" :href="'https://usdt.tokenview.com/cn/address/'+item.to_address" target="_blank">{[item.to_address]}</a>
                                         </td>
                                         <td>{[item.time]}</td>
-                                        <!-- <td>{[item.create_time]}</td> -->
                                     </tr>
                                 </tbody>
                             </table>
