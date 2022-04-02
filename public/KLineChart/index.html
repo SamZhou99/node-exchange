@@ -18,9 +18,9 @@
     <script src="https://wo99.oss-cn-qingdao.aliyuncs.com/scripts/jquery/3.2.1/jquery.min.js"></script>
     <script src="./assets/pako.min.js"></script>
     <style>
-        .tag-name{
-            margin-top:10px;
-            margin-left:10px;
+        .tag-name {
+            margin-top: 10px;
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -579,8 +579,8 @@
         }
 
         function getKLineData() {
-            let U=String(symbol).toLocaleUpperCase()
-            let tag = U.substring(0,U.length-4)+'/'+U.substring(U.length-4,U.length)
+            let U = String(symbol).toLocaleUpperCase()
+            let tag = U.substring(0, U.length - 4) + '/' + U.substring(U.length - 4, U.length)
             jQuery('.top-bar-periods-small').html(`<div class="tag-name">${tag}</div><div class="tag-name">    Last Price <span id="late_price">0</span></div>`)
 
 
@@ -627,7 +627,7 @@
             window.parent.postMessage({ data }, '/');
         }
 
-        function showLatePrice(price){
+        function showLatePrice(price) {
             jQuery('#late_price').text(price)
         }
 
@@ -648,9 +648,10 @@
                     let res = JSON.parse(event.data)
                     let lastData = chartDataList[chartDataList.length - 1]
                     lastData.close = res.price
-                    console.log(res, lastData)
-                    let b=100000000
-                    showLatePrice(Math.round(res.price*b)/b)
+                    lastData.high = res.price
+                    // console.log('--->', res, lastData)
+                    let b = 100000000
+                    showLatePrice(Math.round(res.price * b) / b)
                     chart.updateData(lastData)
                 }
                 return
