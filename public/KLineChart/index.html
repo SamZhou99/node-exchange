@@ -648,7 +648,11 @@
                     let res = JSON.parse(event.data)
                     let lastData = chartDataList[chartDataList.length - 1]
                     lastData.close = res.price
-                    lastData.high = res.price
+                    if (res.is_up > 0) {
+                        lastData.high = res.price
+                    } else {
+                        lastData.low = res.price
+                    }
                     // console.log('--->', res, lastData)
                     let b = 100000000
                     showLatePrice(Math.round(res.price * b) / b)
