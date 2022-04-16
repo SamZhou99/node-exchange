@@ -733,6 +733,10 @@ let service = {
             let a = res.data.token_transfers
             for (let i = 0; i < a.length; i++) {
                 let item = a[i]
+                // BUG 过滤掉 不符合的数据
+                if (item.tokenInfo.tokenAbbr.toLowerCase() != 'usdt') {
+                    continue
+                }
                 let o = {
                     hash: item.transaction_id,
                     block: item.block,
