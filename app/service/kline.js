@@ -91,7 +91,8 @@ async function makePlatformCurrency(symbol, period, size) {
 
 let KLineChart = {
     async get(symbol = 'btcusdt', period = '1day', size = '500') {
-        const URL = `https://api.hadax.com/market/history/kline?period=${period}&size=${size}&symbol=${symbol}`
+        // const URL = `https://api.hadax.com/market/history/kline?period=${period}&size=${size}&symbol=${symbol}`
+        const URL = `http://api.huobi.pro/market/history/kline?period=${period}&size=${size}&symbol=${symbol}`
         const DATE = utils99.moment().utcOffset(480).format('YYYY-MM-DD')
         let filePath = __dirname + `/../../public/kline/${symbol}-${DATE}.json`
         // console.log('K线图文件路径：', filePath)
